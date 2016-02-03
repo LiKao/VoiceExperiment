@@ -9,3 +9,7 @@ version.txt
 .project
 .settings/
 
+*.Rcheck/
+VoiceExperiment_*.tar.gz
+man/
+
