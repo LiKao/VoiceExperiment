@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+
+NAMESPACE
+sources.txt
+version.txt
+
+.project
+.settings/
+
