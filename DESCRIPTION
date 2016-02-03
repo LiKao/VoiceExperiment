@@ -1,10 +1,10 @@
 Package: VoiceExperiment
-Title: What the Package Does (one line, title case)
+Title: Analysis of Vocal Responses to Psychological Experiments
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Tillmann", "Nett", email = "mail@tcrueger.de", role = c("aut", "cre"))
+Description: This package allows the analysis of vocal responses to psychological experiments. Currently the onset times of all responses is extracted and can be exported as a csv file.
 Depends:
     R (>= 3.2.2)
-License: What license is it under?
+License: file LICENSE
 LazyData: true
 RoxygenNote: 5.0.1.9000
