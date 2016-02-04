@@ -5,6 +5,8 @@ Authors@R: person("Tillmann", "Nett", email = "mail@tcrueger.de", role = c("aut"
 Description: This package allows the analysis of vocal responses to psychological experiments. Currently the onset times of all responses is extracted and can be exported as a csv file.
 Depends:
     R (>= 3.2.2)
+Imports:
+	tuneR (>= 1.2.1)
 License: file LICENSE
 LazyData: true
 RoxygenNote: 5.0.1.9000
