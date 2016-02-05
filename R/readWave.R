@@ -29,13 +29,11 @@ read.wav <- function(filename, channels=c("both","left","right")) {
 	s <- if(w@stereo){ tuneR::mono(w,which=channels)@left} else {w@left} / (2^w@bit) 
 	
 	l <- length(s)
-	d <- l /w@samp.rate
+	d <- l/w@samp.rate
 	
-	# produce time indexes
-	t <- (1:l)/w@samp.rate
+	s <- ts(s, start=0, end=d, frequency=w@samp.rate)
 	
 	r <- list(samples=s,
-			  times=t,
 			  filename=filename,
 			  duration=d,
 			  tuneR.data = w)

@@ -6,3 +6,4 @@ Changes:
 * Initial release
 * Reading of wavefiles
 * Automatical conversion of wavefiles to format independent data
+* Onset detection based on energy density
