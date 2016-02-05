@@ -31,8 +31,15 @@ energyDensity <- function(ts, window.width=10, stepsize=5, window.function=signa
 	UseMethod("energyDensity")
 }
 
+#' Calculate the Energy Density at a Specific Position of a Standard R ts Object
+#' 
+#' @param ts 				The time series object.
+#' @param start 			The starting position at which the energy density should be calculated.
+#' @param end 				The end position until which the energy density should be calculated.
+#' @param window.function   A windowing function to weight the samples.
+#' 
 #' @export
-energyDensityAt <- function(ts, start, end, window.function, ... ) {
+energyDensityAt <- function(ts, start, end, window.function=signal::boxcar ) {
 	s <- window(ts, start/1000, end/1000)^2
 	l <- length(s)
 	w <- window.function(l)
