@@ -4,13 +4,13 @@
 ###############################################################################
 
 #' @export
-print.WaveData <- function(object, ..) {
+print.WaveData <- function(x, ...) {
 	cat("WaveData Object:")
-	cat(paste("\n\tNumber of Samples:", length(w$samples), sep="\t\t"))
-	cat(paste("\n\tSampling Frequency:", frequency(w$samples),sep="\t\t"))
-	cat(paste("\n\tDuration (seconds):", w$duration, sep="\t\t"))
-	if( !is.null(w$filename) ) {
-		cat(paste("\n\tOriginal Filename:", w$filename, sep="\t\t"))	
+	cat(paste("\n\tNumber of Samples:", length(x$samples), sep="\t\t"))
+	cat(paste("\n\tSampling Frequency:", frequency(x$samples),sep="\t\t"))
+	cat(paste("\n\tDuration (seconds):", x$duration, sep="\t\t"))
+	if( !is.null(x$filename) ) {
+		cat(paste("\n\tOriginal Filename:", x$filename, sep="\t\t"))	
 	}
 }
 
@@ -20,6 +20,6 @@ summary.WaveData <- function(object, ...) {
 } 
 
 #' @export
-plot.WaveData <- function(object, ... ) {
-	plot(object$samples, ylab="Intensity", xlab="Time (s)", ...)
+plot.WaveData <- function(x, ... ) {
+	plot(x$samples, ylab="Intensity", xlab="Time (s)", ...)
 }
