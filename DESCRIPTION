@@ -6,7 +6,8 @@ Description: This package allows the analysis of vocal responses to psychologica
 Depends:
     R (>= 3.2.2)
 Imports:
-	tuneR (>= 1.2.1)
+	tuneR (>= 1.2.1),
+	signal (>= 0.7-6)
 License: file LICENSE
 LazyData: true
 RoxygenNote: 5.0.1.9000
