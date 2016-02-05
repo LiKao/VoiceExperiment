@@ -25,3 +25,11 @@ onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window
 	e <- energyDensity.WaveData(ts)
 	onsets.energyDensity(e)
 }
+
+#' @export
+print.onset <- function(x, ...) {
+	cat("Onset Block:")
+	cat(paste("\n\tStart:", x$start,sep="\t\t\t\t"))
+	cat(paste("\n\tEnd:", x$end, sep="\t\t\t\t"))
+	cat(paste("\n\tAverage Energy:", formatC(x$energy.avg,digits=2), sep="\t\t"))
+}
