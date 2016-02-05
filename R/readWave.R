@@ -6,7 +6,7 @@
 #' Reads Wave Date From a File
 #'
 #' This function reads wave data from a file. The data is read using
-#' the \code{\link[tuneR]{readWave}}] function and then automatically
+#' the \code{\link[tuneR]{readWave}} function and then automatically
 #' simplified for further processing.
 #' 
 #' @param filename The filename to be read
