@@ -3,11 +3,31 @@
 # Author: till
 ###############################################################################
 
+#' Calculate (Physical) Onset Times from an Object containing Time Series Data
+#' 
+#' This function calculates onset times for any kind of object containing time
+#' series data. The onsets are calculated by comparing the overall energy of 
+#' each part of the time series with the rest of the time series. Positions
+#' where the energy is above a portion of \code{limit}, compared to the overal
+#' energy, are assumed to contain actual data.
+#' 
+#' @param ts The object containing the time series data.
+#' 
+#' @param limit Parameter used for filtering silence. Energy below this level
+#' (compared to all other energy levels in term of percentiles) is ignored.
+#' 
+#' @param ... Object specific parameters  
+#' 
 #' @export
 onsets <- function(ts, limit = 0.1, ... ) {
 	UseMethod("onsets")
 }
 
+#' Extracts Onsets from an energyDensity Object
+#' 
+#' @inheritParams onsets
+#' @param ... ignored
+#'  
 #' @export
 onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 	e.limit <- quantile(ts$energy,c(limit))
@@ -20,6 +40,15 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 	apply(X=r, 1, FUN=function(s){l<-list(start=s[1], end=s[2], energy.avg=s[3]); class(l) <- append(class(l), "onset"); l})
 }
 
+#' Specialized Method for Extracting Onsets from WaveData objects
+#' 
+#' This method first extracts the energy density, using the \code{\link{energyDensity}} method, and then
+#' calculates onsets based on the energy density.
+#' 
+#' @inheritParams onsets
+#' @inheritParams energyDensity
+#' @param ... ignored
+#' 
 #' @export
 onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar, ... ) {
 	e <- energyDensity.WaveData(ts)
