@@ -23,6 +23,12 @@ onsets <- function(ts, limit = 0.1, ... ) {
 	UseMethod("onsets")
 }
 
+as.onset <- function(v) {
+	r <- list(start=v[1], end=v[2], energy.total=v[3], energy.avg=v[4]); 
+	class(r) <- append(class(r), "onset");
+	r
+} 
+
 #' Extracts Onsets from an energyDensity Object
 #' 
 #' @inheritParams onsets
@@ -36,8 +42,9 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 	# Indexing starts at 1 in R, hence the first sample is at time 0 (index-1).
 	# Furthermore the end times are shifted by 1, hence we must subtract 2 here.
 	r <- matrix(c(which(changes==1)-1,which(changes==-1)-2),ncol=2)/frequency(ts$energy)
+	r <- cbind(r,apply(X=r,1,FUN=function(s){sum(window(ts$energy, start=s[1], end=s[2]))}))
 	r <- cbind(r,apply(X=r,1,FUN=function(s){mean(window(ts$energy, start=s[1], end=s[2]))}))
-	apply(X=r, 1, FUN=function(s){l<-list(start=s[1], end=s[2], energy.avg=s[3]); class(l) <- append(class(l), "onset"); l})
+	apply(X=r, 1, FUN=as.onset)
 }
 
 #' Specialized Method for Extracting Onsets from WaveData objects
@@ -58,7 +65,9 @@ onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window
 #' @export
 print.onset <- function(x, ...) {
 	cat("Onset Block:")
-	cat(paste("\n\tStart:", x$start,sep="\t\t\t\t"))
-	cat(paste("\n\tEnd:", x$end, sep="\t\t\t\t"))
-	cat(paste("\n\tAverage Energy:", formatC(x$energy.avg,digits=2), sep="\t\t"))
+	cat(paste("\n\tStart:", 			x$start,sep="\t\t\t\t"))
+	cat(paste("\n\tEnd:", 				x$end, sep="\t\t\t\t"))
+	cat(paste("\n\tDuration:", 			formatC(x$end-x$start, digits=2), sep="\t\t\t"))
+	cat(paste("\n\tTotal Energy:", 		formatC(x$energy.total, digits=2), sep="\t\t"))
+	cat(paste("\n\tAverage Energy:",	formatC(x$energy.avg, digits=2), sep="\t\t"))
 }
