@@ -71,3 +71,10 @@ print.onset <- function(x, ...) {
 	cat(paste("\n\tTotal Energy:", 		formatC(x$energy.total, digits=2), sep="\t\t"))
 	cat(paste("\n\tAverage Energy:",	formatC(x$energy.avg, digits=2), sep="\t\t"))
 }
+
+#' @export
+as.matrix.onset <- function(x, ... ) {
+	r <- c(x$start, x$end, x$end-x$start, x$energy.total, x$energy.avg)
+	names(r) <- c("Start", "End", "Duration", "TotalEnergy", "AverageEnergy")
+	r
+}
