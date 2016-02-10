@@ -88,7 +88,15 @@ fixup.names.onsetData <- function(x, i) {
 }
 
 #' @export
-as.matrix.onsetData <- function(x, ...) {
+as.matrix.onsetData <- function(x, padding = NULL, ...) {
 	l <- length(x)
-	do.call(c,lapply( X=1:l, FUN=function(i){fixup.names.onsetData(x, i)}))
+	r <- do.call(c,lapply( X=1:l, FUN=function(i){fixup.names.onsetData(x, i)}))
+	if(!is.null(padding) && l < padding) {
+		o <- paste("Onset",(l+1):padding,sep="")
+		n <- do.call(c,lapply(o,FUN=function(s){paste(s,c("Start", "End", "Duration", "TotalEnergy", "AverageEnergy"),sep=".")}))
+		p <- rep(NA,length(n))
+		names(p) <- n
+		r <- c(r,p)
+	}
+	r
 }
