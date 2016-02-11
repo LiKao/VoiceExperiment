@@ -12,4 +12,4 @@ version.txt
 *.Rcheck/
 VoiceExperiment_*.tar.gz
 man/
-
+doc/
