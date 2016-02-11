@@ -32,6 +32,7 @@ analyse.directory <- function(dirname, channels=c("both","left","right"),
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
 	r <- lapply(fullnames,analyse.file)
-	names(r) <- filenames
+	r <- lapply(1:length(filenames), function(i){list(filename=filenames[[i]], onsets=r[[i]])})
+	class(r) <- append(class(r),"voiceExperimentData")
 	r
 }
