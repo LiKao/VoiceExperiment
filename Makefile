@@ -26,7 +26,8 @@ sources.txt: Makefile
 	@ls -1 R/*  | tr '\n' ' ' >> sources.txt
 	@echo "" >> sources.txt
 	@echo -n "DATAFILES=" >> sources.txt
-	@ls -1 data/*  | tr '\n' ' ' >> sources.txt
+	@[ -d data ] && ls -1 data/*  | tr '\n' ' ' >> sources.txt
+	@echo ""
 
 ${PACKAGE_TARGET}: NAMESPACE DESCRIPTION .Rbuildignore version.txt
 	R CMD build .
