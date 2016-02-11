@@ -1,4 +1,4 @@
-VoiceExperiment v???
+VoiceExperiment v0.1.0 (Release date: 2016-02-11)
 ==============
 
 Changes:
@@ -7,3 +7,5 @@ Changes:
 * Reading of wavefiles
 * Automatical conversion of wavefiles to format independent data
 * Onset detection based on energy density
+* Analysis of complete directories at once
+* Formating of results as CSV
