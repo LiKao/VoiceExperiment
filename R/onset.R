@@ -44,7 +44,9 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 	r <- matrix(c(which(changes==1)-1,which(changes==-1)-2),ncol=2)/frequency(ts$energy)
 	r <- cbind(r,apply(X=r,1,FUN=function(s){sum(window(ts$energy, start=s[1], end=s[2]))}))
 	r <- cbind(r,apply(X=r,1,FUN=function(s){mean(window(ts$energy, start=s[1], end=s[2]))}))
-	apply(X=r, 1, FUN=as.onset)
+	r <- apply(X=r, 1, FUN=as.onset)
+	class(r) <- append(class(r), "onsetData")
+	r
 }
 
 #' Specialized Method for Extracting Onsets from WaveData objects
@@ -70,4 +72,31 @@ print.onset <- function(x, ...) {
 	cat(paste("\n\tDuration:", 			formatC(x$end-x$start, digits=2), sep="\t\t\t"))
 	cat(paste("\n\tTotal Energy:", 		formatC(x$energy.total, digits=2), sep="\t\t"))
 	cat(paste("\n\tAverage Energy:",	formatC(x$energy.avg, digits=2), sep="\t\t"))
+}
+
+#' @export
+as.matrix.onset <- function(x, ... ) {
+	r <- c(x$start, x$end, x$end-x$start, x$energy.total, x$energy.avg)
+	names(r) <- c("Start", "End", "Duration", "TotalEnergy", "AverageEnergy")
+	r
+}
+
+fixup.names.onsetData <- function(x, i) {
+	v<-as.matrix.onset(x[[i]]); 
+	names(v) <- paste(paste("Onset",i,sep=""),names(v),sep=".");
+	v
+}
+
+#' @export
+as.matrix.onsetData <- function(x, padding = NULL, ...) {
+	l <- length(x)
+	r <- do.call(c,lapply( X=1:l, FUN=function(i){fixup.names.onsetData(x, i)}))
+	if(!is.null(padding) && l < padding) {
+		o <- paste("Onset",(l+1):padding,sep="")
+		n <- do.call(c,lapply(o,FUN=function(s){paste(s,c("Start", "End", "Duration", "TotalEnergy", "AverageEnergy"),sep=".")}))
+		p <- rep(NA,length(n))
+		names(p) <- n
+		r <- c(r,p)
+	}
+	r
 }

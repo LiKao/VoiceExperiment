@@ -32,6 +32,15 @@ analyse.directory <- function(dirname, channels=c("both","left","right"),
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
 	r <- lapply(fullnames,analyse.file)
-	names(r) <- filenames
+	r <- lapply(1:length(filenames), function(i){list(filename=filenames[[i]], onsets=r[[i]])})
+	class(r) <- c("voiceExperimentData","list")
 	r
+}
+
+#' @export
+as.data.frame.voiceExperimentData <- function(x, ...) {
+	max.onsets <- max(unlist(lapply(x, function(d){length(d$onsets)})))
+	onsets <- do.call(rbind,lapply(x,function(d){as.matrix(d$onsets,padding=max.onsets)}))
+	filenames <- unlist(lapply(x,function(d){d$filename}))
+	cbind(data.frame(filename=filenames,stringsAsFactors=FALSE),as.data.frame(onsets))
 }
