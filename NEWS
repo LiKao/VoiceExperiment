@@ -1,3 +1,10 @@
+VoiceExperiment v0.1.1 (Release date: 2016-02-11)
+==============
+
+Changes:
+
+* Fixed automatic installation from github (using devtools::install_github)
+
 VoiceExperiment v0.1.0 (Release date: 2016-02-11)
 ==============
 
