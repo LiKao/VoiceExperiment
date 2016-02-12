@@ -8,6 +8,10 @@ DOCFILE=doc/${PACKAGE_NAME}.pdf
 all: ${PACKAGE_TARGET}
 
 
+.PHONY: prepare
+prepare: sources.txt version.txt NAMESPACE
+
+
 .PHONY: version
 version: version.txt
 
@@ -16,7 +20,6 @@ version.txt:	DESCRIPTION Makefile
 	@grep "Package:" DESCRIPTION | sed "s/Package: *//" >> version.txt
 	@echo -n "PACKAGE_VERSION=" >> version.txt
 	@grep "Version:" DESCRIPTION | sed "s/Version: *//" >> version.txt
-
 
 .PHONY: sources
 sources: sources.txt
@@ -47,7 +50,10 @@ ${DOCFILE}: NAMESPACE
 check: ${PACKAGE_TARGET}
 	R CMD check ${PACKAGE_TARGET}
 
-.PHONY: doclean checkclean targetclean
+.PHONY: prepclean doclean checkclean targetclean reallyclean
+
+prepclean:
+	rm -f NAMESPACE sources.txt version.txt man/*.Rd
 
 checkclean:
 	rm -rf ${PACKAGE_NAME}.Rcheck
@@ -59,3 +65,5 @@ targetclean:
 	rm -f ${PACKAGE_TARGET}
 
 clean: doclean checkclean targetclean
+
+reallyclean: clean prepclean
