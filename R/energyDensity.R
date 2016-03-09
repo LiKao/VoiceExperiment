@@ -63,6 +63,7 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, window.funct
 	r <- list(energy=energy,
 			  duration=tail(end,n=1)/1000)
 	class(r) <- append(class(r),"energyDensity")
+	attr(r,"params") <- list(window.width=window.width,stepsize=stepsize)
 	r
 }
 
