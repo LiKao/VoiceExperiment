@@ -11,3 +11,4 @@ Imports:
 License: file LICENSE
 LazyData: true
 RoxygenNote: 5.0.1.9000
+Suggests: testthat
