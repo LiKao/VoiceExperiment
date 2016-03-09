@@ -30,10 +30,13 @@ sources.txt: Makefile
 	@echo "" >> sources.txt
 	@echo -n "TESTFILES=" >> sources.txt
 	@if [ -d tests/testthat/ ]; then ls -1 tests/testthat/* | tr '\n' ' ' >> sources.txt; fi
-	@echo ""
+	@echo "" >> sources.txt
+	@echo -n "TESTDATAFILES=" >> sources.txt
+	@if [ -d tests/testdata/ ]; then ls -1 tests/testdata/* | tr '\n' ' ' >> sources.txt; fi
+	@echo "" >> sources.txt
 
 
-${PACKAGE_TARGET}: NAMESPACE DESCRIPTION .Rbuildignore version.txt ${TESTFILES}
+${PACKAGE_TARGET}: NAMESPACE DESCRIPTION .Rbuildignore version.txt ${TESTFILES} ${TESTDATAFILES}
 	R CMD build .
 
 NAMESPACE: ${SOURCEFILES} ${DATAFILES}
