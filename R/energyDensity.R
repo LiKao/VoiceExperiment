@@ -52,6 +52,8 @@ energyDensity <- function(ts, window.width=10, stepsize=5, window.function=signa
 #' @param end 				The end position until which the energy density should be calculated.
 #' @param window.function   A windowing function to weight the samples.
 #' 
+#' TODO: Make this a polymorphic function (cannot assume this works for anything but WaveData)
+#' 
 #' @export
 energyDensityAt <- function(ts, start, end, window.function=signal::hanning ) {
 	s <- window(ts, start/1000, end/1000)^2
