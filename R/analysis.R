@@ -49,7 +49,8 @@ analyse.directory <- function(dirname, channels=c("both","left","right"),
 						  	  limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning ) {
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
-	r <- lapply(fullnames,analyse.file)
+	r <- lapply(fullnames, analyse.file, channels=channels, limit=limit, window.width=window.width, 
+			    stepsize=stepsize, window.function=window.function)
 	r <- lapply(1:length(filenames), function(i){list(filename=filenames[[i]], onsets=r[[i]])})
 	class(r) <- c("voiceExperimentData","list")
 	r
