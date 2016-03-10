@@ -23,6 +23,8 @@
 
 context("Parameters")
 
+#############################################################
+
 test_that("Parameters are propagated during file analysis", {
 	
 	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, window.width=10, stepsize=5)
@@ -31,11 +33,15 @@ test_that("Parameters are propagated during file analysis", {
 	expect_equal(attr(o1,"params")$stepsize,		5)
 	expect_equal(attr(o1,"params")$channels, 		"both")
 	
+	###
+	
 	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="left", limit = 0.1, window.width=10, stepsize=5)
 	expect_equal(attr(o1,"params")$limit,			0.1)
 	expect_equal(attr(o1,"params")$window.width,	10)
 	expect_equal(attr(o1,"params")$stepsize,		5)
 	expect_equal(attr(o1,"params")$channels, 		"left")
+	
+	###
 	
 	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="right", limit = 0.1, window.width=10, stepsize=5)
 	expect_equal(attr(o1,"params")$limit,			0.1)
@@ -43,11 +49,15 @@ test_that("Parameters are propagated during file analysis", {
 	expect_equal(attr(o1,"params")$stepsize,		5)
 	expect_equal(attr(o1,"params")$channels, 		"right")
 	
+	###
+	
 	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.5, window.width=10, stepsize=5)
 	expect_equal(attr(o1,"params")$limit,			0.5)
 	expect_equal(attr(o1,"params")$window.width,	10)
 	expect_equal(attr(o1,"params")$stepsize,		5)
 	expect_equal(attr(o1,"params")$channels, 		"both")
+	
+	###
 	
 	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, window.width=20, stepsize=5)
 	expect_equal(attr(o1,"params")$limit,			0.1)
@@ -55,16 +65,149 @@ test_that("Parameters are propagated during file analysis", {
 	expect_equal(attr(o1,"params")$stepsize,		5)
 	expect_equal(attr(o1,"params")$channels, 		"both")
 	
+	###
+	
 	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, window.width=10, stepsize=3)
 	expect_equal(attr(o1,"params")$limit,			0.1)
 	expect_equal(attr(o1,"params")$window.width,	10)
 	expect_equal(attr(o1,"params")$stepsize,		3)
 	expect_equal(attr(o1,"params")$channels, 		"both")
 	
+	###
+	
 	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="left", limit = 0.5, window.width=20, stepsize=3)
 	expect_equal(attr(o1,"params")$limit,			0.5)
 	expect_equal(attr(o1,"params")$window.width,	20)
 	expect_equal(attr(o1,"params")$stepsize,		3)
 	expect_equal(attr(o1,"params")$channels, 		"left")
+})
+
+##################################################################
+
+test_that("Parameters are propagated during directory analysis", {
+			
+		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, window.width=10, stepsize=5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
+		
+		###
+		
+		o1 <- analyse.directory("../testdata/testsets", channels="left", limit = 0.1, window.width=10, stepsize=5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"left")
+		
+		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"left")
+		
+		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"left")
+		
+		###
+		
+		o1 <- analyse.directory("../testdata/testsets", channels="right", limit = 0.1, window.width=10, stepsize=5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"right")
+		
+		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"right")
+		
+		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"right")
+		
+		###
+		
+		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.5, window.width=10, stepsize=5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.5)
+		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.5)
+		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
+		
+		###
+		
+		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, window.width=20, stepsize=5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	20)
+		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	20)
+		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	20)
+		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
+		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
+		
+		###
+		
+		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, window.width=10, stepsize=3)
+		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
+		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
+		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
+		
+		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
+		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
+		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
+		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
+		
+		###
+		
+		o1 <- analyse.directory("../testdata/testsets", channels="left", limit = 0.5, window.width=20, stepsize=3)
+		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.5)
+		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	20)
+		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
+		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"left")
+		
+		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.5)
+		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	20)
+		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
+		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"left")
+		
+		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.5)
+		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	20)
+		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
+		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"left")
 })
 
