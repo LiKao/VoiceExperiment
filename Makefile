@@ -42,6 +42,10 @@ sources.txt: Makefile
 ${PACKAGE_TARGET}: NAMESPACE DESCRIPTION .Rbuildignore version.txt ${TESTFILES} ${TESTDATAFILES}
 	R CMD build .
 
+.PHONY: install
+install: ${PACKAGE_TARGET}
+	R CMD INSTALL ${PACKAGE_TARGET}
+
 NAMESPACE: ${SOURCEFILES} ${DATAFILES}
 	R -e 'devtools::document()'
 	touch NAMESPACE
