@@ -4,7 +4,7 @@
 \alias{energyDensityAt}
 \title{Calculate the Energy Density at a Specific Position of a Standard R ts Object}
 \usage{
-energyDensityAt(ts, start, end, window.function = signal::boxcar)
+energyDensityAt(ts, start, end, window.function = signal::hanning)
 }
 \arguments{
 \item{ts}{The time series object.}

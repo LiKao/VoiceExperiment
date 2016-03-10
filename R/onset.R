@@ -75,7 +75,7 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 #' @param ... ignored
 #' 
 #' @export
-onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar, ... ) {
+onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
 	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, window.function=window.function)
 	r <- onsets.energyDensity(e, limit = limit)
 	p1 <- attr(r,"params")

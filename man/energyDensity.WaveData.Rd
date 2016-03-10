@@ -5,7 +5,7 @@
 \title{energyDensity implementation for WaveData objects}
 \usage{
 \method{energyDensity}{WaveData}(ts, window.width = 10, stepsize = 5,
-  window.function = signal::boxcar, ...)
+  window.function = signal::hanning, ...)
 }
 \arguments{
 \item{ts}{The object that contains the time series data}

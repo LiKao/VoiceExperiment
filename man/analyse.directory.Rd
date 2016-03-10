@@ -6,7 +6,7 @@
 \usage{
 analyse.directory(dirname, channels = c("both", "left", "right"),
   limit = 0.1, window.width = 10, stepsize = 5,
-  window.function = signal::boxcar)
+  window.function = signal::hanning)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}

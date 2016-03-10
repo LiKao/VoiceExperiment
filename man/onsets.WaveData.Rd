@@ -5,7 +5,7 @@
 \title{Specialized Method for Extracting Onsets from WaveData objects}
 \usage{
 \method{onsets}{WaveData}(ts, limit = 0.1, window.width = 10,
-  stepsize = 5, window.function = signal::boxcar, ...)
+  stepsize = 5, window.function = signal::hanning, ...)
 }
 \arguments{
 \item{ts}{The object containing the time series data.}

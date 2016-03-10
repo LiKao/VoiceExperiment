@@ -41,7 +41,7 @@
 #' @param ... Further object specific arguments.
 #' 
 #' @export
-energyDensity <- function(ts, window.width=10, stepsize=5, window.function=signal::boxcar, ... ) {
+energyDensity <- function(ts, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
 	UseMethod("energyDensity")
 }
 
@@ -53,7 +53,7 @@ energyDensity <- function(ts, window.width=10, stepsize=5, window.function=signa
 #' @param window.function   A windowing function to weight the samples.
 #' 
 #' @export
-energyDensityAt <- function(ts, start, end, window.function=signal::boxcar ) {
+energyDensityAt <- function(ts, start, end, window.function=signal::hanning ) {
 	s <- window(ts, start/1000, end/1000)^2
 	l <- length(s)
 	w <- window.function(l)
@@ -66,7 +66,7 @@ energyDensityAt <- function(ts, start, end, window.function=signal::boxcar ) {
 #' @inheritParams energyDensity
 #' @param ... ignored
 #' @export
-energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, window.function=signal::boxcar, ...) {
+energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, window.function=signal::hanning, ...) {
 	
 	duration.ms <- ts$duration*1000
 	# We need to generate only up to the last full window (incomplete windows 

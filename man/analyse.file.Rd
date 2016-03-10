@@ -5,7 +5,7 @@
 \title{Analyse a Single File for Onset Times}
 \usage{
 analyse.file(filename, channels = c("both", "left", "right"), limit = 0.1,
-  window.width = 10, stepsize = 5, window.function = signal::boxcar)
+  window.width = 10, stepsize = 5, window.function = signal::hanning)
 }
 \arguments{
 \item{filename}{The filename to be read}

@@ -5,7 +5,7 @@
 \title{Generic Method to Calculate the Energy Density of an Object}
 \usage{
 energyDensity(ts, window.width = 10, stepsize = 5,
-  window.function = signal::boxcar, ...)
+  window.function = signal::hanning, ...)
 }
 \arguments{
 \item{ts}{The object that contains the time series data}

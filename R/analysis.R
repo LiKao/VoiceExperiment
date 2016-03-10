@@ -25,7 +25,7 @@
 #' 
 #' @export
 analyse.file <- function( filename, channels=c("both","left","right"), 
-						  limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar ) {
+						  limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning ) {
 	
 	channels <- match.arg(channels)
 	w <- read.wav(filename, channels )
@@ -46,7 +46,7 @@ analyse.file <- function( filename, channels=c("both","left","right"),
 #' 
 #' @export
 analyse.directory <- function(dirname, channels=c("both","left","right"), 
-						  	  limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar ) {
+						  	  limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning ) {
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
 	r <- lapply(fullnames,analyse.file)
