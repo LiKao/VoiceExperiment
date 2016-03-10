@@ -60,6 +60,8 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 	r <- cbind(r,apply(X=r,1,FUN=function(s){mean(window(ts$energy, start=s[1], end=s[2]))}))
 	r <- apply(X=r, 1, FUN=as.onset)
 	class(r) <- append(class(r), "onsetData")
+	attr(r,"params") <- list(limit=limit) 
+	attr(r,"dataType") <- "energyDensity"
 	r
 }
 
@@ -74,8 +76,13 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 #' 
 #' @export
 onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar, ... ) {
-	e <- energyDensity.WaveData(ts)
-	onsets.energyDensity(e)
+	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, window.function=window.function)
+	r <- onsets.energyDensity(e, limit = limit)
+	p1 <- attr(r,"params")
+	p2 <- attr(e,"params")
+	attr(r,"params") <- append(p1,p2)
+	attr(r,"dataType") <- "WaveData"
+	r
 }
 
 #' @export

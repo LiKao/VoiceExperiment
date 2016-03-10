@@ -52,5 +52,6 @@ read.wav <- function(filename, channels=c("both","left","right")) {
 			  duration=d,
 			  tuneR.data = w)
 	class(r) <- append(class(r),"WaveData")
+	attr(r,"params") <- list(channels=channels) 
 	r
 }

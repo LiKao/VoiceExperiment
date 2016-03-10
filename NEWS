@@ -2,6 +2,15 @@ Changes:
 * Corrected distribution of manual when installing from github
 * Switched license to GPL-v3
 
+VoiceExperiment v0.1.2 (Release date: 2016-03-10)
+==============
+
+Changes:
+
+* Added unit testing using testthat package
+* Added automatic test for parameter propagation during call chain
+* FIX: Error in parameter propagation from analysis function
+
 VoiceExperiment v0.1.1 (Release date: 2016-02-11)
 ==============
 

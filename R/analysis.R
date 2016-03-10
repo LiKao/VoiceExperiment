@@ -29,7 +29,11 @@ analyse.file <- function( filename, channels=c("both","left","right"),
 	
 	channels <- match.arg(channels)
 	w <- read.wav(filename, channels )
-	onsets.WaveData( w, limit, window.width, stepsize, window.function )
+	r <- onsets.WaveData( w, limit, window.width, stepsize, window.function )
+	p1 <- attr(r,"params")
+	p2 <- attr(w,"params")
+	attr(r,"params") <- append(p1,p2)
+	r
 }
 
 
