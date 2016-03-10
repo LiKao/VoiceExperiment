@@ -2,6 +2,7 @@ Changes:
 
 * Added unit testing using testthat package
 * Added automatic test for parameter propagation during call chain
+* FIX: Error in parameter propagation from analysis function
 
 VoiceExperiment v0.1.1 (Release date: 2016-02-11)
 ==============
