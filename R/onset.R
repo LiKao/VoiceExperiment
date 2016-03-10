@@ -50,6 +50,10 @@ as.onset <- function(v) {
 #'  
 #' @export
 onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
+	if(limit <= 0 || limit >= 1) {
+		stop("Illegal limit value: ", limit)
+	}
+	
 	e.limit <- quantile(ts$energy,c(limit))
 	gated <- ifelse(ts$energy > e.limit, 1, 0)
 	changes <- c(gated,0) - c(0,gated)
@@ -76,6 +80,8 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 #' 
 #' @export
 onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+	# Parameter testing done in called functions
+	
 	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, window.function=window.function)
 	r <- onsets.energyDensity(e, limit = limit)
 	p1 <- attr(r,"params")

@@ -70,6 +70,18 @@ energyDensityAt <- function(ts, start, end, window.function=signal::hanning ) {
 #' @export
 energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, window.function=signal::hanning, ...) {
 	
+	if(window.width<1) {
+		stop("Illegal window width: ", window.width)
+	}
+	
+	if(stepsize<1) {
+		stop("Illegal stepsize: ", stepsize)
+	}
+	
+	if(stepsize > window.width) {
+		warning("Stepsize ",stepsize," is larger than window width ",window.width)
+	}
+	
 	duration.ms <- ts$duration*1000
 	# We need to generate only up to the last full window (incomplete windows 
 	# at end are discarded)
