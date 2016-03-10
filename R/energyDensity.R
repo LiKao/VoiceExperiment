@@ -93,3 +93,8 @@ print.energyDensity <- function(x, ... ) {
 plot.energyDensity <- function(x, ... ) {
 	plot(x$energy, ylab="Energy", xlab="Time (s)", ...)
 }
+
+#' @export
+lines.energyDensity <- function(x, ... ) {
+	lines(x$energy, ...)
+}

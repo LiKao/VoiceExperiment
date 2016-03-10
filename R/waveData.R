@@ -37,3 +37,8 @@ summary.WaveData <- function(object, ...) {
 plot.WaveData <- function(x, ... ) {
 	plot(x$samples, ylab="Intensity", xlab="Time (s)", ...)
 }
+
+#' @export
+lines.WaveData <- function(x, ... ) {
+	lines(x$samples, ... )
+}
