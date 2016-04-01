@@ -1,5 +1,3 @@
-
-
 # test file for propagation of parameters to final analysis functions
 #
 # Added in Version 0.1.2 as test for bugfix
