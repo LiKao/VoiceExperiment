@@ -47,6 +47,10 @@ analyse.file <- function( filename, channels=c("both","left","right"),
 #' @export
 analyse.directory <- function(dirname, channels=c("both","left","right"), 
 						  	  limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning ) {
+	if(!dir.exists(dirname)) {
+		stop("Directory '",dirname,"' does not exist.")
+	}
+						  
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
 	r <- lapply(fullnames, analyse.file, channels=channels, limit=limit, window.width=window.width, 
