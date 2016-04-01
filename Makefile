@@ -26,16 +26,16 @@ sources: sources.txt
 
 sources.txt: Makefile
 	@echo -n "SOURCEFILES=" > sources.txt
-	@ls -1 R/*  | tr '\n' ' ' >> sources.txt
+	@find R -type "f" -printf "%p " >> sources.txt
 	@echo "" >> sources.txt
 	@echo -n "DATAFILES=" >> sources.txt
-	@if [ -d data ]; then ls -1 data/*  | tr '\n' ' ' >> sources.txt; fi
+	@if [ -d data ]; then find data -type "f" -printf "%p " >> sources.txt; fi
 	@echo "" >> sources.txt
 	@echo -n "TESTFILES=" >> sources.txt
-	@if [ -d tests/testthat/ ]; then ls -1 tests/testthat/* | tr '\n' ' ' >> sources.txt; fi
+	@if [ -d tests/testthat/ ]; then find tests/testthat -type "f" -printf "%p " >> sources.txt; fi
 	@echo "" >> sources.txt
 	@echo -n "TESTDATAFILES=" >> sources.txt
-	@if [ -d tests/testdata/ ]; then ls -1 tests/testdata/* | tr '\n' ' ' >> sources.txt; fi
+	@if [ -d tests/testdata/ ]; then find tests/testdata/ -type "f" -printf "%p " >> sources.txt; fi
 	@echo "" >> sources.txt
 
 
