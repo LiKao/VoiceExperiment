@@ -112,6 +112,9 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.
 	r
 }
 
+# TODO: Simplify representation as a vector with additional attributes (like ts objects, will simplify construction, mean and sum)
+
+
 ##### 
 # S3 generic methods
 #####

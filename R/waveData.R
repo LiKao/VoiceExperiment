@@ -17,6 +17,8 @@
 #
 ###############################################################################
 
+# TODO: simplify representation as a vector with additional attributes (similar to ts objects)
+
 #####
 # Generic usefull R functions
 #####
