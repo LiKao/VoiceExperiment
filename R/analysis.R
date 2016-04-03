@@ -22,6 +22,7 @@
 #' @inheritParams read.wav
 #' @inheritParams onsets
 #' @inheritParams energyDensity
+#' @param quiet If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
 analyse.file <- function( filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"), 
@@ -48,6 +49,7 @@ analyse.file <- function( filename, channels=c("both","left","right"), limit = 0
 #' @inheritParams read.wav
 #' @inheritParams onsets
 #' @inheritParams energyDensity
+#' @param quiet If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
 analyse.directory <- function(dirname, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),

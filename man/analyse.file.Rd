@@ -6,7 +6,7 @@
 \usage{
 analyse.file(filename, channels = c("both", "left", "right"), limit = 0.1,
   limit.type = c("absolute", "relative"), window.width = 10, stepsize = 5,
-  normalize = 0.9, window.function = signal::hanning)
+  normalize = 0.9, window.function = signal::hanning, quiet = TRUE)
 }
 \arguments{
 \item{filename}{The filename to be read}
@@ -40,6 +40,8 @@ Defaults to 0.9. Maximum normalization to 1.}
 different weigth to different samples within the window. Several usable windowing functions
    are defined in the signal package. Defaults to \code{\link[signal]{boxcar}}, i.e. equal weight
    for all samples.}
+
+\item{quiet}{If set to true, the function will output the current filename to be analysed}
 }
 \description{
 Analyse a Single File for Onset Times

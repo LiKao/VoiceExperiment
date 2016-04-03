@@ -166,7 +166,7 @@ cycle.energyDensity <- function(x, ... ) {
 #' @importFrom stats window
 #' @export
 window.energyDensity <- function( x, start=NULL, end=NULL, frequency=NULL, deltat=NULL, extend=FALSE, ... ) {
-	s <- window( as.ts(x), start, end, frequency, deltat, extend, ... )
+	s <- window( as.ts(x), start=start, end=end, frequency=frequency, deltat=deltat, extend=extend, ... )
 	d <- length(s)/frequency(s)
 	r <- list( energy = s, duration = d)
 	class(r) <- append(class(r),"energyDensity")

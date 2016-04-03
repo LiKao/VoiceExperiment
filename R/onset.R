@@ -69,8 +69,9 @@ onsets.energyDensity <- function(ts, limit = 0.1, limit.type=c("absolute","relat
 	changes <- c(gated,0) - c(0,gated)
 	
 	times <- time(ts)
+	# The end times are shifted by 1.
 	starts <- times[which(changes== 1)]
-	ends   <- times[which(changes==-1)]
+	ends   <- times[which(changes==-1)-1]
 		
 	r <- matrix( c(starts,  ends), ncol=2)
 	r <- cbind(r, apply(X=r,1,FUN=function(s){sum(  window(ts, start=s[1], end=s[2]))}))
