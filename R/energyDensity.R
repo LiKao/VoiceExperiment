@@ -60,11 +60,11 @@ energyDensity <- function(ts, window.width=10, stepsize=5, normalize=0.9, window
 #' 
 #' @export
 energyDensityAt <- function(ts, start, end, window.function=signal::hanning ) {
-	s <- window(ts, start/1000, end/1000)^2
+	s <- window(ts, start/1000, end/1000)
 	l <- length(s)
 	w <- window.function(l)
 	w <- w / sum(w)
-	sum(s*w)
+	sum((s*w)^2)
 }
 
 #' energyDensity implementation for WaveData objects
