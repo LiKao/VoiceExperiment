@@ -45,7 +45,7 @@ read.wav <- function(filename, channels=c("both","left","right")) {
 	l <- length(s)
 	d <- l/w@samp.rate
 	
-	s <- ts(s, start=0, end=d, frequency=w@samp.rate)
+	s <- stats::ts(s, start=0, end=d, frequency=w@samp.rate)
 	
 	r <- list(samples=s,
 			  filename=filename,

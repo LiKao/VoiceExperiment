@@ -104,7 +104,7 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.
 		energy <- energy * f
 	}
 	
-	energy <- ts(energy, start=0, frequency=1000/stepsize)
+	energy <- stats::ts(energy, start=0, frequency=1000/stepsize)
 	r <- list(energy=energy,
 			  duration=tail(end,n=1)/1000)
 	class(r) <- append(class(r),"energyDensity")
