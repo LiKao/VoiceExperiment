@@ -1,14 +1,15 @@
 Package: VoiceExperiment
 Title: Analysis of Vocal Responses to Psychological Experiments
-Version: 0.1.2
+Version: 0.2.0
 Authors@R: person("Tillmann", "Nett", email = "mail@tcrueger.de", role = c("aut", "cre"))
 Description: This package allows the analysis of vocal responses to psychological experiments. Currently the onset times of all responses is extracted and can be exported as a csv file.
 Depends:
     R (>= 3.2.2)
 Imports:
 	tuneR (>= 1.2.1),
-	signal (>= 0.7-6)
-License: file LICENSE
+	signal (>= 0.7-6),
+	stats
+License: GPL-3
 LazyData: true
 RoxygenNote: 5.0.1.9000
 Suggests: testthat

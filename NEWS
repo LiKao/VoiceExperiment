@@ -1,3 +1,40 @@
+VoiceExperiment v0.2.0 (Release date: 2016-04-03)
+==============
+
+Changes:
+* Corrected distribution of manual when installing from github
+* Switched license to GPL-v3
+* Switched to hanning window as default window (better resolution)
+* FIX: Error in parameter propagation from directory analysis function
+* FIX: Representation of stereo files
+* Additional tests
+* Added normalization of energy levels
+* Added limit of onsets based on absolute energy
+
+Notes:
+
+The Hanning window now used, because the drop off towards the ends of
+the window provides much better resolution with overlapping windows.
+The drop off makes the window focus on the middle of the window. If
+this is not desired (or the windows do not overlapp), the original
+boxcar window can be selected using a parameter.
+
+Onset detection now based on absolute values by default, instead of
+percentiles. Onset detection based on relative values is unreliable,
+if most of the file is silence, since then the percentiles are mostly
+used for very silent data.
+
+If absolute onset is combined with normalization (i.e. default case),
+the onset will be detected relative to the maximum energy in the file.
+
+Known issues:
+
+* In presence of ground loops, the resulting waves may create additional
+  onsets
+
+* Detection of offsets is unreliable due to slow fading of signals
+
+
 VoiceExperiment v0.1.2 (Release date: 2016-03-10)
 ==============
 

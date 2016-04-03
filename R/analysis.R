@@ -1,6 +1,20 @@
 # Functions for complete analysis of experimental data (files/directories)
 # 
-# Author: till
+# Copyright (C) 2016 Tillmann Nett for FernUni Hagen
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
 ###############################################################################
 
 #' Analyse a Single File for Onset Times
@@ -8,14 +22,20 @@
 #' @inheritParams read.wav
 #' @inheritParams onsets
 #' @inheritParams energyDensity
+#' @param quiet If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
-analyse.file <- function( filename, channels=c("both","left","right"), 
-						  limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar ) {
+analyse.file <- function( filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"), 
+						  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, quiet=TRUE ) {
 	
+	if(!quiet) {
+		cat("Analysing file: ", filename,"\n")
+	}
+					  
 	channels <- match.arg(channels)
 	w <- read.wav(filename, channels )
-	r <- onsets.WaveData( w, limit, window.width, stepsize, window.function )
+	r <- onsets.WaveData( w, limit=limit, window.width=window.width, stepsize=stepsize, limit.type=limit.type,
+			              normalize=normalize, window.function=window.function )
 	p1 <- attr(r,"params")
 	p2 <- attr(w,"params")
 	attr(r,"params") <- append(p1,p2)
@@ -29,13 +49,19 @@ analyse.file <- function( filename, channels=c("both","left","right"),
 #' @inheritParams read.wav
 #' @inheritParams onsets
 #' @inheritParams energyDensity
+#' @param quiet If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
-analyse.directory <- function(dirname, channels=c("both","left","right"), 
-						  	  limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar ) {
+analyse.directory <- function(dirname, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
+							  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, quiet=TRUE ) {
+	if(!dir.exists(dirname)) {
+		stop("Directory '",dirname,"' does not exist.")
+	}
+						  
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
-	r <- lapply(fullnames,analyse.file)
+	r <- lapply(fullnames, analyse.file, channels=channels, limit=limit, limit.type=limit.type, window.width=window.width, 
+			    stepsize=stepsize, normalize=normalize, window.function=window.function, quiet=quiet)
 	r <- lapply(1:length(filenames), function(i){list(filename=filenames[[i]], onsets=r[[i]])})
 	class(r) <- c("voiceExperimentData","list")
 	r

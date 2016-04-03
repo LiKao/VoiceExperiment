@@ -1,6 +1,20 @@
 # Functions to calculate Onsets
-# 
-# Author: till
+#
+# Copyright (C) 2016 Tillmann Nett for FernUni Hagen
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
 ###############################################################################
 
 #' Calculate (Physical) Onset Times from an Object containing Time Series Data
@@ -14,12 +28,18 @@
 #' @param ts The object containing the time series data.
 #' 
 #' @param limit Parameter used for filtering silence. Energy below this level
-#' (compared to all other energy levels in term of percentiles) is ignored.
+#'              is ignored.
+#' 
+#' @param limit.type Type of limit, which is used to detect on- and offsets.
+#' 		  If set to \code{absolute} (default) then the limit value is used
+#' 		  directly. If set to \code{relative} then the limit is determined
+#' 		  as the energy in the i-th percentile, where i is given by the
+#' 		  limit parameter.
 #' 
 #' @param ... Object specific parameters  
 #' 
 #' @export
-onsets <- function(ts, limit = 0.1, ... ) {
+onsets <- function(ts, limit = 0.1, limit.type=c("absolute","relative"), ... ) {
 	UseMethod("onsets")
 }
 
@@ -35,18 +55,30 @@ as.onset <- function(v) {
 #' @param ... ignored
 #'  
 #' @export
-onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
-	e.limit <- quantile(ts$energy,c(limit))
+onsets.energyDensity <- function(ts, limit = 0.1, limit.type=c("absolute","relative"), ... ) {
+	if(limit <= 0 || limit >= 1) {
+		stop("Illegal limit value: ", limit)
+	}
+	
+	limit.type = match.arg(limit.type)
+	
+	e.limit <- switch( limit.type,
+					   absolute = limit,
+			           relative = quantile(ts$energy,c(limit)))
 	gated <- ifelse(ts$energy > e.limit, 1, 0)
 	changes <- c(gated,0) - c(0,gated)
-	# Indexing starts at 1 in R, hence the first sample is at time 0 (index-1).
-	# Furthermore the end times are shifted by 1, hence we must subtract 2 here.
-	r <- matrix(c(which(changes==1)-1,which(changes==-1)-2),ncol=2)/frequency(ts$energy)
-	r <- cbind(r,apply(X=r,1,FUN=function(s){sum(window(ts$energy, start=s[1], end=s[2]))}))
-	r <- cbind(r,apply(X=r,1,FUN=function(s){mean(window(ts$energy, start=s[1], end=s[2]))}))
+	
+	times <- time(ts)
+	# The end times are shifted by 1.
+	starts <- times[which(changes== 1)]
+	ends   <- times[which(changes==-1)-1]
+		
+	r <- matrix( c(starts,  ends), ncol=2)
+	r <- cbind(r, apply(X=r,1,FUN=function(s){sum(  window(ts, start=s[1], end=s[2]))}))
+	r <- cbind(r, apply(X=r,1,FUN=function(s){mean( window(ts, start=s[1], end=s[2]))}))
 	r <- apply(X=r, 1, FUN=as.onset)
 	class(r) <- append(class(r), "onsetData")
-	attr(r,"params") <- list(limit=limit) 
+	attr(r,"params") <- list(limit=limit, limit.type=limit.type) 
 	attr(r,"dataType") <- "energyDensity"
 	r
 }
@@ -61,9 +93,12 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 #' @param ... ignored
 #' 
 #' @export
-onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, window.function=signal::boxcar, ... ) {
-	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, window.function=window.function)
-	r <- onsets.energyDensity(e, limit = limit)
+onsets.WaveData <- function( ts, limit = 0.1, limit.type=c("absolute","relative"), window.width=10, 
+							 stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
+	# Parameter testing done in called functions
+	
+	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, normalize=normalize, window.function=window.function)
+	r <- onsets.energyDensity(e, limit = limit, limit.type=limit.type)
 	p1 <- attr(r,"params")
 	p2 <- attr(e,"params")
 	attr(r,"params") <- append(p1,p2)
