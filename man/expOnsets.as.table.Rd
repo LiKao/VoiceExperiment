@@ -19,7 +19,7 @@ reduced to a mono wave file, either by selecting a single channel (values
 If the file is alread a mono file, this argument is ignored.}
 
 \item{limit}{Parameter used for filtering silence. Energy below this level
-(compared to all other energy levels in term of percentiles) is ignored.}
+is ignored.}
 
 \item{window.width}{The windowing width that is used to estimate the density (in ms). The time
 series data is chopped into windows of this length, and the energy density is calculated

@@ -4,14 +4,21 @@
 \alias{onsets.WaveData}
 \title{Specialized Method for Extracting Onsets from WaveData objects}
 \usage{
-\method{onsets}{WaveData}(ts, limit = 0.1, window.width = 10,
-  stepsize = 5, normalize = 0.9, window.function = signal::hanning, ...)
+\method{onsets}{WaveData}(ts, limit = 0.1, limit.type = c("absolute",
+  "relative"), window.width = 10, stepsize = 5, normalize = 0.9,
+  window.function = signal::hanning, ...)
 }
 \arguments{
 \item{ts}{The object containing the time series data.}
 
 \item{limit}{Parameter used for filtering silence. Energy below this level
-(compared to all other energy levels in term of percentiles) is ignored.}
+is ignored.}
+
+\item{limit.type}{Type of limit, which is used to detect on- and offsets.
+If set to \code{absolute} (default) then the limit value is used
+directly. If set to \code{relative} then the limit is determined
+as the energy in the i-th percentile, where i is given by the
+limit parameter.}
 
 \item{window.width}{The windowing width that is used to estimate the density (in ms). The time
 series data is chopped into windows of this length, and the energy density is calculated

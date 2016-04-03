@@ -6,6 +6,7 @@ Changes:
 * FIX: Representation of stereo files
 * Additional tests
 * Added normalization of energy levels
+* Added limit of onsets based on absolute energy
 
 VoiceExperiment v0.1.2 (Release date: 2016-03-10)
 ==============
