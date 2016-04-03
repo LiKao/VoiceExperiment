@@ -5,8 +5,8 @@
 \title{Analyse All Files from a Given Directory and Write Results as Tabular Format}
 \usage{
 expOnsets.as.table(dirname, filename, channels = c("both", "left", "right"),
-  limit = 0.1, window.width = 10, stepsize = 5,
-  window.function = signal::hanning, ...)
+  limit = 0.1, limit.type = c("absolute", "relative"), normalize = 0.9,
+  window.width = 10, stepsize = 5, window.function = signal::hanning, ...)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}
@@ -20,6 +20,16 @@ If the file is alread a mono file, this argument is ignored.}
 
 \item{limit}{Parameter used for filtering silence. Energy below this level
 is ignored.}
+
+\item{limit.type}{Type of limit, which is used to detect on- and offsets.
+If set to \code{absolute} (default) then the limit value is used
+directly. If set to \code{relative} then the limit is determined
+as the energy in the i-th percentile, where i is given by the
+limit parameter.}
+
+\item{normalize}{Normalization level for energy density values. Maximum energy density will be set to this
+level to simplify comparison between data files. Set to 0 to deactivate normalization. 
+Defaults to 0.9. Maximum normalization to 1.}
 
 \item{window.width}{The windowing width that is used to estimate the density (in ms). The time
 series data is chopped into windows of this length, and the energy density is calculated

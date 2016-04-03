@@ -31,10 +31,12 @@
 #' 
 #' @export
 #' 
-expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"), 
-							 limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning,
-							 ... ) {
-	a <- analyse.directory(dirname, channels, limit, window.width, stepsize, window.function)
+expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
+							 normalize=0.9, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+						 
+	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=0.9,
+			               window.width=window.width, stepsize=stepsize, window.function=window.function)
+				   
 	write.csv(a, file = filename, ...)
 }
 
@@ -51,10 +53,12 @@ expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"
 #' 
 #' @export
 #' 
-expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right"), 
-		limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning,
-		... ) {
-	a <- analyse.directory(dirname, channels, limit, window.width, stepsize, window.function)
+expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
+		                      normalize=0.9,window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+						  
+	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=normalize,
+			               window.width=window.width, stepsize=stepsize, window.function=window.function)
+				   
 	write.csv2(a, file = filename, ...)
 }
 
@@ -69,9 +73,11 @@ expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right
 #' 
 #' @export
 #' 
-expOnsets.as.table <- function(dirname, filename, channels=c("both","left","right"), 
-		limit = 0.1, window.width=10, stepsize=5, window.function=signal::hanning,
-		... ) {
-	a <- analyse.directory(dirname, channels, limit, window.width, stepsize, window.function)
+expOnsets.as.table <- function(dirname, filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
+		                       normalize=0.9, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+						   
+	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=normalize,
+			               window.width=window.width, stepsize=stepsize, window.function=window.function)
+				   
 	write.table(a, file = filename, ...)
 } 
