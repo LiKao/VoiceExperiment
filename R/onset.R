@@ -28,12 +28,18 @@
 #' @param ts The object containing the time series data.
 #' 
 #' @param limit Parameter used for filtering silence. Energy below this level
-#' (compared to all other energy levels in term of percentiles) is ignored.
+#'              is ignored.
+#' 
+#' @param limit.type Type of limit, which is used to detect on- and offsets.
+#' 		  If set to \code{absolute} (default) then the limit value is used
+#' 		  directly. If set to \code{relative} then the limit is determined
+#' 		  as the energy in the i-th percentile, where i is given by the
+#' 		  limit parameter.
 #' 
 #' @param ... Object specific parameters  
 #' 
 #' @export
-onsets <- function(ts, limit = 0.1, ... ) {
+onsets <- function(ts, limit = 0.1, limit.type=c("absolute","relative"), ... ) {
 	UseMethod("onsets")
 }
 
@@ -49,12 +55,16 @@ as.onset <- function(v) {
 #' @param ... ignored
 #'  
 #' @export
-onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
+onsets.energyDensity <- function(ts, limit = 0.1, limit.type=c("absolute","relative"), ... ) {
 	if(limit <= 0 || limit >= 1) {
 		stop("Illegal limit value: ", limit)
 	}
 	
-	e.limit <- quantile(ts$energy,c(limit))
+	limit.type = match.arg(limit.type)
+	
+	e.limit <- switch( limit.type,
+					   absolute = limit,
+			           relative = quantile(ts$energy,c(limit)))
 	gated <- ifelse(ts$energy > e.limit, 1, 0)
 	changes <- c(gated,0) - c(0,gated)
 	
@@ -68,7 +78,7 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 	r <- cbind(r, apply(X=r,1,FUN=function(s){mean( window(ts, start=s[1], end=s[2]))}))
 	r <- apply(X=r, 1, FUN=as.onset)
 	class(r) <- append(class(r), "onsetData")
-	attr(r,"params") <- list(limit=limit) 
+	attr(r,"params") <- list(limit=limit, limit.type=limit.type) 
 	attr(r,"dataType") <- "energyDensity"
 	r
 }
@@ -83,11 +93,12 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 #' @param ... ignored
 #' 
 #' @export
-onsets.WaveData <- function(ts, limit = 0.1, window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
+onsets.WaveData <- function( ts, limit = 0.1, limit.type=c("absolute","relative"), window.width=10, 
+							 stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
 	# Parameter testing done in called functions
 	
 	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, normalize=normalize, window.function=window.function)
-	r <- onsets.energyDensity(e, limit = limit)
+	r <- onsets.energyDensity(e, limit = limit, limit.type=limit.type)
 	p1 <- attr(r,"params")
 	p2 <- attr(e,"params")
 	attr(r,"params") <- append(p1,p2)

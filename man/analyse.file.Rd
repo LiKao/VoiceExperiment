@@ -5,8 +5,8 @@
 \title{Analyse a Single File for Onset Times}
 \usage{
 analyse.file(filename, channels = c("both", "left", "right"), limit = 0.1,
-  window.width = 10, stepsize = 5, normalize = 0.9,
-  window.function = signal::hanning)
+  limit.type = c("absolute", "relative"), window.width = 10, stepsize = 5,
+  normalize = 0.9, window.function = signal::hanning)
 }
 \arguments{
 \item{filename}{The filename to be read}
@@ -17,7 +17,13 @@ reduced to a mono wave file, either by selecting a single channel (values
 If the file is alread a mono file, this argument is ignored.}
 
 \item{limit}{Parameter used for filtering silence. Energy below this level
-(compared to all other energy levels in term of percentiles) is ignored.}
+is ignored.}
+
+\item{limit.type}{Type of limit, which is used to detect on- and offsets.
+If set to \code{absolute} (default) then the limit value is used
+directly. If set to \code{relative} then the limit is determined
+as the energy in the i-th percentile, where i is given by the
+limit parameter.}
 
 \item{window.width}{The windowing width that is used to estimate the density (in ms). The time
 series data is chopped into windows of this length, and the energy density is calculated
