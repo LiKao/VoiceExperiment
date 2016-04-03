@@ -35,7 +35,7 @@ expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"
 							 normalize=0.9, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
 						 
 	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=0.9,
-			               window.width=window.width, stepsize=stepsize, window.function=window.function)
+			               window.width=window.width, stepsize=stepsize, window.function=window.function, quiet=FALSE)
 				   
 	write.csv(a, file = filename, ...)
 }
@@ -57,7 +57,7 @@ expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right
 		                      normalize=0.9,window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
 						  
 	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=normalize,
-			               window.width=window.width, stepsize=stepsize, window.function=window.function)
+			               window.width=window.width, stepsize=stepsize, window.function=window.function, quiet=FALSE)
 				   
 	write.csv2(a, file = filename, ...)
 }
@@ -77,7 +77,7 @@ expOnsets.as.table <- function(dirname, filename, channels=c("both","left","righ
 		                       normalize=0.9, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
 						   
 	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=normalize,
-			               window.width=window.width, stepsize=stepsize, window.function=window.function)
+			               window.width=window.width, stepsize=stepsize, window.function=window.function, quiet=FALSE)
 				   
 	write.table(a, file = filename, ...)
 } 

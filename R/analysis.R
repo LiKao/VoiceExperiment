@@ -25,8 +25,12 @@
 #' 
 #' @export
 analyse.file <- function( filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"), 
-						  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning ) {
+						  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, quiet=TRUE ) {
 	
+	if(!quiet) {
+		cat("Analysing file: ", filename,"\n")
+	}
+					  
 	channels <- match.arg(channels)
 	w <- read.wav(filename, channels )
 	r <- onsets.WaveData( w, limit=limit, window.width=window.width, stepsize=stepsize, limit.type=limit.type,
@@ -47,15 +51,15 @@ analyse.file <- function( filename, channels=c("both","left","right"), limit = 0
 #' 
 #' @export
 analyse.directory <- function(dirname, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
-							  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning ) {
+							  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, quiet=TRUE ) {
 	if(!dir.exists(dirname)) {
 		stop("Directory '",dirname,"' does not exist.")
 	}
 						  
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
-	r <- lapply(fullnames, analyse.file, channels=channels, limit=limit, limit.type=limit.type, 
-			    window.width=window.width, stepsize=stepsize, normalize=normalize, window.function=window.function)
+	r <- lapply(fullnames, analyse.file, channels=channels, limit=limit, limit.type=limit.type, window.width=window.width, 
+			    stepsize=stepsize, normalize=normalize, window.function=window.function, quiet=quiet)
 	r <- lapply(1:length(filenames), function(i){list(filename=filenames[[i]], onsets=r[[i]])})
 	class(r) <- c("voiceExperimentData","list")
 	r
