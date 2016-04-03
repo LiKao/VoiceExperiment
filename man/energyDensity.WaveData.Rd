@@ -5,7 +5,7 @@
 \title{energyDensity implementation for WaveData objects}
 \usage{
 \method{energyDensity}{WaveData}(ts, window.width = 10, stepsize = 5,
-  window.function = signal::hanning, ...)
+  normalize = 0.9, window.function = signal::hanning, ...)
 }
 \arguments{
 \item{ts}{The object that contains the time series data}
@@ -16,6 +16,10 @@ for each of these windows seperately. Defaults to 10ms.}
 
 \item{stepsize}{The stepsize to be used for windowing. Windows are advanced this many ms for each
 calculation. Can be used to create overlapping windows. Defaults to 5ms.}
+
+\item{normalize}{Normalization level for energy density values. Maximum energy density will be set to this
+level to simplify comparison between data files. Set to 0 to deactivate normalization. 
+Defaults to 0.9. Maximum normalization to 1.}
 
 \item{window.function}{The windowing function to be used. This argument can be used to give
 different weigth to different samples within the window. Several usable windowing functions

@@ -13,7 +13,9 @@ energyDensityAt(ts, start, end, window.function = signal::hanning)
 
 \item{end}{The end position until which the energy density should be calculated.}
 
-\item{window.function}{A windowing function to weight the samples.}
+\item{window.function}{A windowing function to weight the samples.
+
+TODO: Make this a polymorphic function (cannot assume this works for anything but WaveData)}
 }
 \description{
 Calculate the Energy Density at a Specific Position of a Standard R ts Object

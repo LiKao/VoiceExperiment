@@ -34,6 +34,10 @@
 #' @param stepsize The stepsize to be used for windowing. Windows are advanced this many ms for each
 #' 		  calculation. Can be used to create overlapping windows. Defaults to 5ms.
 #' 
+#' @param normalize Normalization level for energy density values. Maximum energy density will be set to this
+#' 		  level to simplify comparison between data files. Set to 0 to deactivate normalization. 
+#' 		  Defaults to 0.9. Maximum normalization to 1.
+#' 
 #' @param window.function The windowing function to be used. This argument can be used to give
 #'        different weigth to different samples within the window. Several usable windowing functions
 #' 		  are defined in the signal package. Defaults to \code{\link[signal]{boxcar}}, i.e. equal weight
@@ -41,7 +45,7 @@
 #' @param ... Further object specific arguments.
 #' 
 #' @export
-energyDensity <- function(ts, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+energyDensity <- function(ts, window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
 	UseMethod("energyDensity")
 }
 
@@ -68,7 +72,7 @@ energyDensityAt <- function(ts, start, end, window.function=signal::hanning ) {
 #' @inheritParams energyDensity
 #' @param ... ignored
 #' @export
-energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, window.function=signal::hanning, ...) {
+energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, ...) {
 	
 	if(window.width<1) {
 		stop("Illegal window width: ", window.width)
@@ -82,16 +86,29 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, window.funct
 		warning("Stepsize ",stepsize," is larger than window width ",window.width)
 	}
 	
+	if(normalize < 0 || normalize > 1) {
+		stop("Illegal normalization value: ", normalize)
+	}
+
+	
 	duration.ms <- ts$duration*1000
 	# We need to generate only up to the last full window (incomplete windows 
 	# at end are discarded)
 	end <- seq(from=window.width, to=duration.ms, by=stepsize)
 	energy <- vapply(X=end, FUN=function(e){energyDensityAt(ts$samples,e-window.width,e,window.function)}, FUN.VALUE=0)
+	
+	# Normalization, if activated
+	if(normalize > 0) {
+		m <- max(energy)
+		f <- normalize / m
+		energy <- energy * f
+	}
+	
 	energy <- ts(energy, start=0, frequency=1000/stepsize)
 	r <- list(energy=energy,
 			  duration=tail(end,n=1)/1000)
 	class(r) <- append(class(r),"energyDensity")
-	attr(r,"params") <- list(window.width=window.width,stepsize=stepsize)
+	attr(r,"params") <- list(window.width=window.width, stepsize=stepsize, normalize=normalize)
 	r
 }
 

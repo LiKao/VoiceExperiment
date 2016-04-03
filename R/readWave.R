@@ -40,7 +40,7 @@ read.wav <- function(filename, channels=c("both","left","right")) {
 	w <- tuneR::readWave(filename)
 	
 	# Reduce stereo and Normalize to format independent of bit-depth
-	s <- if(w@stereo){ tuneR::mono(w,which=channels)@left} else {w@left} / (2^w@bit) 
+	s <- (if(w@stereo){ tuneR::mono(w,which=channels)@left} else {w@left}) / (2^w@bit) 
 	
 	l <- length(s)
 	d <- l/w@samp.rate

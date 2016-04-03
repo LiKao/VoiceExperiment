@@ -3,7 +3,9 @@ Changes:
 * Switched license to GPL-v3
 * Switched to hanning window as default window (better resolution)
 * FIX: Error in parameter propagation from directory analysis function
+* FIX: Representation of stereo files
 * Additional tests
+* Added normalization of energy levels
 
 VoiceExperiment v0.1.2 (Release date: 2016-03-10)
 ==============
