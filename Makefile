@@ -60,6 +60,10 @@ ${DOCFILE}: NAMESPACE
 .PHONY: check
 check: ${PACKAGE_TARGET}
 	R CMD check ${PACKAGE_TARGET}
+	
+.PHONY: test
+test:
+	@LANG=C R -e "devtools::test('.')"
 
 .PHONY: prepclean doclean checkclean targetclean reallyclean
 
