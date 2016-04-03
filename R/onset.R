@@ -57,11 +57,15 @@ onsets.energyDensity <- function(ts, limit = 0.1, ... ) {
 	e.limit <- quantile(ts$energy,c(limit))
 	gated <- ifelse(ts$energy > e.limit, 1, 0)
 	changes <- c(gated,0) - c(0,gated)
-	# Indexing starts at 1 in R, hence the first sample is at time 0 (index-1).
-	# Furthermore the end times are shifted by 1, hence we must subtract 2 here.
-	r <- matrix(c(which(changes==1)-1,which(changes==-1)-2),ncol=2)/frequency(ts$energy)
-	r <- cbind(r,apply(X=r,1,FUN=function(s){sum(window(ts$energy, start=s[1], end=s[2]))}))
-	r <- cbind(r,apply(X=r,1,FUN=function(s){mean(window(ts$energy, start=s[1], end=s[2]))}))
+	
+	times <- time(ts)
+	# The end times are shifted by 1.
+	starts <- times[which(changes== 1)]
+	ends   <- times[which(changes==-1)-1]
+		
+	r <- matrix( c(starts,  ends), ncol=2)
+	r <- cbind(r, apply(X=r,1,FUN=function(s){sum(  window(ts, start=s[1], end=s[2]))}))
+	r <- cbind(r, apply(X=r,1,FUN=function(s){mean( window(ts, start=s[1], end=s[2]))}))
 	r <- apply(X=r, 1, FUN=as.onset)
 	class(r) <- append(class(r), "onsetData")
 	attr(r,"params") <- list(limit=limit) 
