@@ -20,6 +20,8 @@
 #
 ###############################################################################
 
+require(methods)
+
 #' Generic Method to Calculate the Energy Density of an Object
 #' 
 #' This method calculates the energy density of any kind of object, which
