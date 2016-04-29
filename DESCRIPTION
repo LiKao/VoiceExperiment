@@ -8,7 +8,8 @@ Depends:
 Imports:
 	tuneR (>= 1.2.1),
 	signal (>= 0.7-6),
-	stats
+	stats,
+	Matrix
 License: GPL-3
 LazyData: true
 RoxygenNote: 5.0.1.9000
