@@ -29,6 +29,15 @@ length.WaveData <- function(x, ...) {
 }
 
 #####
+# Conversion to standard R objects
+#####
+
+#' @export
+as.matrix.WaveData <- function(x, ... ) {
+	as.matrix(x$samples)
+}
+
+#####
 # Usage as timeseries data
 #####
 
