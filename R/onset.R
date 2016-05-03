@@ -89,20 +89,20 @@ onsets.energyDensity <- function(ts, limit = 0.1, limit.type=c("absolute","relat
 #' calculates onsets based on the energy density.
 #' 
 #' @inheritParams onsets
-#' @inheritParams energyDensity
+#' @param energy.params Additional Parameters passed to \code{\link{energyDensity}}.
 #' @param ... ignored
 #' 
 #' @export
-onsets.WaveData <- function( ts, limit = 0.1, limit.type=c("absolute","relative"), window.width=10, 
-							 stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
+onsets.WaveData <- function( ts, limit = 0.1, limit.type=c("absolute","relative"),
+							 energy.params = list(), ... ) {
 	# Parameter testing done in called functions
 	
-	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, normalize=normalize, window.function=window.function)
+	e <- do.call(energyDensity.WaveData, c(list(ts=ts), energy.params) )
 	r <- onsets.energyDensity(e, limit = limit, limit.type=limit.type)
 	p1 <- attr(r,"params")
 	p2 <- attr(e,"params")
-	attr(r,"params") <- append(p1,p2)
-	attr(r,"dataType") <- "WaveData"
+	p1$dataType = "WaveData"	
+	attr(r,"params") <- c(p1,energy.params=list(p2)) 
 	r
 }
 

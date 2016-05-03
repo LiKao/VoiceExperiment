@@ -5,8 +5,8 @@
 \title{Analyse All Files from a Given Directory and Write Results as CSV file}
 \usage{
 expOnsets.as.csv2(dirname, filename, channels = c("both", "left", "right"),
-  limit = 0.1, limit.type = c("absolute", "relative"), normalize = 0.9,
-  window.width = 10, stepsize = 5, window.function = signal::hanning, ...)
+  limit = 0.1, limit.type = c("absolute", "relative"),
+  energy.params = energy.params, ...)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}
@@ -27,21 +27,7 @@ directly. If set to \code{relative} then the limit is determined
 as the energy in the i-th percentile, where i is given by the
 limit parameter.}
 
-\item{normalize}{Normalization level for energy density values. Maximum energy density will be set to this
-level to simplify comparison between data files. Set to 0 to deactivate normalization. 
-Defaults to 0.9. Maximum normalization to 1.}
-
-\item{window.width}{The windowing width that is used to estimate the density (in ms). The time
-series data is chopped into windows of this length, and the energy density is calculated
-for each of these windows seperately. Defaults to 10ms.}
-
-\item{stepsize}{The stepsize to be used for windowing. Windows are advanced this many ms for each
-calculation. Can be used to create overlapping windows. Defaults to 5ms.}
-
-\item{window.function}{The windowing function to be used. This argument can be used to give
-different weigth to different samples within the window. Several usable windowing functions
-   are defined in the signal package. Defaults to \code{\link[signal]{boxcar}}, i.e. equal weight
-   for all samples.}
+\item{energy.params}{Additional Parameters passed to \code{\link{energyDensity}}.}
 
 \item{...}{Optional arguments passed to \code{\link[utils]{write.csv2}}}
 }
