@@ -325,231 +325,131 @@ test_that("Parameters are propagated during file analysis", {
 test_that("Parameters are propagated during directory analysis", {
 			
 			
-		# TODO: Use loops here (not recommendet in Unit testing, but simplifies this mess a lot)
-			
 		### All parameters at default values
 			
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
 								window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.1)
+			expect_equal(attr(o$onsets,"params")$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$stepsize,		5)
+			expect_equal(attr(o$onsets,"params")$channels, 		"both")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.9)
+			expect_equal(attr(o$onsets,"params")$limit.type,	"absolute")
+		}
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
 		
 		### channels = left
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="left", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory("../testdata/testsets", channels="left", limit = 0.1, limit.type="absolute",
 				                window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.1)
+			expect_equal(attr(o$onsets,"params")$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$stepsize,		5)
+			expect_equal(attr(o$onsets,"params")$channels, 		"left")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.9)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"absolute")
+		}
 		
 		### channels = right
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="right", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory("../testdata/testsets", channels="right", limit = 0.1, limit.type="absolute",
 				                window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"right")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"right")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"right")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.1)
+			expect_equal(attr(o$onsets,"params")$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$stepsize,		5)
+			expect_equal(attr(o$onsets,"params")$channels, 		"right")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.9)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"absolute")
+		}
 		
 		### limit = 0.5
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.5, limit.type="absolute",
+		os <- analyse.directory("../testdata/testsets", channels="both", limit = 0.5, limit.type="absolute",
 				                window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.5)
+			expect_equal(attr(o$onsets,"params")$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$stepsize,		5)
+			expect_equal(attr(o$onsets,"params")$channels, 		"both")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.9)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"absolute")
+		}
 		
 		### window.witdth = 20
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
 				                window.width=20, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.1)
+			expect_equal(attr(o$onsets,"params")$window.width,	20)
+			expect_equal(attr(o$onsets,"params")$stepsize,		5)
+			expect_equal(attr(o$onsets,"params")$channels, 		"both")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.9)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"absolute")
+		}
 		
 		### stepsize = 3
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
 				                window.width=10, stepsize=3, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.1)
+			expect_equal(attr(o$onsets,"params")$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$stepsize,		3)
+			expect_equal(attr(o$onsets,"params")$channels, 		"both")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.9)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"absolute")
+		}
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
-		
+				
 		### normalize = 0.7
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
 				                window.width=10, stepsize=3, normalize=0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.1)
+			expect_equal(attr(o$onsets,"params")$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$stepsize,		3)
+			expect_equal(attr(o$onsets,"params")$channels, 		"both")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.7)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"absolute")
+		}
 		
 		### limit.type = "relative"
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="relative",
+		os <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="relative",
 				window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"relative")
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"relative")
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.1)
+			expect_equal(attr(o$onsets,"params")$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$stepsize,		5)
+			expect_equal(attr(o$onsets,"params")$channels, 		"both")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.9)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"relative")
+		}
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"relative")
 		
 		### All parameters changed
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="left", limit = 0.5, limit.type="relative",
+		os <- analyse.directory("../testdata/testsets", channels="left", limit = 0.5, limit.type="relative",
 				                window.width=20, stepsize=3, normalize=0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"relative")
-		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"relative")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"relative")
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$limit,			0.5)
+			expect_equal(attr(o$onsets,"params")$window.width,	20)
+			expect_equal(attr(o$onsets,"params")$stepsize,		3)
+			expect_equal(attr(o$onsets,"params")$channels, 		"left")
+			expect_equal(attr(o$onsets,"params")$normalize,		0.7)
+			expect_equal(attr(o$onsets,"params")$limit.type,		"relative")
+		}
 })
 
