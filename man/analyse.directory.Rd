@@ -5,9 +5,7 @@
 \title{Analyse a Complete Directory for Onset Times}
 \usage{
 analyse.directory(dirname, channels = c("both", "left", "right"),
-  limit = 0.1, limit.type = c("absolute", "relative"), window.width = 10,
-  stepsize = 5, normalize = 0.9, window.function = signal::hanning,
-  quiet = TRUE)
+  onset.params = list(), energy.params = list(), quiet = TRUE)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}
@@ -17,30 +15,9 @@ reduced to a mono wave file, either by selecting a single channel (values
 \code{left} or \code{right}) or by averaging accros both channels (\code{both}).
 If the file is alread a mono file, this argument is ignored.}
 
-\item{limit}{Parameter used for filtering silence. Energy below this level
-is ignored.}
+\item{onset.params}{Parameters passed to \code{\link{onsets}}}
 
-\item{limit.type}{Type of limit, which is used to detect on- and offsets.
-If set to \code{absolute} (default) then the limit value is used
-directly. If set to \code{relative} then the limit is determined
-as the energy in the i-th percentile, where i is given by the
-limit parameter.}
-
-\item{window.width}{The windowing width that is used to estimate the density (in ms). The time
-series data is chopped into windows of this length, and the energy density is calculated
-for each of these windows seperately. Defaults to 10ms.}
-
-\item{stepsize}{The stepsize to be used for windowing. Windows are advanced this many ms for each
-calculation. Can be used to create overlapping windows. Defaults to 5ms.}
-
-\item{normalize}{Normalization level for energy density values. Maximum energy density will be set to this
-level to simplify comparison between data files. Set to 0 to deactivate normalization. 
-Defaults to 0.9. Maximum normalization to 1.}
-
-\item{window.function}{The windowing function to be used. This argument can be used to give
-different weigth to different samples within the window. Several usable windowing functions
-   are defined in the signal package. Defaults to \code{\link[signal]{boxcar}}, i.e. equal weight
-   for all samples.}
+\item{energy.params}{Additional Parameters passed to \code{\link{energyDensity}}.}
 
 \item{quiet}{If set to true, the function will output the current filename to be analysed}
 }

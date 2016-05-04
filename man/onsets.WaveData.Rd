@@ -5,8 +5,7 @@
 \title{Specialized Method for Extracting Onsets from WaveData objects}
 \usage{
 \method{onsets}{WaveData}(ts, limit = 0.1, limit.type = c("absolute",
-  "relative"), window.width = 10, stepsize = 5, normalize = 0.9,
-  window.function = signal::hanning, ...)
+  "relative"), energy.params = list(), ...)
 }
 \arguments{
 \item{ts}{The object containing the time series data.}
@@ -20,21 +19,7 @@ directly. If set to \code{relative} then the limit is determined
 as the energy in the i-th percentile, where i is given by the
 limit parameter.}
 
-\item{window.width}{The windowing width that is used to estimate the density (in ms). The time
-series data is chopped into windows of this length, and the energy density is calculated
-for each of these windows seperately. Defaults to 10ms.}
-
-\item{stepsize}{The stepsize to be used for windowing. Windows are advanced this many ms for each
-calculation. Can be used to create overlapping windows. Defaults to 5ms.}
-
-\item{normalize}{Normalization level for energy density values. Maximum energy density will be set to this
-level to simplify comparison between data files. Set to 0 to deactivate normalization. 
-Defaults to 0.9. Maximum normalization to 1.}
-
-\item{window.function}{The windowing function to be used. This argument can be used to give
-different weigth to different samples within the window. Several usable windowing functions
-   are defined in the signal package. Defaults to \code{\link[signal]{boxcar}}, i.e. equal weight
-   for all samples.}
+\item{energy.params}{Additional Parameters passed to \code{\link{energyDensity}}.}
 
 \item{...}{ignored}
 }
