@@ -5,8 +5,7 @@
 \title{Analyse All Files from a Given Directory and Write Results as CSV file}
 \usage{
 expOnsets.as.csv(dirname, filename, channels = c("both", "left", "right"),
-  limit = 0.1, limit.type = c("absolute", "relative"),
-  energy.params = list(), ...)
+  onset.params = list(), energy.params = list(), ...)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}
@@ -18,14 +17,7 @@ reduced to a mono wave file, either by selecting a single channel (values
 \code{left} or \code{right}) or by averaging accros both channels (\code{both}).
 If the file is alread a mono file, this argument is ignored.}
 
-\item{limit}{Parameter used for filtering silence. Energy below this level
-is ignored.}
-
-\item{limit.type}{Type of limit, which is used to detect on- and offsets.
-If set to \code{absolute} (default) then the limit value is used
-directly. If set to \code{relative} then the limit is determined
-as the energy in the i-th percentile, where i is given by the
-limit parameter.}
+\item{onset.params}{Parameters passed to \code{\link{onsets}}}
 
 \item{energy.params}{Additional Parameters passed to \code{\link{energyDensity}}.}
 

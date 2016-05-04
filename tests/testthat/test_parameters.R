@@ -106,77 +106,79 @@ test_that("Illegal Paramters produce errors", {
 	
 	### analyse.file
 	
-	expect_error( analyse.file( "../testdata/illegal.wav", channels="both", limit = 0.1, limit.type="absolute"), 			"File '[^']*' does not exist.")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="none", limit = 0.1, limit.type="absolute"),	"'arg' should be one of \"both\", \"left\", \"right\"")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit = -2, limit.type="absolute"),	"Illegal limit value: -2" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit = -1, limit.type="absolute"),	"Illegal limit value: -1" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit = -0.1, limit.type="absolute"),	"Illegal limit value: -0.1" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0, limit.type="absolute"),	"Illegal limit value: 0" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  1, limit.type="absolute"),	"Illegal limit value: 1" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  2, limit.type="absolute"),	"Illegal limit value: 2" )
+	onset.params.dflt <- list(limit = 0.1, limit.type="absolute")
+	
+	expect_error( analyse.file( "../testdata/illegal.wav", channels="both", onset.params=onset.params.dflt), 			"File '[^']*' does not exist.")
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="none", onset.params=onset.params.dflt),	"'arg' should be one of \"both\", \"left\", \"right\"")
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=list(limit = -2, limit.type="absolute")),	"Illegal limit value: -2" )
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=list(limit = -1, limit.type="absolute")),	"Illegal limit value: -1" )
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=list(limit = -0.1, limit.type="absolute")),	"Illegal limit value: -0.1" )
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=list(limit =  0, limit.type="absolute")),	"Illegal limit value: 0" )
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=list(limit =  1, limit.type="absolute")),	"Illegal limit value: 1" )
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=list(limit =  2, limit.type="absolute")),	"Illegal limit value: 2" )
 		  
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					            energy.params=list(normalize=0.9, window.width=-10, stepsize=  5)), 
 				  "Illegal window width: -10")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					            energy.params=list(normalize=0.9, window.width=  0, stepsize=  5)),
 				  "Illegal window width: 0")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					            energy.params=list(normalize=0.9, window.width= 10, stepsize=-10)),
 			      "Illegal stepsize: -10")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					            energy.params=list(normalize=0.9, window.width= 10, stepsize=  0)),
 			      "Illegal stepsize: 0")
-	expect_warning( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_warning( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					              energy.params=list(normalize=0.9, window.width=10, stepsize=15)),
 			        "Stepsize 15 is larger than window width 10")
 			
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					            energy.params=list(window.width= 10, stepsize=5, normalize=-1.5)),
 				  "Illegal normalization value: -1.5")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					            energy.params=list(window.width= 10, stepsize=5, normalize=-0.5)),
   				  "Illegal normalization value: -0.5")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", onset.params=onset.params.dflt,
 					            energy.params=list(window.width= 10, stepsize=5, normalize=1.5)),
   				  "Illegal normalization value: 1.5")
 	
 	
 	### analyse.directory
 	
-	expect_error( analyse.directory( "../testdata/illegal/", channels="both", limit = 0.1, limit.type="absolute"),	"Directory '[^']*' does not exist.")
-	expect_error( analyse.directory( "../testdata/testsets",channels="none", limit = 0.1, limit.type="absolute"),	"'arg' should be one of \"both\", \"left\", \"right\"")
+	expect_error( analyse.directory( "../testdata/illegal/", channels="both", onset.params=onset.params.dflt),	"Directory '[^']*' does not exist.")
+	expect_error( analyse.directory( "../testdata/testsets",channels="none", onset.params=onset.params.dflt),	"'arg' should be one of \"both\", \"left\", \"right\"")
 	
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit = -2, limit.type="absolute"),	"Illegal limit value: -2" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit = -1, limit.type="absolute"),	"Illegal limit value: -1" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit = -0.1, limit.type="absolute"),	"Illegal limit value: -0.1" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0, limit.type="absolute"),	"Illegal limit value: 0" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  1, limit.type="absolute"),	"Illegal limit value: 1" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  2, limit.type="absolute"),	"Illegal limit value: 2" )
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=list(limit = -2, limit.type="absolute")),	"Illegal limit value: -2" )
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=list(limit = -1, limit.type="absolute")),	"Illegal limit value: -1" )
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=list(limit = -0.1, limit.type="absolute")),	"Illegal limit value: -0.1" )
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=list(limit =  0, limit.type="absolute")),	"Illegal limit value: 0" )
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=list(limit =  1, limit.type="absolute")),	"Illegal limit value: 1" )
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=list(limit =  2, limit.type="absolute")),	"Illegal limit value: 2" )
 	
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                 energy.params=list(normalize=0.9, window.width=-10, stepsize=  5)),
 			      "Illegal window width: -10")
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                 energy.params=list(normalize=0.9, window.width=  0, stepsize=  5)),
 			      "Illegal window width: 0")
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                 energy.params=list(normalize=0.9, window.width= 10, stepsize=-10)),
 			      "Illegal stepsize: -10")
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                 energy.params=list(normalize=0.9, window.width= 10, stepsize=  0)),
 			      "Illegal stepsize: 0")
-	expect_warning( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+	expect_warning( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                   energy.params=list(normalize=0.9, window.width=10, stepsize=15)),
 			        "Stepsize 15 is larger than window width 10")
 			
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+	expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                 energy.params=list(normalize=-1.5, window.width= 10, stepsize=  5)),
 				  "Illegal normalization value: -1.5")
-    expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+    expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                 energy.params=list(normalize=-0.5, window.width= 10, stepsize=  5)),
 	              "Illegal normalization value: -0.5")
-    expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
+    expect_error( analyse.directory( "../testdata/testsets",channels="both", onset.params=onset.params.dflt,
 					                 energy.params=list(normalize=1.5, window.width= 10, stepsize=  5)),
 	              "Illegal normalization value: 1.5")
 })
@@ -184,45 +186,47 @@ test_that("Illegal Paramters produce errors", {
 #############################################################
 
 test_that("Parameters are propagated during file analysis", {
+			
+	onset.params.dflt <- list(limit = 0.1, limit.type="absolute")
 	
 	### All parameters at default values
 				
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute")
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", onset.params=onset.params.dflt)
 	expect_equal(attr(o1,"params")$limit,			0.1)
 	expect_equal(attr(o1,"params")$channels, 		"both")
 	expect_equal(attr(o1,"params")$limit.type,		"absolute")
 	
 	### channels = left
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="left", limit = 0.1, limit.type="absolute")
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="left", onset.params=onset.params.dflt)
 	expect_equal(attr(o1,"params")$limit,			0.1)
 	expect_equal(attr(o1,"params")$channels, 		"left")
 	expect_equal(attr(o1,"params")$limit.type,		"absolute")
 	
 	### channels = right
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="right", limit = 0.1, limit.type="absolute")
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="right", onset.params=onset.params.dflt)
 	expect_equal(attr(o1,"params")$limit,			0.1)
 	expect_equal(attr(o1,"params")$channels, 		"right")
 	expect_equal(attr(o1,"params")$limit.type,		"absolute")
 
 	### limit = 0.5
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", limit = 0.5, limit.type="absolute")
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", onset.params=list(limit = 0.5, limit.type="absolute"))
 	expect_equal(attr(o1,"params")$limit,			0.5)
 	expect_equal(attr(o1,"params")$channels, 		"both")
 	expect_equal(attr(o1,"params")$limit.type,		"absolute")
 	
 	### limit.type = "relative"
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="relative")
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", onset.params=list(limit = 0.1, limit.type="relative"))
 	expect_equal(attr(o1,"params")$limit,			0.1)
 	expect_equal(attr(o1,"params")$channels, 		"both")
 	expect_equal(attr(o1,"params")$limit.type,		"relative")
 	
 	### All parameters
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="left", limit = 0.5, limit.type="relative")
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="left", onset.params=list(limit = 0.5, limit.type="relative"))
 	expect_equal(attr(o1,"params")$limit,			0.5)
 	expect_equal(attr(o1,"params")$channels, 		"left")
 	expect_equal(attr(o1,"params")$limit.type,		"relative")
@@ -231,7 +235,7 @@ test_that("Parameters are propagated during file analysis", {
 	
 	### window.witdht = 20
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute",
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", onset.params=onset.params.dflt,
 			            energy.params=list(window.width=20, stepsize=5, normalize=0.9))
 	expect_equal(attr(o1,"params")$energy.params$window.width,	20)
 	expect_equal(attr(o1,"params")$energy.params$stepsize,		5)
@@ -239,7 +243,7 @@ test_that("Parameters are propagated during file analysis", {
 	
 	### stepsize = 3
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute",
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", onset.params=onset.params.dflt,
 			             energy.params=list(window.width=10, stepsize=3, normalize=0.9))
 
 	expect_equal(attr(o1,"params")$energy.params$window.width,	10)
@@ -248,7 +252,7 @@ test_that("Parameters are propagated during file analysis", {
 	
 	### normalize = 0.7
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute",
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", onset.params=onset.params.dflt,
 			            energy.params=list(window.width=10, stepsize=5, normalize=0.7))
 	expect_equal(attr(o1,"params")$energy.params$window.width,	10)
 	expect_equal(attr(o1,"params")$energy.params$stepsize,		5)
@@ -256,7 +260,7 @@ test_that("Parameters are propagated during file analysis", {
 	
 	### All parameters
 	
-	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute",
+	o1 <- analyse.file( "../testdata/silence_50ms_mono.wav", channels="both", onset.params=onset.params.dflt,
 			            energy.params=list(window.width=20, stepsize=3, normalize=0.7))
 	expect_equal(attr(o1,"params")$energy.params$window.width,  20)
 	expect_equal(attr(o1,"params")$energy.params$stepsize,		3)
@@ -266,10 +270,12 @@ test_that("Parameters are propagated during file analysis", {
 ##################################################################
 
 test_that("Parameters are propagated during directory analysis", {
+			
+		onset.params.dflt <- list(limit = 0.1, limit.type="absolute")
 				
 		### All parameters at default values
 			
-		os <- analyse.directory( "../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute")
+		os <- analyse.directory( "../testdata/testsets", channels="both", onset.params=onset.params.dflt)
 						
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$limit,			0.1)
@@ -280,7 +286,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### channels = left
 		
-		os <- analyse.directory( "../testdata/testsets", channels="left", limit = 0.1, limit.type="absolute")
+		os <- analyse.directory( "../testdata/testsets", channels="left", onset.params=onset.params.dflt)
 						
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$limit,			0.1)
@@ -290,7 +296,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### channels = right
 		
-		os <- analyse.directory( "../testdata/testsets", channels="right", limit = 0.1, limit.type="absolute")
+		os <- analyse.directory( "../testdata/testsets", channels="right", onset.params=onset.params.dflt)
 						
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$limit,			0.1)
@@ -300,7 +306,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### limit = 0.5
 		
-		os <- analyse.directory( "../testdata/testsets", channels="both", limit = 0.5, limit.type="absolute")
+		os <- analyse.directory( "../testdata/testsets", channels="both", onset.params=list(limit = 0.5, limit.type="absolute"))
 		
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$limit,			0.5)
@@ -310,7 +316,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### limit.type = "relative"
 		
-		os <- analyse.directory( "../testdata/testsets", channels="both", limit = 0.1, limit.type="relative")
+		os <- analyse.directory( "../testdata/testsets", channels="both", onset.params=list(limit = 0.1, limit.type="relative"))
 		
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$limit,			0.1)
@@ -320,7 +326,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### All parameters changed
 		
-		os <- analyse.directory( "../testdata/testsets", channels="left", limit = 0.5, limit.type="relative")
+		os <- analyse.directory( "../testdata/testsets", channels="left", onset.params=list(limit = 0.5, limit.type="relative"))
 		
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$limit,			0.5)
@@ -332,7 +338,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### window.witdth = 20
 		
-		os <- analyse.directory( "../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory( "../testdata/testsets", channels="both", onset.params=onset.params.dflt,
 				                 energy.params=list(window.width=20, stepsize=5, normalize=0.9))
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$energy.params$window.width,	20)
@@ -342,7 +348,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### stepsize = 3
 		
-		os <- analyse.directory( "../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory( "../testdata/testsets", channels="both", onset.params=onset.params.dflt,
 				                 energy.params=list(window.width=10, stepsize=3, normalize=0.9))
 						
 		for(o in os) {
@@ -354,7 +360,7 @@ test_that("Parameters are propagated during directory analysis", {
 				
 		### normalize = 0.7
 		
-		os <- analyse.directory( "../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory( "../testdata/testsets", channels="both", onset.params=onset.params.dflt,
 				                 energy.params=list(window.width=10, stepsize=3, normalize=0.7))
 						
 		for(o in os) {
@@ -366,7 +372,7 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		### All parameters changed
 		
-		os <- analyse.directory( "../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
+		os <- analyse.directory( "../testdata/testsets", channels="both", onset.params=onset.params.dflt,
 				                 energy.params=list(window.width=20, stepsize=3, normalize=0.7))
 						
 		for(o in os) {
