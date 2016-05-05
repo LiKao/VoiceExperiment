@@ -47,7 +47,7 @@ require(methods)
 #' @param ... Further object specific arguments.
 #' 
 #' @export
-energyDensity <- function(ts, window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
+energyDensity <- function(ts, window.width=10, stepsize=5, normalize=1, window.function=signal::hanning, ... ) {
 	UseMethod("energyDensity")
 }
 
@@ -56,7 +56,7 @@ energyDensity <- function(ts, window.width=10, stepsize=5, normalize=0.9, window
 #' @inheritParams energyDensity
 #' @param ... ignored
 #' @export
-energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, ...) {
+energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1, window.function=signal::hanning, ...) {
 	
 	if(window.width<1) {
 		stop("Illegal window width: ", window.width)
