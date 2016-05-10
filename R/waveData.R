@@ -97,14 +97,37 @@ summary.WaveData <- function(object, ...) {
 } 
 
 #' @export
-plot.WaveData <- function(x, ... ) {
-	plot( as.ts(x), ylab="Intensity", xlab="Time (s)", ...)
+plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum","spec"), 
+                          window.width=10, stepsize=5, window.function=signal::hanning, ... ) 
+{
+  type <- match.arg(type)
+  
+  if(substr(type,1,4)=="spec") {
+    
+    duration.ms <- x$duration*1000
+    f <- frequency(x)
+    starts <- (seq(from=10,to=duration.ms,by=5)-10)/1000
+    starts.samples <- round(starts*f)
+    l <- window.width/1000*f
+    w <- window.function(l)
+    w <- w / sum(w)
+    
+    j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
+    m <- matrix(x$samples[j],nrow=l)
+    m <- m * w
+    
+    p <- fftw::planFFT(l)
+    ff <- apply(m,2,function(v){fftw::FFT(v,plan=p)})
+      
+    image(x=starts, y=seq(from=1000/window.width,to=f/2,by=1000/window.width), z=t(log10(abs(ff[2:ceiling(l/2),]))),log="y",xlab="Time",ylab="Frequency")      
+  } 
+  else {
+	  plot( as.ts(x), ylab="Intensity", xlab="Time (s)", ...)
+  }
 }
 
 #' @export
 lines.WaveData <- function(x, ... ) {
 	lines( as.ts(x), ... )
 }
-
-
 	
