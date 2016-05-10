@@ -119,14 +119,17 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 # Basic methods
 #####
 
+#' @export
 length.energyDensity <- function(x, ...) {
 	length(x$energy)
 }
 
+#' @export
 sum.energyDensity <- function(x, ... ) {
 	sum(as.ts(x))
 }
 
+#' @export
 mean.energyDensity <- function(x, ... ) {
 	mean(as.ts(x))
 }
