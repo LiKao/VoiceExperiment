@@ -181,9 +181,24 @@ print.energyDensity <- function(x, ... ) {
 	cat(paste("\n\tDuration (seconds):", x$duration, sep="\t\t"))
 }
 
+#' Plotting of EnergyDensity Objects
+#' 
+#' @param x Energy density object to be plotted
+#' @param db Decibel indicator positions in plot (set to \code{NULL} to deactivate)
+#' @param ... Additional arguments passed to \link{plot}
+#' 
 #' @export
-plot.energyDensity <- function(x, ... ) {
+plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), ... ) {
+	if(!is.null(db)) {
+		mar <- par()$mar
+		par(mar=mar+c(0,0,0,2))
+	}
 	plot(as.ts(x), ylab="Energy", xlab="Time (s)", ...)
+	if(!is.null(db)) {
+		pw <- 10^(db/10)
+		axis(4,at=pw,labels=paste(db,"dB",sep=""),las=2)
+		par(mar=mar)
+	}
 }
 
 #' @export
