@@ -4,7 +4,7 @@
 \alias{expOnsets.as.csv2}
 \title{Analyse All Files from a Given Directory and Write Results as CSV file}
 \usage{
-expOnsets.as.csv2(dirname, filename, channels = c("both", "left", "right"),
+expOnsets.as.csv2(dirname, filename, read.params = list(), filter = list(),
   onset.params = list(), energy.params = energy.params, ...)
 }
 \arguments{
@@ -12,10 +12,10 @@ expOnsets.as.csv2(dirname, filename, channels = c("both", "left", "right"),
 
 \item{filename}{The filename of the csv file to which the results should be written}
 
-\item{channels}{The channel(s) that should be used. The wave file is automatically
-reduced to a mono wave file, either by selecting a single channel (values 
-\code{left} or \code{right}) or by averaging accros both channels (\code{both}).
-If the file is alread a mono file, this argument is ignored.}
+\item{read.params}{Parameters passed to \code{\link{read.wav}} (except filter parameters)}
+
+\item{filter}{List of filter parameters (set to \code{NULL} to deactivate filter). 
+See "Details"}
 
 \item{onset.params}{Parameters passed to \code{\link{onsets}}}
 
