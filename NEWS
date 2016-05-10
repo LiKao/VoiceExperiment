@@ -1,3 +1,4 @@
+* Added limit indicator in energy display
 * Added decibel indicator in energy display
 * Added spectrogram display of wave files
 * Simplified structure of arguments for combined functions

@@ -188,15 +188,20 @@ print.energyDensity <- function(x, ... ) {
 #' 
 #' @param x Energy density object to be plotted
 #' @param db Decibel indicator positions in plot (set to \code{NULL} to deactivate)
+#' @param limit Position of limit indicator (set to \code{NULL} to deactivate)
+#' @param limit.lty Line type of limit indicator 
 #' @param ... Additional arguments passed to \link{plot}
 #' 
 #' @export
-plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), ... ) {
+plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), limit=0.1, limit.lty=3, ... ) {
 	if(!is.null(db)) {
 		mar <- par()$mar
 		par(mar=mar+c(0,0,0,2))
 	}
 	plot(as.ts(x), ylab="Energy", xlab="Time (s)", ...)
+	if(!is.null(limit)) {
+		lines(x=time(x),y=rep(limit,length(x)),type="l",lty=limit.lty)
+	}
 	if(!is.null(db)) {
 		pw <- 10^(db/10)
 		axis(4,at=pw,labels=paste(db,"dB",sep=""),las=2)

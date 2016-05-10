@@ -5,12 +5,16 @@
 \title{Plotting of EnergyDensity Objects}
 \usage{
 \method{plot}{energyDensity}(x, db = c(0, -1, -2, -3, -4, -5, -6, -10, -15,
-  -Inf), ...)
+  -Inf), limit = 0.1, limit.lty = 3, ...)
 }
 \arguments{
 \item{x}{Energy density object to be plotted}
 
 \item{db}{Decibel indicator positions in plot (set to \code{NULL} to deactivate)}
+
+\item{limit}{Position of limit indicator (set to \code{NULL} to deactivate)}
+
+\item{limit.lty}{Line type of limit indicator}
 
 \item{...}{Additional arguments passed to \link{plot}}
 }
