@@ -193,14 +193,20 @@ print.energyDensity <- function(x, ... ) {
 #' @param ... Additional arguments passed to \link{plot}
 #' 
 #' @export
-plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), limit=0.1, limit.lty=3, ... ) {
+plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), limit=c(0.1,0.01), limit.lty=3, ... ) {
 	if(!is.null(db)) {
 		mar <- par()$mar
 		par(mar=mar+c(0,0,0,2))
 	}
 	plot(as.ts(x), ylab="Energy", xlab="Time (s)", ...)
 	if(!is.null(limit)) {
-		lines(x=time(x),y=rep(limit,length(x)),type="l",lty=limit.lty)
+		if(length(limit>1)) {
+			lines(x=time(x),y=rep(limit[1],length(x)),type="l",lty=limit.lty)
+			lines(x=time(x),y=rep(limit[2],length(x)),type="l",lty=limit.lty)
+		} 
+		else {
+			lines(x=time(x),y=rep(limit,length(x)),type="l",lty=limit.lty)
+		}
 	}
 	if(!is.null(db)) {
 		pw <- 10^(db/10)
