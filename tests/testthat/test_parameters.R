@@ -86,6 +86,18 @@ test_that("Illegal Paramters produce errors", {
 	
 	### onsets
 	
+	# Limits with hysteresis
+
+	expect_error( onsets(w, limit=c(0.1,  -2), limit.type="absolute"), 	"Illegal lower limit value: -2" )
+	expect_error( onsets(w, limit=c(0.1,  -1), limit.type="absolute"), 	"Illegal lower limit value: -1" )
+	expect_error( onsets(w, limit=c(0.1,-0.1), limit.type="absolute"), 	"Illegal lower limit value: -0.1" )
+	expect_error( onsets(w, limit=c(0.1,   0), limit.type="absolute"), 	"Illegal lower limit value: 0" )
+	expect_error( onsets(w, limit=c(1,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 1" )
+	expect_error( onsets(w, limit=c(2,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 2" )
+	expect_error( onsets(w, limit=c(0.01,0.1), limit.type="absolute"), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
+	
 	expect_error( onsets(w, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
 	expect_error( onsets(w, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
 	expect_error( onsets(w, limit=-0.1, limit.type="absolute"), 	"Illegal limit value: -0.1" )
@@ -93,14 +105,19 @@ test_that("Illegal Paramters produce errors", {
 	expect_error( onsets(w, limit= 1,   limit.type="absolute"), 	"Illegal limit value: 1" )
 	expect_error( onsets(w, limit= 2,   limit.type="absolute"), 	"Illegal limit value: 2" )
 	
-	expect_error( onsets(e, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
-	expect_error( onsets(e, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
-	expect_error( onsets(e, limit=-0.1, limit.type="absolute"), 	"Illegal limit value: -0.1" )
-	expect_error( onsets(e, limit= 0,   limit.type="absolute"), 	"Illegal limit value: 0" )
-	expect_error( onsets(e, limit= 1,   limit.type="absolute"), 	"Illegal limit value: 1" )
-	expect_error( onsets(e, limit= 2,   limit.type="absolute"), 	"Illegal limit value: 2" )
-	
 	### onsets.WaveData
+	
+	# Limits with hysteresis
+	
+	expect_error( onsets.WaveData(w, limit=c(0.1,  -2), limit.type="absolute"), 	"Illegal lower limit value: -2" )
+	expect_error( onsets.WaveData(w, limit=c(0.1,  -1), limit.type="absolute"), 	"Illegal lower limit value: -1" )
+	expect_error( onsets.WaveData(w, limit=c(0.1,-0.1), limit.type="absolute"), 	"Illegal lower limit value: -0.1" )
+	expect_error( onsets.WaveData(w, limit=c(0.1,   0), limit.type="absolute"), 	"Illegal lower limit value: 0" )
+	expect_error( onsets.WaveData(w, limit=c(1,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 1" )
+	expect_error( onsets.WaveData(w, limit=c(2,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 2" )
+	expect_error( onsets.WaveData(w, limit=c(0.01,0.1), limit.type="absolute"), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
 	
 	expect_error(   onsets.WaveData(w, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
 	expect_error(   onsets.WaveData(w, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
@@ -119,6 +136,18 @@ test_that("Illegal Paramters produce errors", {
 	expect_error(   onsets.WaveData(w, energy.params=list(window.width= 10, stepsize=  5, normalize=1.5)), 	"Illegal normalization value: 1.5")
 	
 	### onsets.energyDensity
+	
+	# Limits with hysteresis
+	
+	expect_error( onsets.energyDensity(e, limit=c(0.1,  -2), limit.type="absolute"), 	"Illegal lower limit value: -2" )
+	expect_error( onsets.energyDensity(e, limit=c(0.1,  -1), limit.type="absolute"), 	"Illegal lower limit value: -1" )
+	expect_error( onsets.energyDensity(e, limit=c(0.1,-0.1), limit.type="absolute"), 	"Illegal lower limit value: -0.1" )
+	expect_error( onsets.energyDensity(e, limit=c(0.1,   0), limit.type="absolute"), 	"Illegal lower limit value: 0" )
+	expect_error( onsets.energyDensity(e, limit=c(1,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 1" )
+	expect_error( onsets.energyDensity(e, limit=c(2,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 2" )
+	expect_error( onsets.energyDensity(e, limit=c(0.01,0.1), limit.type="absolute"), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
 	
 	expect_error( onsets.energyDensity(e, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
 	expect_error( onsets.energyDensity(e, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
@@ -151,7 +180,17 @@ test_that("Illegal Paramters produce errors", {
 	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness=-1)), "Illegal steepness: -1" )
 	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness= 0)), "Illegal steepness: 0" )
 	
+	# Limits with hysteresis
 	
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,  -2), limit.type="absolute")), 	"Illegal lower limit value: -2" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,  -1), limit.type="absolute")), 	"Illegal lower limit value: -1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,-0.1), limit.type="absolute")), 	"Illegal lower limit value: -0.1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,   0), limit.type="absolute")), 	"Illegal lower limit value: 0" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(1,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(2,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 2" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.01,0.1), limit.type="absolute")), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
 	
 	expect_error( analyse.file( testfile, onset.params=list(limit = -2,	limit.type="absolute")), "Illegal limit value: -2" )
 	expect_error( analyse.file( testfile, onset.params=list(limit = -1,	limit.type="absolute")), "Illegal limit value: -1" )
@@ -175,6 +214,18 @@ test_that("Illegal Paramters produce errors", {
 	expect_error( analyse.directory( illegaldir ), "Directory '[^']*' does not exist.")
 	
 	expect_error( analyse.directory( testdir, read.params=list(channels="none")), "'arg' should be one of \"both\", \"left\", \"right\"")
+	
+	# Limits with hysteresis
+	
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,  -2), limit.type="absolute")), 	"Illegal lower limit value: -2" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,  -1), limit.type="absolute")), 	"Illegal lower limit value: -1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,-0.1), limit.type="absolute")), 	"Illegal lower limit value: -0.1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,   0), limit.type="absolute")), 	"Illegal lower limit value: 0" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(1,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(2,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 2" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.01,0.1), limit.type="absolute")), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
 	
 	expect_error( analyse.directory( testdir, onset.params=list(limit = -2,   limit.type="absolute")), "Illegal limit value: -2" )
 	expect_error( analyse.directory( testdir, onset.params=list(limit = -1,   limit.type="absolute")), "Illegal limit value: -1" )
@@ -300,16 +351,44 @@ test_that("Parameters are propagated during file analysis", {
 	
 	###### onsets
 
-	### limit = 0.5
+	### limit.type = "absolute"
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit.type="absolute"))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
+	
+	### limit.type = "relative"
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+	
+	### lower limit parameter at 0.05
+
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.1,0.05), limit.type="absolute"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.1,0.05))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.1,0.05), limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.1,0.05))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+	
+	### upper limit parameter at 0.5
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.5,0.01), limit.type="absolute"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.5,0.01))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.5,0.01), limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.5,0.01))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+	
+	### limit = 0.5 (no hysteresis)
 	
 	o1 <- analyse.file( testfile, onset.params=list(limit = 0.5, limit.type="absolute"))
 	expect_equal(attr(o1,"params")$onset.params$limit,		0.5)
 	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
 	
-	### limit.type = "relative"
-	
-	o1 <- analyse.file( testfile, onset.params=list(limit = 0.1, limit.type="relative"))
-	expect_equal(attr(o1,"params")$onset.params$limit,		0.1)
+	o1 <- analyse.file( testfile, onset.params=list(limit = 0.5, limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		0.5)
 	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
 	
 	### All parameters
@@ -465,7 +544,55 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		###### onsets
 		
-		### limit = 0.5
+		### limit.type = "absolute"
+		
+		os <- analyse.directory( testdir, onset.params=list(limit.type="absolute"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+		}
+		
+		### limit.type = "relative"
+		
+		os <- analyse.directory( testdir, onset.params=list(limit.type="relative"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
+		
+		### lower limit parameter at 0.05
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.1,0.05), limit.type="absolute"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.1,0.05))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+		}
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.1,0.05), limit.type="relative"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.1,0.05))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
+		
+		### upper limit parameter at 0.5
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.5,0.01), limit.type="absolute"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.5,0.01))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+		}
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.5,0.01), limit.type="relative"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.5,0.01))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
+		
+		### limit = 0.5 (no hysteresis)
 		
 		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="absolute"))
 		
@@ -474,12 +601,10 @@ test_that("Parameters are propagated during directory analysis", {
 			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
 		}
 		
-		### limit.type = "relative"
-		
-		os <- analyse.directory( testdir, onset.params=list(limit = 0.1, limit.type="relative"))
+		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="relative"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.1)
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.5)
 			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
 		}
 		

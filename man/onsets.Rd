@@ -4,7 +4,8 @@
 \alias{onsets}
 \title{Calculate (Physical) Onset Times from an Object containing Time Series Data}
 \usage{
-onsets(ts, limit = 0.1, limit.type = c("absolute", "relative"), ...)
+onsets(ts, limit = c(0.1, 0.01), limit.type = c("absolute", "relative"),
+  ...)
 }
 \arguments{
 \item{ts}{The object containing the time series data.}

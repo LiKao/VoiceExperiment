@@ -1,3 +1,4 @@
+* Added hysteresis logic for onset detection
 * Added voice band filter to remove ground loop noise
 * Added limit indicator in energy display
 * Added decibel indicator in energy display
