@@ -5,7 +5,7 @@
 \title{Plotting of EnergyDensity Objects}
 \usage{
 \method{plot}{energyDensity}(x, db = c(0, -1, -2, -3, -4, -5, -6, -10, -15,
-  -Inf), limit = 0.1, limit.lty = 3, ...)
+  -Inf), limit = c(0.1, 0.01), limit.lty = 3, ...)
 }
 \arguments{
 \item{x}{Energy density object to be plotted}
