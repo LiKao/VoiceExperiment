@@ -26,17 +26,41 @@ context("Parameters")
 ###############################################
 
 test_that("Illegal Paramters produce errors", {
-
+			
 	### Prepare test data
 	
-	w <- read.wav("../testdata/silence_50ms_mono.wav")
+	illegalfile <- "../testdata/illegal.wav"
+	testfile	<- "../testdata/silence_50ms_mono.wav"
+
+	illegaldir	<- "../testdata/illegal/"
+	testdir		<- "../testdata/testsets"
+	
+	w <- read.wav(testfile)
 	e <- energyDensity(w)
 			
 	### read.wav
 	
-	expect_error( read.wav("../testdata/illegal.wav"), "File '[^']*' does not exist.")
-	expect_error( read.wav("../testdata/silence_50ms_mono.wav",channels="none"), 
-			      "'arg' should be one of \"both\", \"left\", \"right\"")
+	expect_error( read.wav(illegalfile), 				"File '[^']*' does not exist.")
+	expect_error( read.wav(testfile,channels="none"),	"'arg' should be one of \"both\", \"left\", \"right\"")
+	
+	expect_error( read.wav(testfile, filter=list(low=-100, high= 4000, Rp=0.01, 	Rs= 40, steepness= 1)), "Illegal value -100 for lower passband border in filter parameter" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high=  200, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 200 below lower passband border 300" )
+	# The testfile is sampled at 44.1kHz, so the Nyquist Frequency is at 22.05kHz
+	expect_error( read.wav(testfile, filter=list(low= 300, high=25000, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 25000 above Nyquist frequency 22050" )
+	# With a passband border at 15kHz and a steepness of 1 octave, we get a stopband at 30kHz, 
+	# i.e. above Nyquist
+	expect_error( read.wav(testfile, filter=list(low= 300, high=15000, Rp=  0.01, 	Rs= 40, steepness= 1)), "Illegal upper stopband border: 30000" )
+	# With a steepness of 2 octave we ge a lower limit (2 octaves is times 4, i.e. 2 octaves above 10kHz is 40kHz)
+	expect_error( read.wav(testfile, filter=list(low= 300, high=10000, Rp=  0.01, 	Rs= 40, steepness= 2)), "Illegal upper stopband border: 40000" )
+	
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=-10,		Rs= 40, steepness= 1)), "Illegal passband ripple: -10" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=  0, 		Rs= 40, steepness= 1)), "Illegal passband ripple: 0" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=  0.01, 	Rs=-10, steepness= 1)), "Illegal attenuation: -10" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=0.01, 	Rs=  0, steepness= 1)), "Illegal attenuation: 0" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness=-1)), "Illegal steepness: -1" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness= 0)), "Illegal steepness: 0" )
+	
+	
 		  
 	### energyDensity
 	
@@ -62,6 +86,18 @@ test_that("Illegal Paramters produce errors", {
 	
 	### onsets
 	
+	# Limits with hysteresis
+
+	expect_error( onsets(w, limit=c(0.1,  -2), limit.type="absolute"), 	"Illegal lower limit value: -2" )
+	expect_error( onsets(w, limit=c(0.1,  -1), limit.type="absolute"), 	"Illegal lower limit value: -1" )
+	expect_error( onsets(w, limit=c(0.1,-0.1), limit.type="absolute"), 	"Illegal lower limit value: -0.1" )
+	expect_error( onsets(w, limit=c(0.1,   0), limit.type="absolute"), 	"Illegal lower limit value: 0" )
+	expect_error( onsets(w, limit=c(1,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 1" )
+	expect_error( onsets(w, limit=c(2,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 2" )
+	expect_error( onsets(w, limit=c(0.01,0.1), limit.type="absolute"), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
+	
 	expect_error( onsets(w, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
 	expect_error( onsets(w, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
 	expect_error( onsets(w, limit=-0.1, limit.type="absolute"), 	"Illegal limit value: -0.1" )
@@ -69,32 +105,49 @@ test_that("Illegal Paramters produce errors", {
 	expect_error( onsets(w, limit= 1,   limit.type="absolute"), 	"Illegal limit value: 1" )
 	expect_error( onsets(w, limit= 2,   limit.type="absolute"), 	"Illegal limit value: 2" )
 	
-	expect_error( onsets(e, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
-	expect_error( onsets(e, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
-	expect_error( onsets(e, limit=-0.1, limit.type="absolute"), 	"Illegal limit value: -0.1" )
-	expect_error( onsets(e, limit= 0,   limit.type="absolute"), 	"Illegal limit value: 0" )
-	expect_error( onsets(e, limit= 1,   limit.type="absolute"), 	"Illegal limit value: 1" )
-	expect_error( onsets(e, limit= 2,   limit.type="absolute"), 	"Illegal limit value: 2" )
-	
 	### onsets.WaveData
 	
-	expect_error(   onsets.WaveData(w, limit=-2,   limit.type="absolute", window.width= 10, stepsize=  5, normalize=0.9), 	"Illegal limit value: -2" )
-	expect_error(   onsets.WaveData(w, limit=-1,   limit.type="absolute", window.width= 10, stepsize=  5, normalize=0.9), 	"Illegal limit value: -1" )
-	expect_error(   onsets.WaveData(w, limit=-0.1, limit.type="absolute", window.width= 10, stepsize=  5, normalize=0.9), 	"Illegal limit value: -0.1" )
-	expect_error(   onsets.WaveData(w, limit= 0,   limit.type="absolute", window.width= 10, stepsize=  5, normalize=0.9), 	"Illegal limit value: 0" )
-	expect_error(   onsets.WaveData(w, limit= 1,   limit.type="absolute", window.width= 10, stepsize=  5, normalize=0.9), 	"Illegal limit value: 1" )
-	expect_error(   onsets.WaveData(w, limit= 2,   limit.type="absolute", window.width= 10, stepsize=  5, normalize=0.9), 	"Illegal limit value: 2" )
+	# Limits with hysteresis
 	
-	expect_error(   onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width=-10, stepsize=  5, normalize=0.9), 	"Illegal window width: -10")
-	expect_error(   onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width=  0, stepsize=  5, normalize=0.9), 	"Illegal window width: 0")
-	expect_error(   onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width= 10, stepsize=-10, normalize=0.9), 	"Illegal stepsize: -10")
-	expect_error(   onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width= 10, stepsize=  0, normalize=0.9), 	"Illegal stepsize: 0")
-	expect_warning( onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width= 10, stepsize= 15, normalize=0.9),	"Stepsize 15 is larger than window width 10")
-	expect_error(   onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width= 10, stepsize=  5, normalize=-1.5), "Illegal normalization value: -1.5")
-	expect_error(   onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width= 10, stepsize=  5, normalize=-0.5), "Illegal normalization value: -0.5")
-	expect_error(   onsets.WaveData(w, limit=0.1,  limit.type="absolute", window.width= 10, stepsize=  5, normalize=1.5), 	"Illegal normalization value: 1.5")
+	expect_error( onsets.WaveData(w, limit=c(0.1,  -2), limit.type="absolute"), 	"Illegal lower limit value: -2" )
+	expect_error( onsets.WaveData(w, limit=c(0.1,  -1), limit.type="absolute"), 	"Illegal lower limit value: -1" )
+	expect_error( onsets.WaveData(w, limit=c(0.1,-0.1), limit.type="absolute"), 	"Illegal lower limit value: -0.1" )
+	expect_error( onsets.WaveData(w, limit=c(0.1,   0), limit.type="absolute"), 	"Illegal lower limit value: 0" )
+	expect_error( onsets.WaveData(w, limit=c(1,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 1" )
+	expect_error( onsets.WaveData(w, limit=c(2,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 2" )
+	expect_error( onsets.WaveData(w, limit=c(0.01,0.1), limit.type="absolute"), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
+	
+	expect_error(   onsets.WaveData(w, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
+	expect_error(   onsets.WaveData(w, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
+	expect_error(   onsets.WaveData(w, limit=-0.1, limit.type="absolute"), 	"Illegal limit value: -0.1" )
+	expect_error(   onsets.WaveData(w, limit= 0,   limit.type="absolute"), 	"Illegal limit value: 0" )
+	expect_error(   onsets.WaveData(w, limit= 1,   limit.type="absolute"), 	"Illegal limit value: 1" )
+	expect_error(   onsets.WaveData(w, limit= 2,   limit.type="absolute"), 	"Illegal limit value: 2" )
+	
+	expect_error(   onsets.WaveData(w, energy.params=list(window.width=-10, stepsize=  5, normalize=0.9)), 	"Illegal window width: -10")
+	expect_error(   onsets.WaveData(w, energy.params=list(window.width=  0, stepsize=  5, normalize=0.9)), 	"Illegal window width: 0")
+	expect_error(   onsets.WaveData(w, energy.params=list(window.width= 10, stepsize=-10, normalize=0.9)), 	"Illegal stepsize: -10")
+	expect_error(   onsets.WaveData(w, energy.params=list(window.width= 10, stepsize=  0, normalize=0.9)), 	"Illegal stepsize: 0")
+	expect_warning( onsets.WaveData(w, energy.params=list(window.width= 10, stepsize= 15, normalize=0.9)),	"Stepsize 15 is larger than window width 10")
+	expect_error(   onsets.WaveData(w, energy.params=list(window.width= 10, stepsize=  5, normalize=-1.5)), "Illegal normalization value: -1.5")
+	expect_error(   onsets.WaveData(w, energy.params=list(window.width= 10, stepsize=  5, normalize=-0.5)), "Illegal normalization value: -0.5")
+	expect_error(   onsets.WaveData(w, energy.params=list(window.width= 10, stepsize=  5, normalize=1.5)), 	"Illegal normalization value: 1.5")
 	
 	### onsets.energyDensity
+	
+	# Limits with hysteresis
+	
+	expect_error( onsets.energyDensity(e, limit=c(0.1,  -2), limit.type="absolute"), 	"Illegal lower limit value: -2" )
+	expect_error( onsets.energyDensity(e, limit=c(0.1,  -1), limit.type="absolute"), 	"Illegal lower limit value: -1" )
+	expect_error( onsets.energyDensity(e, limit=c(0.1,-0.1), limit.type="absolute"), 	"Illegal lower limit value: -0.1" )
+	expect_error( onsets.energyDensity(e, limit=c(0.1,   0), limit.type="absolute"), 	"Illegal lower limit value: 0" )
+	expect_error( onsets.energyDensity(e, limit=c(1,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 1" )
+	expect_error( onsets.energyDensity(e, limit=c(2,  0.01), limit.type="absolute"), 	"Illegal higher limit value: 2" )
+	expect_error( onsets.energyDensity(e, limit=c(0.01,0.1), limit.type="absolute"), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
 	
 	expect_error( onsets.energyDensity(e, limit=-2,   limit.type="absolute"), 	"Illegal limit value: -2" )
 	expect_error( onsets.energyDensity(e, limit=-1,   limit.type="absolute"), 	"Illegal limit value: -1" )
@@ -104,452 +157,508 @@ test_that("Illegal Paramters produce errors", {
 	expect_error( onsets.energyDensity(e, limit= 2,   limit.type="absolute"), 	"Illegal limit value: 2" )
 	
 	
-	### analyse.file 
+	### analyse.file
 	
-	expect_error( analyse.file( "../testdata/illegal.wav", channels="both", limit = 0.1, limit.type="absolute", 
-					            normalize=0.9, window.width=10, stepsize=5), 
-				  "File '[^']*' does not exist.")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="none", limit = 0.1, limit.type="absolute", 
-							    normalize=0.9, window.width=10, stepsize=5), 
-				  "'arg' should be one of \"both\", \"left\", \"right\"")
-
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit = -2, limit.type="absolute",
-					            normalize=0.9, window.width=10, stepsize=5),
-				  "Illegal limit value: -2" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit = -1, limit.type="absolute",
-					            normalize=0.9, window.width=10, stepsize=5),
-				  "Illegal limit value: -1" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit = -0.1, limit.type="absolute",
-						        normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: -0.1" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0, limit.type="absolute",
-					            normalize=0.9, window.width=10, stepsize=5),
-				  "Illegal limit value: 0" )
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  1, limit.type="absolute",
-					            normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: 1" )
-	expect_error( analyse.file("../testdata/silence_50ms_mono.wav",channels="both", limit =  2, limit.type="absolute",
-					           normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: 2" )
+	expect_error( analyse.file( illegalfile ), "File '[^']*' does not exist.")
+	
+	expect_error( analyse.file( testfile, read.params=list(channels="none") ), "'arg' should be one of \"both\", \"left\", \"right\"")
+	
+	expect_error( analyse.file(testfile, filter=list(low=-100, high= 4000, Rp=0.01, 	Rs= 40, steepness= 1)), "Illegal value -100 for lower passband border in filter parameter" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=  200, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 200 below lower passband border 300" )
+	# The testfile is sampled at 44.1kHz, so the Nyquist Frequency is at 22.05kHz
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=25000, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 25000 above Nyquist frequency 22050" )
+	# With a passband border at 15kHz and a steepness of 1 octave, we get a stopband at 30kHz, 
+	# i.e. above Nyquist
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=15000, Rp=  0.01, 	Rs= 40, steepness= 1)), "Illegal upper stopband border: 30000" )
+	# With a steepness of 2 octave we ge a lower limit (2 octaves is times 4, i.e. 2 octaves above 10kHz is 40kHz)
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=10000, Rp=  0.01, 	Rs= 40, steepness= 2)), "Illegal upper stopband border: 40000" )
+	
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=-10,		Rs= 40, steepness= 1)), "Illegal passband ripple: -10" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=  0, 		Rs= 40, steepness= 1)), "Illegal passband ripple: 0" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=  0.01, 	Rs=-10, steepness= 1)), "Illegal attenuation: -10" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01, 	Rs=  0, steepness= 1)), "Illegal attenuation: 0" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness=-1)), "Illegal steepness: -1" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness= 0)), "Illegal steepness: 0" )
+	
+	# Limits with hysteresis
+	
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,  -2), limit.type="absolute")), 	"Illegal lower limit value: -2" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,  -1), limit.type="absolute")), 	"Illegal lower limit value: -1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,-0.1), limit.type="absolute")), 	"Illegal lower limit value: -0.1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.1,   0), limit.type="absolute")), 	"Illegal lower limit value: 0" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(1,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(2,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 2" )
+	expect_error( analyse.file( testfile, onset.params=list(limit=c(0.01,0.1), limit.type="absolute")), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
+	
+	# Limits without hysteresis
+	
+	expect_error( analyse.file( testfile, onset.params=list(limit = -2,	limit.type="absolute")), "Illegal limit value: -2" )
+	expect_error( analyse.file( testfile, onset.params=list(limit = -1,	limit.type="absolute")), "Illegal limit value: -1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit = -0.1, 	limit.type="absolute")), "Illegal limit value: -0.1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit =  0,	limit.type="absolute")), "Illegal limit value: 0" )
+	expect_error( analyse.file( testfile, onset.params=list(limit =  1,	limit.type="absolute")), "Illegal limit value: 1" )
+	expect_error( analyse.file( testfile, onset.params=list(limit =  2,	limit.type="absolute")), "Illegal limit value: 2" )
 		  
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-					            normalize=0.9, window.width=-10, stepsize=  5),
-				  "Illegal window width: -10")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-					            normalize=0.9, window.width=  0, stepsize=  5),
-				  "Illegal window width: 0")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-					            normalize=0.9, window.width= 10, stepsize=-10),
-			      "Illegal stepsize: -10")
-	expect_error( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-					            normalize=0.9, window.width= 10, stepsize=  0),
-			      "Illegal stepsize: 0")
-	expect_warning( analyse.file( "../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-					              normalize=0.9, window.width=10, stepsize=15),
-			        "Stepsize 15 is larger than window width 10")
-			
-	expect_error( analyse.file("../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-							   window.width= 10, stepsize=5, normalize=-1.5),
-				  "Illegal normalization value: -1.5")
-	expect_error( analyse.file("../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-		                       window.width= 10, stepsize=5, normalize=-0.5),
-  				  "Illegal normalization value: -0.5")
-	expect_error( analyse.file("../testdata/silence_50ms_mono.wav",channels="both", limit =  0.1, limit.type="absolute",
-		          			   window.width= 10, stepsize=5, normalize=1.5),
-  				  "Illegal normalization value: 1.5")
+	expect_error(	analyse.file( testfile, energy.params=list(normalize= 0.9, window.width=-10, stepsize=  5)), "Illegal window width: -10")
+	expect_error(	analyse.file( testfile, energy.params=list(normalize= 0.9, window.width=  0, stepsize=  5)), "Illegal window width: 0")
+	expect_error(	analyse.file( testfile, energy.params=list(normalize= 0.9, window.width= 10, stepsize=-10)), "Illegal stepsize: -10")
+	expect_error(	analyse.file( testfile, energy.params=list(normalize= 0.9, window.width= 10, stepsize=  0)), "Illegal stepsize: 0")
+	expect_warning(	analyse.file( testfile, energy.params=list(normalize= 0.9, window.width= 10, stepsize= 15)), "Stepsize 15 is larger than window width 10")
+	expect_error(	analyse.file( testfile, energy.params=list(normalize=-1.5, window.width= 10, stepsize=  5)), "Illegal normalization value: -1.5")
+	expect_error(	analyse.file( testfile, energy.params=list(normalize=-0.5, window.width= 10, stepsize=  5)), "Illegal normalization value: -0.5")
+	expect_error(	analyse.file( testfile, energy.params=list(normalize= 1.5, window.width= 10, stepsize=  5)), "Illegal normalization value: 1.5")
 	
 	
 	### analyse.directory
 	
-	expect_error( analyse.directory( "../testdata/illegal/", channels="both", limit = 0.1, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5), 
-			      "Directory '[^']*' does not exist.")
-	expect_error( analyse.directory( "../testdata/testsets",channels="none", limit = 0.1, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5), 
-			      "'arg' should be one of \"both\", \"left\", \"right\"")
+	expect_error( analyse.directory( illegaldir ), "Directory '[^']*' does not exist.")
 	
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit = -2, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: -2" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit = -1, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: -1" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit = -0.1, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: -0.1" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: 0" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  1, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: 1" )
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  2, limit.type="absolute",
-					                 normalize=0.9, window.width=10, stepsize=5),
-			      "Illegal limit value: 2" )
+	expect_error( analyse.directory( testdir, read.params=list(channels="none")), "'arg' should be one of \"both\", \"left\", \"right\"")
 	
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-					                 normalize=0.9, window.width=-10, stepsize=  5),
-			      "Illegal window width: -10")
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-					                 normalize=0.9, window.width=  0, stepsize=  5),
-			      "Illegal window width: 0")
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-					                 normalize=0.9, window.width= 10, stepsize=-10),
-			      "Illegal stepsize: -10")
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-					                 normalize=0.9, window.width= 10, stepsize=  0),
-			      "Illegal stepsize: 0")
-	expect_warning( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-					                   normalize=0.9, window.width=10, stepsize=15),
-			        "Stepsize 15 is larger than window width 10")
-			
-	expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-									 normalize=-1.5, window.width= 10, stepsize=  5),
-				  "Illegal normalization value: -1.5")
-    expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-	    		                     normalize=-0.5, window.width= 10, stepsize=  5),
-	              "Illegal normalization value: -0.5")
-    expect_error( analyse.directory( "../testdata/testsets",channels="both", limit =  0.1, limit.type="absolute",
-			                         normalize=1.5, window.width= 10, stepsize=  5),
-	              "Illegal normalization value: 1.5")
+	# Limits with hysteresis
 	
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,  -2), limit.type="absolute")), 	"Illegal lower limit value: -2" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,  -1), limit.type="absolute")), 	"Illegal lower limit value: -1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,-0.1), limit.type="absolute")), 	"Illegal lower limit value: -0.1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.1,   0), limit.type="absolute")), 	"Illegal lower limit value: 0" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(1,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(2,  0.01), limit.type="absolute")), 	"Illegal higher limit value: 2" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit=c(0.01,0.1), limit.type="absolute")), 	"Illegal limit value: High limit 0.01 is below low limit 0.1" )
 	
+	# Limits without hysteresis
+	
+	expect_error( analyse.directory( testdir, onset.params=list(limit = -2,   limit.type="absolute")), "Illegal limit value: -2" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit = -1,   limit.type="absolute")), "Illegal limit value: -1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit = -0.1, limit.type="absolute")), "Illegal limit value: -0.1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit =  0,   limit.type="absolute")), "Illegal limit value: 0" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit =  1,   limit.type="absolute")), "Illegal limit value: 1" )
+	expect_error( analyse.directory( testdir, onset.params=list(limit =  2,   limit.type="absolute")), "Illegal limit value: 2" )
+	
+	expect_error( analyse.directory( testdir, filter=list(low=-100, high= 4000, Rp=0.01, 	Rs= 40, steepness= 1)), "Illegal value -100 for lower passband border in filter parameter" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=  200, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 200 below lower passband border 300" )
+	# The testfile is sampled at 44.1kHz, so the Nyquist Frequency is at 22.05kHz
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=25000, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 25000 above Nyquist frequency 22050" )
+	# With a passband border at 15kHz and a steepness of 1 octave, we get a stopband at 30kHz, 
+	# i.e. above Nyquist
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=15000, Rp=  0.01, 	Rs= 40, steepness= 1)), "Illegal upper stopband border: 30000" )
+	# With a steepness of 2 octave we ge a lower limit (2 octaves is times 4, i.e. 2 octaves above 10kHz is 40kHz)
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=10000, Rp=  0.01, 	Rs= 40, steepness= 2)), "Illegal upper stopband border: 40000" )
+	
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=-10,		Rs= 40, steepness= 1)), "Illegal passband ripple: -10" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=  0, 		Rs= 40, steepness= 1)), "Illegal passband ripple: 0" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=  0.01, 	Rs=-10, steepness= 1)), "Illegal attenuation: -10" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=0.01, 	Rs=  0, steepness= 1)), "Illegal attenuation: 0" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness=-1)), "Illegal steepness: -1" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness= 0)), "Illegal steepness: 0" )
+	
+	expect_error(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width=-10, stepsize=  5)), "Illegal window width: -10")
+	expect_error(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width=  0, stepsize=  5)), "Illegal window width: 0")
+	expect_error(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width= 10, stepsize=-10)), "Illegal stepsize: -10")
+	expect_error(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width= 10, stepsize=  0)), "Illegal stepsize: 0")
+	expect_warning(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width= 10, stepsize= 15)), "Stepsize 15 is larger than window width 10")
+	expect_error(	analyse.directory( testdir, energy.params=list(normalize=-1.5, window.width= 10, stepsize=  5)), "Illegal normalization value: -1.5")
+    expect_error(	analyse.directory( testdir, energy.params=list(normalize=-0.5, window.width= 10, stepsize=  5)), "Illegal normalization value: -0.5")
+    expect_error(	analyse.directory( testdir, energy.params=list(normalize= 1.5, window.width= 10, stepsize=  5)), "Illegal normalization value: 1.5")
 })
 
 #############################################################
 
 test_that("Parameters are propagated during file analysis", {
-	
-	### All parameters at default values
 			
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute", 
-					   window.width=10, stepsize=5, normalize=0.9)
-	expect_equal(attr(o1,"params")$limit,			0.1)
-	expect_equal(attr(o1,"params")$window.width,	10)
-	expect_equal(attr(o1,"params")$stepsize,		5)
-	expect_equal(attr(o1,"params")$channels, 		"both")
-	expect_equal(attr(o1,"params")$normalize,		0.9)
-	expect_equal(attr(o1,"params")$limit.type,		"absolute")
+	testfile	<- "../testdata/silence_50ms_mono.wav"
+	
+	###### read.wav
+	
+	### channels = both (default)
+				
+	o1 <- analyse.file( testfile, read.params=list(channels="both") )
+	expect_equal(attr(o1,"params")$read.params$channels, "both")
 	
 	### channels = left
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="left", limit = 0.1, limit.type="absolute",
-			           window.width=10, stepsize=5, normalize=0.9)
-	expect_equal(attr(o1,"params")$limit,			0.1)
-	expect_equal(attr(o1,"params")$window.width,	10)
-	expect_equal(attr(o1,"params")$stepsize,		5)
-	expect_equal(attr(o1,"params")$channels, 		"left")
-	expect_equal(attr(o1,"params")$normalize,		0.9)
-	expect_equal(attr(o1,"params")$limit.type,		"absolute")
+	o1 <- analyse.file( testfile, read.params=list(channels="left"))
+	expect_equal(attr(o1,"params")$read.params$channels, "left")
 	
 	### channels = right
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="right", limit = 0.1, limit.type="absolute",
-			           window.width=10, stepsize=5, normalize=0.9)
-	expect_equal(attr(o1,"params")$limit,			0.1)
-	expect_equal(attr(o1,"params")$window.width,	10)
-	expect_equal(attr(o1,"params")$stepsize,		5)
-	expect_equal(attr(o1,"params")$channels, 		"right")
-	expect_equal(attr(o1,"params")$normalize,		0.9)
-	expect_equal(attr(o1,"params")$limit.type,		"absolute")
+	o1 <- analyse.file( testfile, read.params=list(channels="right"))
+	expect_equal(attr(o1,"params")$read.params$channels, "right")
 	
-	### limit = 0.5
+	### Filter parameters
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.5, limit.type="absolute",
-			           window.width=10, stepsize=5, normalize=0.9)
-	expect_equal(attr(o1,"params")$limit,			0.5)
-	expect_equal(attr(o1,"params")$window.width,	10)
-	expect_equal(attr(o1,"params")$stepsize,		5)
-	expect_equal(attr(o1,"params")$channels, 		"both")
-	expect_equal(attr(o1,"params")$normalize,		0.9)
-	expect_equal(attr(o1,"params")$limit.type,		"absolute")
+	### Defaults
 	
-	### window.witdht = 20
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute",
-			           window.width=20, stepsize=5, normalize=0.9)
-	expect_equal(attr(o1,"params")$limit,			0.1)
-	expect_equal(attr(o1,"params")$window.width,	20)
-	expect_equal(attr(o1,"params")$stepsize,		5)
-	expect_equal(attr(o1,"params")$channels, 		"both")
-	expect_equal(attr(o1,"params")$normalize,		0.9)
-	expect_equal(attr(o1,"params")$limit.type,		"absolute")
+	### low=200
 	
-	### stepsize = 3
+	o1 <- analyse.file( testfile, filter=list(low=200, high=4000, Rp=0.001, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			200)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute",
-			           window.width=10, stepsize=3, normalize=0.9)
-	expect_equal(attr(o1,"params")$limit,			0.1)
-	expect_equal(attr(o1,"params")$window.width,	10)
-	expect_equal(attr(o1,"params")$stepsize,		3)
-	expect_equal(attr(o1,"params")$channels, 		"both")
-	expect_equal(attr(o1,"params")$normalize,		0.9)
-	expect_equal(attr(o1,"params")$limit.type,		"absolute")
+	### high=5000
 	
-	### normalize = 0.7
+	o1 <- analyse.file( testfile, filter=list(low=300, high=5000, Rp=0.001, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			5000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="absolute",
-			           window.width=10, stepsize=5, normalize=0.7)
-	expect_equal(attr(o1,"params")$limit,			0.1)
-	expect_equal(attr(o1,"params")$window.width,	10)
-	expect_equal(attr(o1,"params")$stepsize,		5)
-	expect_equal(attr(o1,"params")$channels, 		"both")
-	expect_equal(attr(o1,"params")$normalize,		0.7)
-	expect_equal(attr(o1,"params")$limit.type,		"absolute")
+	### Rp=1
 	
-	### limit.type = "relative"
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=1, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			1)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="both", limit = 0.1, limit.type="relative", 
-			window.width=10, stepsize=5, normalize=0.9)
-	expect_equal(attr(o1,"params")$limit,			0.1)
-	expect_equal(attr(o1,"params")$window.width,	10)
-	expect_equal(attr(o1,"params")$stepsize,		5)
-	expect_equal(attr(o1,"params")$channels, 		"both")
-	expect_equal(attr(o1,"params")$normalize,		0.9)
-	expect_equal(attr(o1,"params")$limit.type,		"relative")
+	### Rs=20
+	
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=0.001, Rs=20, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			20)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
+	
+	### steepness=2
+	
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=2))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	2)
 	
 	### All parameters
 	
-	o1 <- analyse.file("../testdata/silence_50ms_mono.wav", channels="left", limit = 0.5, limit.type="relative",
-			           window.width=20, stepsize=3, normalize=0.7)
-	expect_equal(attr(o1,"params")$limit,			0.5)
-	expect_equal(attr(o1,"params")$window.width,	20)
-	expect_equal(attr(o1,"params")$stepsize,		3)
-	expect_equal(attr(o1,"params")$channels, 		"left")
-	expect_equal(attr(o1,"params")$normalize,		0.7)
-	expect_equal(attr(o1,"params")$limit.type,		"relative")
+	o1 <- analyse.file( testfile, filter=list(low=200, high=5000, Rp=1, Rs=20, steepness=2))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			200)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			5000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			1)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			20)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	2)
+	
+	###### onsets
+
+	### limit.type = "absolute"
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit.type="absolute"))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
+	
+	### limit.type = "relative"
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+	
+	### lower limit parameter at 0.05
+
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.1,0.05), limit.type="absolute"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.1,0.05))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.1,0.05), limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.1,0.05))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+	
+	### upper limit parameter at 0.5
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.5,0.01), limit.type="absolute"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.5,0.01))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = c(0.5,0.01), limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		c(0.5,0.01))
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+	
+	### limit = 0.5 (no hysteresis)
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = 0.5, limit.type="absolute"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		0.5)
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"absolute")
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = 0.5, limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		0.5)
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+	
+	### All parameters
+	
+	o1 <- analyse.file( testfile, onset.params=list(limit = 0.5, limit.type="relative"))
+	expect_equal(attr(o1,"params")$onset.params$limit,		0.5)
+	expect_equal(attr(o1,"params")$onset.params$limit.type,	"relative")
+
+	###### energy.params
+	
+	### window.witdht = 20
+	
+	o1 <- analyse.file( testfile, energy.params=list(window.width=20, stepsize=5, normalize=0.9))
+	expect_equal(attr(o1,"params")$onset.params$energy.params$window.width,	20)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$stepsize,		5)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$normalize,		0.9)
+	
+	### stepsize = 3
+	
+	o1 <- analyse.file( testfile, energy.params=list(window.width=10, stepsize=3, normalize=0.9))
+
+	expect_equal(attr(o1,"params")$onset.params$energy.params$window.width,	10)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$stepsize,		3)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$normalize,		0.9)
+	
+	### normalize = 0.7
+	
+	o1 <- analyse.file( testfile, energy.params=list(window.width=10, stepsize=5, normalize=0.7))
+	expect_equal(attr(o1,"params")$onset.params$energy.params$window.width,	10)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$stepsize,		5)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$normalize,		0.7)
+	
+	### All parameters
+	
+	o1 <- analyse.file( testfile, energy.params=list(window.width=20, stepsize=3, normalize=0.7))
+	expect_equal(attr(o1,"params")$onset.params$energy.params$window.width,  20)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$stepsize,		3)
+	expect_equal(attr(o1,"params")$onset.params$energy.params$normalize,		0.7)
 })
 
 ##################################################################
 
 test_that("Parameters are propagated during directory analysis", {
 			
-			
-		# TODO: Use loops here (not recommendet in Unit testing, but simplifies this mess a lot)
-			
-		### All parameters at default values
-			
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
-								window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+		testdir		<- "../testdata/testsets"
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
+		###### read.wav
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		### channels = both
+			
+		os <- analyse.directory( testdir, read.params=list(channels="both"))
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$channels, "both")
+		}
+		
 		
 		### channels = left
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="left", limit = 0.1, limit.type="absolute",
-				                window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
-		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, read.params=list(channels="left"))
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$channels, "left")
+		}
 		
 		### channels = right
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="right", limit = 0.1, limit.type="absolute",
-				                window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"right")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, read.params=list(channels="right"))
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$channels, "right")
+		}
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"right")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"right")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		### Filter parameters
 		
-		### limit = 0.5
+		### Defaults
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.5, limit.type="absolute",
-				                window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
+		### low=200
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, filter=list(low=200, high=4000, Rp=0.001, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		200)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
 		
-		### window.witdth = 20
+		### high=5000
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
-				                window.width=20, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, filter=list(low=300, high=5000, Rp=0.001, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		5000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
+		### Rp=1
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=1, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			1)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
 		
-		### stepsize = 3
+		### Rs=20
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
-				                window.width=10, stepsize=3, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=20, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			20)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
+		### steepnes=2
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=2))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	2)
+		}
 		
-		### normalize = 0.7
+		### All parameters
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="absolute",
-				                window.width=10, stepsize=3, normalize=0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"absolute")
+		os <- analyse.directory( testdir, filter=list(low=200, high=5000, Rp=1, Rs=20, steepness=2))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		200)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		5000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			1)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			20)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	2)
+		}
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"absolute")
+		###### onsets
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"absolute")
+		### limit.type = "absolute"
+		
+		os <- analyse.directory( testdir, onset.params=list(limit.type="absolute"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+		}
 		
 		### limit.type = "relative"
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="both", limit = 0.1, limit.type="relative",
-				window.width=10, stepsize=5, normalize=0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"relative")
+		os <- analyse.directory( testdir, onset.params=list(limit.type="relative"))
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"relative")
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.1)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	10)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"both")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.9)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"relative")
+		### lower limit parameter at 0.05
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.1,0.05), limit.type="absolute"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.1,0.05))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+		}
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.1,0.05), limit.type="relative"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.1,0.05))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
+		
+		### upper limit parameter at 0.5
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.5,0.01), limit.type="absolute"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.5,0.01))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+		}
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = c(0.5,0.01), limit.type="relative"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.5,0.01))
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
+		
+		### limit = 0.5 (no hysteresis)
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="absolute"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.5)
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+		}
+		
+		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="relative"))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.5)
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
 		
 		### All parameters changed
 		
-		o1 <- analyse.directory("../testdata/testsets", channels="left", limit = 0.5, limit.type="relative",
-				                window.width=20, stepsize=3, normalize=0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[1]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[1]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[1]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[1]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[1]]$onsets,"params")$limit.type,		"relative")
+		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="relative"))
 		
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[2]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[2]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[2]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[2]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[2]]$onsets,"params")$limit.type,		"relative")
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.5)
+			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+		}
 		
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit,			0.5)
-		expect_equal(attr(o1[[3]]$onsets,"params")$window.width,	20)
-		expect_equal(attr(o1[[3]]$onsets,"params")$stepsize,		3)
-		expect_equal(attr(o1[[3]]$onsets,"params")$channels, 		"left")
-		expect_equal(attr(o1[[3]]$onsets,"params")$normalize,		0.7)
-		expect_equal(attr(o1[[3]]$onsets,"params")$limit.type,		"relative")
+		##### energy.params
+		
+		### window.witdth = 20
+		
+		os <- analyse.directory( testdir, energy.params=list(window.width=20, stepsize=5, normalize=0.9))
+		
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	20)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		5)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.9)
+		}
+		
+		### stepsize = 3
+		
+		os <- analyse.directory( testdir, energy.params=list(window.width=10, stepsize=3, normalize=0.9))
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		3)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.9)
+		}
+		
+				
+		### normalize = 0.7
+		
+		os <- analyse.directory( testdir, energy.params=list(window.width=10, stepsize=3, normalize=0.7))
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	10)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		3)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.7)
+		}
+		
+		
+		### All parameters changed
+		
+		os <- analyse.directory( testdir, energy.params=list(window.width=20, stepsize=3, normalize=0.7))
+						
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	20)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		3)
+			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.7)
+		}
 })
 

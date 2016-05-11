@@ -4,7 +4,8 @@
 \alias{read.wav}
 \title{Reads Wave Date From a File}
 \usage{
-read.wav(filename, channels = c("both", "left", "right"))
+read.wav(filename, channels = c("both", "left", "right"), filter = list(low
+  = 300, high = 4000, Rp = 0.001, Rs = 40, steepness = 1))
 }
 \arguments{
 \item{filename}{The filename to be read}
@@ -13,6 +14,9 @@ read.wav(filename, channels = c("both", "left", "right"))
 reduced to a mono wave file, either by selecting a single channel (values 
 \code{left} or \code{right}) or by averaging accros both channels (\code{both}).
 If the file is alread a mono file, this argument is ignored.}
+
+\item{filter}{List of filter parameters (set to \code{NULL} to deactivate filter). 
+See "Details"}
 }
 \value{
 An object of type \code{WaveData}
@@ -21,5 +25,26 @@ An object of type \code{WaveData}
 This function reads wave data from a file. The data is read using
 the \code{\link[tuneR]{readWave}} function and then automatically
 simplified for further processing.
+}
+\details{
+The wavefile is filtered upon loading using an elliptic bandpass filter.
+The filter parameters are passed as a list within the \code{filter} 
+argument, which must contain the following elements. Set the \code{filter}
+argument to \code{NULL} to deactivate the bandpass filter. 
+
+Default values are based on the telephony voice band 
+
+\itemize{
+		\item{low}{Low border (in Hz) of the bandpass region. Default 300Hz}
+		\item{high}{High border (in Hz) of the bandpass region. Default 4kHz}
+		\item{Rp}{Maximum ripple in the bandpass region (in dB). Default to 0.001dB}
+		\item{Rs}{Attenuation within the stop bands (in dB). Default to 40dB}
+		\item{steepness}{Width of the transition region (in octaves). Default to 1octave} 
+	}
+
+So for the default parameters the first stopband goes from 0Hz to 150Hz (1octave 
+below 300Hz) with an attenuation of 40dB. Then there is a transition band from 
+150Hz to 300Hz and a passband from 300Hz to 4kHz. The next transition band ranges
+from 4kHz to 8kHz and everything above 8kHz is again fully attenuated.
 }
 

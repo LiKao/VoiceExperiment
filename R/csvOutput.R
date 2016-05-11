@@ -23,19 +23,18 @@
 #' 
 #' 
 #' @inheritParams analyse.directory
-#' @inheritParams read.wav
 #' @inheritParams onsets
-#' @inheritParams energyDensity
+#' @inheritParams onsets.WaveData
 #' @param filename	The filename of the csv file to which the results should be written
 #' @param ... Optional arguments passed to \code{\link[utils]{write.csv}}
 #' 
 #' @export
 #' 
-expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
-							 normalize=0.9, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+expOnsets.as.csv <- function(dirname, filename, read.params=list(), filter=list(), onset.params=list(), energy.params=list(), ... ) 
+{
 						 
-	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=0.9,
-			               window.width=window.width, stepsize=stepsize, window.function=window.function, quiet=FALSE)
+	a <- analyse.directory(dirname=dirname, read.params=read.params, filter=filter, onset.params=onset.params, 
+			               energy.params=energy.params, quiet=FALSE)
 				   
 	write.csv(a, file = filename, ...)
 }
@@ -46,18 +45,17 @@ expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"
 #' 
 #' @inheritParams analyse.directory
 #' @inheritParams read.wav
-#' @inheritParams onsets
-#' @inheritParams energyDensity
+#' @inheritParams onsets.WaveData
 #' @param filename	The filename of the csv file to which the results should be written
 #' @param ... Optional arguments passed to \code{\link[utils]{write.csv2}}
 #' 
 #' @export
 #' 
-expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
-		                      normalize=0.9,window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+expOnsets.as.csv2 <- function(dirname, filename, read.params=list(), filter=list(), onset.params=list(), energy.params=energy.params, ... ) 
+{
 						  
-	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=normalize,
-			               window.width=window.width, stepsize=stepsize, window.function=window.function, quiet=FALSE)
+	a <- analyse.directory(dirname=dirname, read.params=read.params, onset.params=onset.params, 
+			               energy.params=energy.params, quiet=FALSE)
 				   
 	write.csv2(a, file = filename, ...)
 }
@@ -66,18 +64,17 @@ expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right
 #' 
 #' @inheritParams analyse.directory
 #' @inheritParams read.wav
-#' @inheritParams onsets
-#' @inheritParams energyDensity
+#' @inheritParams onsets.WaveData
 #' @param filename	The filename of the csv file to which the results should be written
 #' @param ... Optional arguments passed to \code{\link[utils]{write.table}}
 #' 
 #' @export
 #' 
-expOnsets.as.table <- function(dirname, filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
-		                       normalize=0.9, window.width=10, stepsize=5, window.function=signal::hanning, ... ) {
+expOnsets.as.table <- function(dirname, filename, read.params=list(), filter=list(), onset.params=list(), energy.params=energy.params, ... ) 
+{
 						   
-	a <- analyse.directory(dirname=dirname, channels=channels, limit=limit, limit.type=limit.type, normalize=normalize,
-			               window.width=window.width, stepsize=stepsize, window.function=window.function, quiet=FALSE)
+	a <- analyse.directory(dirname=dirname, read.params=read.params, filter=filter, onset.params=onset.params, 
+			               energy.params=energy.params, quiet=FALSE)
 				   
 	write.table(a, file = filename, ...)
 } 

@@ -19,49 +19,49 @@
 
 #' Analyse a Single File for Onset Times
 #'
-#' @inheritParams read.wav
-#' @inheritParams onsets
-#' @inheritParams energyDensity
-#' @param quiet If set to true, the function will output the current filename to be analysed
+#' @inheritParams onsets.WaveData
+#' @param filename			Name of the file to be analyzed
+#' @param filter			Filter parameters passed to \code{\link{read.wav}}
+#' @param read.params		Parameters passed to \code{\link{read.wav}} (except filter parameters)
+#' @param onset.params		Parameters passed to \code{\link{onsets}}
+#' @param quiet				If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
-analyse.file <- function( filename, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"), 
-						  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, quiet=TRUE ) {
+analyse.file <- function( filename, read.params=list(), filter=list(), onset.params=list(), energy.params=list(), quiet=TRUE ) 
+{
 	
 	if(!quiet) {
 		cat("Analysing file: ", filename,"\n")
 	}
-					  
-	channels <- match.arg(channels)
-	w <- read.wav(filename, channels )
-	r <- onsets.WaveData( w, limit=limit, window.width=window.width, stepsize=stepsize, limit.type=limit.type,
-			              normalize=normalize, window.function=window.function )
-	p1 <- attr(r,"params")
-	p2 <- attr(w,"params")
-	attr(r,"params") <- append(p1,p2)
+	
+	w <- do.call(read.wav, c(filename, read.params, filter=list(filter)) )
+	r <- do.call(onsets.WaveData, c(ts=list(w), onset.params, energy.params=list(energy.params)))
+	p1 <- attr(w,"params")
+	p2 <- attr(r,"params")
+	attr(r,"params") <- list(read.params=p1,onset.params=p2)
 	r
 }
 
 
 #' Analyse a Complete Directory for Onset Times
 #' 
-#' @param dirname	Name of the directory from which the files should be taken
-#' @inheritParams read.wav
-#' @inheritParams onsets
-#' @inheritParams energyDensity
-#' @param quiet If set to true, the function will output the current filename to be analysed
+#' @inheritParams 	read.wav
+#' @inheritParams 	onsets.WaveData
+#' @inheritParams	analyse.file
+#' @param dirname	Name of the directory from which the files should be taken 
+#' @param quiet 	If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
-analyse.directory <- function(dirname, channels=c("both","left","right"), limit = 0.1, limit.type=c("absolute","relative"),
-							  window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, quiet=TRUE ) {
+analyse.directory <- function(dirname, read.params=list(), filter=list(), onset.params=list(),energy.params=list(), quiet=TRUE ) 
+{
 	if(!dir.exists(dirname)) {
 		stop("Directory '",dirname,"' does not exist.")
 	}
 						  
 	filenames <- list.files(dirname, pattern="\\.wav")
 	fullnames <- paste(dirname,filenames,sep="/")
-	r <- lapply(fullnames, analyse.file, channels=channels, limit=limit, limit.type=limit.type, window.width=window.width, 
-			    stepsize=stepsize, normalize=normalize, window.function=window.function, quiet=quiet)
+	r <- lapply(fullnames, analyse.file, read.params=read.params, filter=filter, onset.params=onset.params, 
+			    energy.params=energy.params, quiet=quiet)
 	r <- lapply(1:length(filenames), function(i){list(filename=filenames[[i]], onsets=r[[i]])})
 	class(r) <- c("voiceExperimentData","list")
 	r

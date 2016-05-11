@@ -20,6 +20,8 @@
 #
 ###############################################################################
 
+require(methods)
+
 #' Generic Method to Calculate the Energy Density of an Object
 #' 
 #' This method calculates the energy density of any kind of object, which
@@ -45,26 +47,8 @@
 #' @param ... Further object specific arguments.
 #' 
 #' @export
-energyDensity <- function(ts, window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
+energyDensity <- function(ts, window.width=10, stepsize=5, normalize=1, window.function=signal::hanning, ... ) {
 	UseMethod("energyDensity")
-}
-
-#' Calculate the Energy Density at a Specific Position of a Standard R ts Object
-#' 
-#' @param ts 				The time series object.
-#' @param start 			The starting position at which the energy density should be calculated.
-#' @param end 				The end position until which the energy density should be calculated.
-#' @param window.function   A windowing function to weight the samples.
-#' 
-#' TODO: Make this a polymorphic function (cannot assume this works for anything but WaveData)
-#' 
-#' @export
-energyDensityAt <- function(ts, start, end, window.function=signal::hanning ) {
-	s <- window(ts, start/1000, end/1000)
-	l <- length(s)
-	w <- window.function(l)
-	w <- w / sum(w)
-	sum((s*w)^2)
 }
 
 #' energyDensity implementation for WaveData objects
@@ -72,7 +56,7 @@ energyDensityAt <- function(ts, start, end, window.function=signal::hanning ) {
 #' @inheritParams energyDensity
 #' @param ... ignored
 #' @export
-energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.9, window.function=signal::hanning, ...) {
+energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1, window.function=signal::hanning, ...) {
 	
 	if(window.width<1) {
 		stop("Illegal window width: ", window.width)
@@ -90,12 +74,24 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.
 		stop("Illegal normalization value: ", normalize)
 	}
 
-	
 	duration.ms <- ts$duration*1000
+	f <- frequency(ts)
 	# We need to generate only up to the last full window (incomplete windows 
 	# at end are discarded)
-	end <- seq(from=window.width, to=duration.ms, by=stepsize)
-	energy <- vapply(X=end, FUN=function(e){energyDensityAt(ts$samples,e-window.width,e,window.function)}, FUN.VALUE=0)
+	starts <- (seq(from=window.width, to=duration.ms, by=stepsize)-window.width)/1000
+	starts.samples <- round(starts*f)
+	
+	l <- window.width/1000*f
+	w <- window.function(l)
+	w <- w / sum(w)
+	w <- w^2
+	
+	i <- do.call(c,lapply(1:length(starts.samples),FUN=function(v){rep(v,l)}))
+	j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
+	
+	m <- Matrix::sparseMatrix(i=i,j=j,x=w)
+	
+	energy <- as.vector(m %*% ((as.matrix(ts)[1:dim(m)[2]])^2))
 	
 	# Normalization, if activated
 	if(normalize > 0) {
@@ -106,7 +102,7 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.
 	
 	energy <- stats::ts(energy, start=0, frequency=1000/stepsize)
 	r <- list(energy=energy,
-			  duration=tail(end,n=1)/1000)
+			  duration=(tail(starts,n=1)+window.width)/1000)
 	class(r) <- append(class(r),"energyDensity")
 	attr(r,"params") <- list(window.width=window.width, stepsize=stepsize, normalize=normalize)
 	r
@@ -123,14 +119,17 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=0.
 # Basic methods
 #####
 
+#' @export
 length.energyDensity <- function(x, ...) {
 	length(x$energy)
 }
 
+#' @export
 sum.energyDensity <- function(x, ... ) {
 	sum(as.ts(x))
 }
 
+#' @export
 mean.energyDensity <- function(x, ... ) {
 	mean(as.ts(x))
 }
@@ -185,9 +184,35 @@ print.energyDensity <- function(x, ... ) {
 	cat(paste("\n\tDuration (seconds):", x$duration, sep="\t\t"))
 }
 
+#' Plotting of EnergyDensity Objects
+#' 
+#' @param x Energy density object to be plotted
+#' @param db Decibel indicator positions in plot (set to \code{NULL} to deactivate)
+#' @param limit Position of limit indicator (set to \code{NULL} to deactivate)
+#' @param limit.lty Line type of limit indicator 
+#' @param ... Additional arguments passed to \link{plot}
+#' 
 #' @export
-plot.energyDensity <- function(x, ... ) {
+plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), limit=c(0.1,0.01), limit.lty=3, ... ) {
+	if(!is.null(db)) {
+		mar <- par()$mar
+		par(mar=mar+c(0,0,0,2))
+	}
 	plot(as.ts(x), ylab="Energy", xlab="Time (s)", ...)
+	if(!is.null(limit)) {
+		if(length(limit>1)) {
+			lines(x=time(x),y=rep(limit[1],length(x)),type="l",lty=limit.lty)
+			lines(x=time(x),y=rep(limit[2],length(x)),type="l",lty=limit.lty)
+		} 
+		else {
+			lines(x=time(x),y=rep(limit,length(x)),type="l",lty=limit.lty)
+		}
+	}
+	if(!is.null(db)) {
+		pw <- 10^(db/10)
+		axis(4,at=pw,labels=paste(db,"dB",sep=""),las=2)
+		par(mar=mar)
+	}
 }
 
 #' @export

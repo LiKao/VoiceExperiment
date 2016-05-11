@@ -4,7 +4,7 @@
 \alias{energyDensity}
 \title{Generic Method to Calculate the Energy Density of an Object}
 \usage{
-energyDensity(ts, window.width = 10, stepsize = 5, normalize = 0.9,
+energyDensity(ts, window.width = 10, stepsize = 5, normalize = 1,
   window.function = signal::hanning, ...)
 }
 \arguments{

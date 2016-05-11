@@ -1,3 +1,24 @@
+VoiceExperiment v0.3.0 (Release date: 2016-05-11)
+==============
+
+Changes:
+* Added hysteresis logic for onset detection
+* Added voice band filter to remove ground loop noise
+* Added limit indicator in energy display
+* Added decibel indicator in energy display
+* Added spectrogram display of wave files
+* Simplified structure of arguments for combined functions
+* Major speed improvement
+
+Notes:
+
+* Both onset and offset detection are now reliable even in the presence of
+  strong ground loops.
+
+* Filter parameters for ground loop filter may be too drastic for speech
+  recognitions. Therefore default parameters are subject to change
+  when speech recognition capabilities are added.
+
 VoiceExperiment v0.2.0 (Release date: 2016-04-03)
 ==============
 

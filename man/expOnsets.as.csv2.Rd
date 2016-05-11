@@ -4,44 +4,22 @@
 \alias{expOnsets.as.csv2}
 \title{Analyse All Files from a Given Directory and Write Results as CSV file}
 \usage{
-expOnsets.as.csv2(dirname, filename, channels = c("both", "left", "right"),
-  limit = 0.1, limit.type = c("absolute", "relative"), normalize = 0.9,
-  window.width = 10, stepsize = 5, window.function = signal::hanning, ...)
+expOnsets.as.csv2(dirname, filename, read.params = list(), filter = list(),
+  onset.params = list(), energy.params = energy.params, ...)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}
 
 \item{filename}{The filename of the csv file to which the results should be written}
 
-\item{channels}{The channel(s) that should be used. The wave file is automatically
-reduced to a mono wave file, either by selecting a single channel (values 
-\code{left} or \code{right}) or by averaging accros both channels (\code{both}).
-If the file is alread a mono file, this argument is ignored.}
+\item{read.params}{Parameters passed to \code{\link{read.wav}} (except filter parameters)}
 
-\item{limit}{Parameter used for filtering silence. Energy below this level
-is ignored.}
+\item{filter}{List of filter parameters (set to \code{NULL} to deactivate filter). 
+See "Details"}
 
-\item{limit.type}{Type of limit, which is used to detect on- and offsets.
-If set to \code{absolute} (default) then the limit value is used
-directly. If set to \code{relative} then the limit is determined
-as the energy in the i-th percentile, where i is given by the
-limit parameter.}
+\item{onset.params}{Parameters passed to \code{\link{onsets}}}
 
-\item{normalize}{Normalization level for energy density values. Maximum energy density will be set to this
-level to simplify comparison between data files. Set to 0 to deactivate normalization. 
-Defaults to 0.9. Maximum normalization to 1.}
-
-\item{window.width}{The windowing width that is used to estimate the density (in ms). The time
-series data is chopped into windows of this length, and the energy density is calculated
-for each of these windows seperately. Defaults to 10ms.}
-
-\item{stepsize}{The stepsize to be used for windowing. Windows are advanced this many ms for each
-calculation. Can be used to create overlapping windows. Defaults to 5ms.}
-
-\item{window.function}{The windowing function to be used. This argument can be used to give
-different weigth to different samples within the window. Several usable windowing functions
-   are defined in the signal package. Defaults to \code{\link[signal]{boxcar}}, i.e. equal weight
-   for all samples.}
+\item{energy.params}{Additional Parameters passed to \code{\link{energyDensity}}.}
 
 \item{...}{Optional arguments passed to \code{\link[utils]{write.csv2}}}
 }

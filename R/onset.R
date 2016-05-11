@@ -27,8 +27,7 @@
 #' 
 #' @param ts The object containing the time series data.
 #' 
-#' @param limit Parameter used for filtering silence. Energy below this level
-#'              is ignored.
+#' @param limit Parameters used for detecting onsets. See 'Details'
 #' 
 #' @param limit.type Type of limit, which is used to detect on- and offsets.
 #' 		  If set to \code{absolute} (default) then the limit value is used
@@ -38,16 +37,22 @@
 #' 
 #' @param ... Object specific parameters  
 #' 
+#' @details
+#' 
+#' The onset detection mechanism used a hysteresis filter by default. If energy goes above
+#' a level defined by the first element of the \code{limit} parameter, this is detected as
+#' a start of a signal block (i.e. an onset). For the signal block to end, the energy has
+#' to go below the level of the second element of the \code{limit} parameter. This way
+#' the energy limit for offset detection can be much lower than the energy for onset 
+#' detection, giving much more reliable onset and offset values.
+#' 
+#' If no hysteresis is desired, simply pass one single value as limit parameter (or the same
+#' value twice). 
+#' 
 #' @export
-onsets <- function(ts, limit = 0.1, limit.type=c("absolute","relative"), ... ) {
+onsets <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"), ... ) {
 	UseMethod("onsets")
 }
-
-as.onset <- function(v) {
-	r <- list(start=v[1], end=v[2], energy.total=v[3], energy.avg=v[4]); 
-	class(r) <- append(class(r), "onset");
-	r
-} 
 
 #' Extracts Onsets from an energyDensity Object
 #' 
@@ -55,28 +60,80 @@ as.onset <- function(v) {
 #' @param ... ignored
 #'  
 #' @export
-onsets.energyDensity <- function(ts, limit = 0.1, limit.type=c("absolute","relative"), ... ) {
-	if(limit <= 0 || limit >= 1) {
-		stop("Illegal limit value: ", limit)
-	}
-	
+onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"), ... ) {
 	limit.type = match.arg(limit.type)
 	
-	e.limit <- switch( limit.type,
-					   absolute = limit,
-			           relative = quantile(ts$energy,c(limit)))
-	gated <- ifelse(ts$energy > e.limit, 1, 0)
-	changes <- c(gated,0) - c(0,gated)
+	if(length(limit)>1) {
+		limit.high <- limit[1]
+		limit.low  <- limit[2]
+		
+		if(limit.low <= 0 ) {
+			stop("Illegal lower limit value: ", limit.low)
+		}
+		
+		if(limit.high >= 1 ) {
+			stop("Illegal higher limit value: ", limit.high)
+		}
+		
+		if(limit.high <= limit.low ) {
+			stop("Illegal limit value: High limit ", limit.high, " is below low limit ", limit.low)
+		}
+		
+	} 
+	else {
+		if(limit <= 0 || limit >= 1) {
+			stop("Illegal limit value: ", limit)
+		}
+		
+		limit.high <- limit
+		limit.low  <- limit
+	}
+	
+	e.limit.high <- switch( limit.type,
+					   		absolute = limit.high,
+			           		relative = quantile(ts$energy,c(limit.high)))
+					
+	e.limit.low <- switch( limit.type,
+					  	   absolute = limit.low,
+						   relative = quantile(ts$energy,c(limit.low)))
+			   
+	gated.upper <- ifelse(ts$energy > e.limit.high, 1, 0)
+	gated.lower <- ifelse(ts$energy > e.limit.low,  1, 0)
+	
+	
+	change.rise <- c(gated.upper,0) - c(0,gated.upper)
+	change.fall <- c(gated.lower,0) - c(0,gated.lower) 
 	
 	times <- time(ts)
 	# The end times are shifted by 1.
-	starts <- times[which(changes== 1)]
-	ends   <- times[which(changes==-1)-1]
+	starts <- times[which(change.rise== 1)]
+	ends   <- times[which(change.fall==-1)-1]
+	
+	r <- list()
+	
+	sidx <- 1
+	eidx <- 1
+	
+	while(sidx <= length(starts) ) {
+
+		start <- starts[sidx]
+		# Find first end point after the current start
+		while(ends[eidx] <= start ) {
+			eidx <- eidx + 1
+		}
+		end <- ends[eidx]
+		samples <- window(ts, start=start, end=end)
 		
-	r <- matrix( c(starts,  ends), ncol=2)
-	r <- cbind(r, apply(X=r,1,FUN=function(s){sum(  window(ts, start=s[1], end=s[2]))}))
-	r <- cbind(r, apply(X=r,1,FUN=function(s){mean( window(ts, start=s[1], end=s[2]))}))
-	r <- apply(X=r, 1, FUN=as.onset)
+		onset <- list(start=start,end=end, energy.total=sum(samples), energy.avg=mean(samples) )
+		class(onset) <- append(class(onset), "onset");	
+		r <- c(r,list(onset))
+		
+		# Skip all starts, which are before the current end
+		while(sidx <= length(starts) && starts[sidx] <= end) {
+			sidx <- sidx + 1
+		}
+	}
+		
 	class(r) <- append(class(r), "onsetData")
 	attr(r,"params") <- list(limit=limit, limit.type=limit.type) 
 	attr(r,"dataType") <- "energyDensity"
@@ -89,20 +146,20 @@ onsets.energyDensity <- function(ts, limit = 0.1, limit.type=c("absolute","relat
 #' calculates onsets based on the energy density.
 #' 
 #' @inheritParams onsets
-#' @inheritParams energyDensity
+#' @param energy.params Additional Parameters passed to \code{\link{energyDensity}}.
 #' @param ... ignored
 #' 
 #' @export
-onsets.WaveData <- function( ts, limit = 0.1, limit.type=c("absolute","relative"), window.width=10, 
-							 stepsize=5, normalize=0.9, window.function=signal::hanning, ... ) {
+onsets.WaveData <- function( ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"),
+							 energy.params = list(), ... ) {
 	# Parameter testing done in called functions
 	
-	e <- energyDensity.WaveData(ts, window.width=window.width, stepsize=stepsize, normalize=normalize, window.function=window.function)
+	e <- do.call(energyDensity.WaveData, c(list(ts=ts), energy.params) )
 	r <- onsets.energyDensity(e, limit = limit, limit.type=limit.type)
 	p1 <- attr(r,"params")
 	p2 <- attr(e,"params")
-	attr(r,"params") <- append(p1,p2)
-	attr(r,"dataType") <- "WaveData"
+	p1$dataType = "WaveData"	
+	attr(r,"params") <- c(p1,energy.params=list(p2)) 
 	r
 }
 

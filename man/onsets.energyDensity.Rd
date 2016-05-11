@@ -4,14 +4,13 @@
 \alias{onsets.energyDensity}
 \title{Extracts Onsets from an energyDensity Object}
 \usage{
-\method{onsets}{energyDensity}(ts, limit = 0.1, limit.type = c("absolute",
-  "relative"), ...)
+\method{onsets}{energyDensity}(ts, limit = c(0.1, 0.01),
+  limit.type = c("absolute", "relative"), ...)
 }
 \arguments{
 \item{ts}{The object containing the time series data.}
 
-\item{limit}{Parameter used for filtering silence. Energy below this level
-is ignored.}
+\item{limit}{Parameters used for detecting onsets. See 'Details'}
 
 \item{limit.type}{Type of limit, which is used to detect on- and offsets.
 If set to \code{absolute} (default) then the limit value is used
