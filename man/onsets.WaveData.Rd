@@ -4,8 +4,8 @@
 \alias{onsets.WaveData}
 \title{Specialized Method for Extracting Onsets from WaveData objects}
 \usage{
-\method{onsets}{WaveData}(ts, limit = 0.1, limit.type = c("absolute",
-  "relative"), energy.params = list(), ...)
+\method{onsets}{WaveData}(ts, limit = c(0.1, 0.01),
+  limit.type = c("absolute", "relative"), energy.params = list(), ...)
 }
 \arguments{
 \item{ts}{The object containing the time series data.}
