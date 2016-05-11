@@ -10,8 +10,7 @@ onsets(ts, limit = c(0.1, 0.01), limit.type = c("absolute", "relative"),
 \arguments{
 \item{ts}{The object containing the time series data.}
 
-\item{limit}{Parameter used for filtering silence. Energy below this level
-is ignored.}
+\item{limit}{Parameters used for detecting onsets. See 'Details'}
 
 \item{limit.type}{Type of limit, which is used to detect on- and offsets.
 If set to \code{absolute} (default) then the limit value is used
@@ -27,5 +26,16 @@ series data. The onsets are calculated by comparing the overall energy of
 each part of the time series with the rest of the time series. Positions
 where the energy is above a portion of \code{limit}, compared to the overal
 energy, are assumed to contain actual data.
+}
+\details{
+The onset detection mechanism used a hysteresis filter by default. If energy goes above
+a level defined by the first element of the \code{limit} parameter, this is detected as
+a start of a signal block (i.e. an onset). For the signal block to end, the energy has
+to go below the level of the second element of the \code{limit} parameter. This way
+the energy limit for offset detection can be much lower than the energy for onset 
+detection, giving much more reliable onset and offset values.
+
+If no hysteresis is desired, simply pass one single value as limit parameter (or the same
+value twice).
 }
 
