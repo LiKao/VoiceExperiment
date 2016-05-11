@@ -4,16 +4,15 @@
 \alias{analyse.file}
 \title{Analyse a Single File for Onset Times}
 \usage{
-analyse.file(filename, channels = c("both", "left", "right"),
+analyse.file(filename, read.params = list(), filter = list(),
   onset.params = list(), energy.params = list(), quiet = TRUE)
 }
 \arguments{
-\item{filename}{The filename to be read}
+\item{filename}{Name of the file to be analyzed}
 
-\item{channels}{The channel(s) that should be used. The wave file is automatically
-reduced to a mono wave file, either by selecting a single channel (values 
-\code{left} or \code{right}) or by averaging accros both channels (\code{both}).
-If the file is alread a mono file, this argument is ignored.}
+\item{read.params}{Parameters passed to \code{\link{read.wav}} (except filter parameters)}
+
+\item{filter}{Filter parameters passed to \code{\link{read.wav}}}
 
 \item{onset.params}{Parameters passed to \code{\link{onsets}}}
 

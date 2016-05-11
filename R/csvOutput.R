@@ -23,7 +23,6 @@
 #' 
 #' 
 #' @inheritParams analyse.directory
-#' @inheritParams read.wav
 #' @inheritParams onsets
 #' @inheritParams onsets.WaveData
 #' @param filename	The filename of the csv file to which the results should be written
@@ -31,10 +30,11 @@
 #' 
 #' @export
 #' 
-expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"), onset.params=list(), energy.params=list(), ... ) 
+expOnsets.as.csv <- function(dirname, filename, read.params=list(), filter=list(), onset.params=list(), energy.params=list(), ... ) 
 {
 						 
-	a <- analyse.directory(dirname=dirname, channels=channels, onset.params=onset.params, energy.params=energy.params, quiet=FALSE)
+	a <- analyse.directory(dirname=dirname, read.params=read.params, filter=filter, onset.params=onset.params, 
+			               energy.params=energy.params, quiet=FALSE)
 				   
 	write.csv(a, file = filename, ...)
 }
@@ -51,10 +51,11 @@ expOnsets.as.csv <- function(dirname, filename, channels=c("both","left","right"
 #' 
 #' @export
 #' 
-expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right"), onset.params=list(), energy.params=energy.params, ... ) 
+expOnsets.as.csv2 <- function(dirname, filename, read.params=list(), filter=list(), onset.params=list(), energy.params=energy.params, ... ) 
 {
 						  
-	a <- analyse.directory(dirname=dirname, channels=channels, onset.params=onset.params, energy.params=energy.params, quiet=FALSE)
+	a <- analyse.directory(dirname=dirname, read.params=read.params, onset.params=onset.params, 
+			               energy.params=energy.params, quiet=FALSE)
 				   
 	write.csv2(a, file = filename, ...)
 }
@@ -69,10 +70,11 @@ expOnsets.as.csv2 <- function(dirname, filename, channels=c("both","left","right
 #' 
 #' @export
 #' 
-expOnsets.as.table <- function(dirname, filename, channels=c("both","left","right"), onset.params=list(), energy.params=energy.params, ... ) 
+expOnsets.as.table <- function(dirname, filename, read.params=list(), filter=list(), onset.params=list(), energy.params=energy.params, ... ) 
 {
 						   
-	a <- analyse.directory(dirname=dirname, channels=channels, onset.params=onset.params, energy.params=energy.params, quiet=FALSE)
+	a <- analyse.directory(dirname=dirname, read.params=read.params, filter=filter, onset.params=onset.params, 
+			               energy.params=energy.params, quiet=FALSE)
 				   
 	write.table(a, file = filename, ...)
 } 

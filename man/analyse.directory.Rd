@@ -4,16 +4,16 @@
 \alias{analyse.directory}
 \title{Analyse a Complete Directory for Onset Times}
 \usage{
-analyse.directory(dirname, channels = c("both", "left", "right"),
+analyse.directory(dirname, read.params = list(), filter = list(),
   onset.params = list(), energy.params = list(), quiet = TRUE)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}
 
-\item{channels}{The channel(s) that should be used. The wave file is automatically
-reduced to a mono wave file, either by selecting a single channel (values 
-\code{left} or \code{right}) or by averaging accros both channels (\code{both}).
-If the file is alread a mono file, this argument is ignored.}
+\item{read.params}{Parameters passed to \code{\link{read.wav}} (except filter parameters)}
+
+\item{filter}{List of filter parameters (set to \code{NULL} to deactivate filter). 
+See "Details"}
 
 \item{onset.params}{Parameters passed to \code{\link{onsets}}}
 
