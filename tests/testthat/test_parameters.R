@@ -42,6 +42,25 @@ test_that("Illegal Paramters produce errors", {
 	
 	expect_error( read.wav(illegalfile), 				"File '[^']*' does not exist.")
 	expect_error( read.wav(testfile,channels="none"),	"'arg' should be one of \"both\", \"left\", \"right\"")
+	
+	expect_error( read.wav(testfile, filter=list(low=-100, high= 4000, Rp=0.01, 	Rs= 40, steepness= 1)), "Illegal value -100 for lower passband border in filter parameter" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high=  200, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 200 below lower passband border 300" )
+	# The testfile is sampled at 44.1kHz, so the Nyquist Frequency is at 22.05kHz
+	expect_error( read.wav(testfile, filter=list(low= 300, high=25000, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 25000 above Nyquist frequency 22050" )
+	# With a passband border at 15kHz and a steepness of 1 octave, we get a stopband at 30kHz, 
+	# i.e. above Nyquist
+	expect_error( read.wav(testfile, filter=list(low= 300, high=15000, Rp=  0.01, 	Rs= 40, steepness= 1)), "Illegal upper stopband border: 30000" )
+	# With a steepness of 2 octave we ge a lower limit (2 octaves is times 4, i.e. 2 octaves above 10kHz is 40kHz)
+	expect_error( read.wav(testfile, filter=list(low= 300, high=10000, Rp=  0.01, 	Rs= 40, steepness= 2)), "Illegal upper stopband border: 40000" )
+	
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=-10,		Rs= 40, steepness= 1)), "Illegal passband ripple: -10" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=  0, 		Rs= 40, steepness= 1)), "Illegal passband ripple: 0" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=  0.01, 	Rs=-10, steepness= 1)), "Illegal attenuation: -10" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=0.01, 	Rs=  0, steepness= 1)), "Illegal attenuation: 0" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness=-1)), "Illegal steepness: -1" )
+	expect_error( read.wav(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness= 0)), "Illegal steepness: 0" )
+	
+	
 		  
 	### energyDensity
 	
@@ -115,6 +134,25 @@ test_that("Illegal Paramters produce errors", {
 	
 	expect_error( analyse.file( testfile, read.params=list(channels="none") ), "'arg' should be one of \"both\", \"left\", \"right\"")
 	
+	expect_error( analyse.file(testfile, filter=list(low=-100, high= 4000, Rp=0.01, 	Rs= 40, steepness= 1)), "Illegal value -100 for lower passband border in filter parameter" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=  200, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 200 below lower passband border 300" )
+	# The testfile is sampled at 44.1kHz, so the Nyquist Frequency is at 22.05kHz
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=25000, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 25000 above Nyquist frequency 22050" )
+	# With a passband border at 15kHz and a steepness of 1 octave, we get a stopband at 30kHz, 
+	# i.e. above Nyquist
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=15000, Rp=  0.01, 	Rs= 40, steepness= 1)), "Illegal upper stopband border: 30000" )
+	# With a steepness of 2 octave we ge a lower limit (2 octaves is times 4, i.e. 2 octaves above 10kHz is 40kHz)
+	expect_error( analyse.file(testfile, filter=list(low= 300, high=10000, Rp=  0.01, 	Rs= 40, steepness= 2)), "Illegal upper stopband border: 40000" )
+	
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=-10,		Rs= 40, steepness= 1)), "Illegal passband ripple: -10" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=  0, 		Rs= 40, steepness= 1)), "Illegal passband ripple: 0" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=  0.01, 	Rs=-10, steepness= 1)), "Illegal attenuation: -10" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01, 	Rs=  0, steepness= 1)), "Illegal attenuation: 0" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness=-1)), "Illegal steepness: -1" )
+	expect_error( analyse.file(testfile, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness= 0)), "Illegal steepness: 0" )
+	
+	
+	
 	expect_error( analyse.file( testfile, onset.params=list(limit = -2,	limit.type="absolute")), "Illegal limit value: -2" )
 	expect_error( analyse.file( testfile, onset.params=list(limit = -1,	limit.type="absolute")), "Illegal limit value: -1" )
 	expect_error( analyse.file( testfile, onset.params=list(limit = -0.1, 	limit.type="absolute")), "Illegal limit value: -0.1" )
@@ -145,6 +183,23 @@ test_that("Illegal Paramters produce errors", {
 	expect_error( analyse.directory( testdir, onset.params=list(limit =  1,   limit.type="absolute")), "Illegal limit value: 1" )
 	expect_error( analyse.directory( testdir, onset.params=list(limit =  2,   limit.type="absolute")), "Illegal limit value: 2" )
 	
+	expect_error( analyse.directory( testdir, filter=list(low=-100, high= 4000, Rp=0.01, 	Rs= 40, steepness= 1)), "Illegal value -100 for lower passband border in filter parameter" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=  200, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 200 below lower passband border 300" )
+	# The testfile is sampled at 44.1kHz, so the Nyquist Frequency is at 22.05kHz
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=25000, Rp=0.01, 	Rs= 40, steepness= 1)), "Higher passband border 25000 above Nyquist frequency 22050" )
+	# With a passband border at 15kHz and a steepness of 1 octave, we get a stopband at 30kHz, 
+	# i.e. above Nyquist
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=15000, Rp=  0.01, 	Rs= 40, steepness= 1)), "Illegal upper stopband border: 30000" )
+	# With a steepness of 2 octave we ge a lower limit (2 octaves is times 4, i.e. 2 octaves above 10kHz is 40kHz)
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high=10000, Rp=  0.01, 	Rs= 40, steepness= 2)), "Illegal upper stopband border: 40000" )
+	
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=-10,		Rs= 40, steepness= 1)), "Illegal passband ripple: -10" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=  0, 		Rs= 40, steepness= 1)), "Illegal passband ripple: 0" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=  0.01, 	Rs=-10, steepness= 1)), "Illegal attenuation: -10" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=0.01, 	Rs=  0, steepness= 1)), "Illegal attenuation: 0" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness=-1)), "Illegal steepness: -1" )
+	expect_error( analyse.directory( testdir, filter=list(low= 300, high= 4000, Rp=0.01,     Rs= 40, steepness= 0)), "Illegal steepness: 0" )
+	
 	expect_error(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width=-10, stepsize=  5)), "Illegal window width: -10")
 	expect_error(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width=  0, stepsize=  5)), "Illegal window width: 0")
 	expect_error(	analyse.directory( testdir, energy.params=list(normalize= 0.9, window.width= 10, stepsize=-10)), "Illegal stepsize: -10")
@@ -163,7 +218,7 @@ test_that("Parameters are propagated during file analysis", {
 	
 	###### read.wav
 	
-	### channels = both
+	### channels = both (default)
 				
 	o1 <- analyse.file( testfile, read.params=list(channels="both") )
 	expect_equal(attr(o1,"params")$read.params$channels, "both")
@@ -177,6 +232,71 @@ test_that("Parameters are propagated during file analysis", {
 	
 	o1 <- analyse.file( testfile, read.params=list(channels="right"))
 	expect_equal(attr(o1,"params")$read.params$channels, "right")
+	
+	### Filter parameters
+	
+	### Defaults
+	
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
+	
+	### low=200
+	
+	o1 <- analyse.file( testfile, filter=list(low=200, high=4000, Rp=0.001, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			200)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
+	
+	### high=5000
+	
+	o1 <- analyse.file( testfile, filter=list(low=300, high=5000, Rp=0.001, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			5000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
+	
+	### Rp=1
+	
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=1, Rs=40, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			1)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
+	
+	### Rs=20
+	
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=0.001, Rs=20, steepness=1))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			20)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	1)
+	
+	### steepness=2
+	
+	o1 <- analyse.file( testfile, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=2))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			300)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			4000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			0.001)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			40)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	2)
+	
+	### All parameters
+	
+	o1 <- analyse.file( testfile, filter=list(low=200, high=5000, Rp=1, Rs=20, steepness=2))
+	expect_equal(attr(o1,"params")$read.params$filter$low,			200)
+	expect_equal(attr(o1,"params")$read.params$filter$high,			5000)
+	expect_equal(attr(o1,"params")$read.params$filter$Rp,			1)
+	expect_equal(attr(o1,"params")$read.params$filter$Rs,			20)
+	expect_equal(attr(o1,"params")$read.params$filter$steepness,	2)
 	
 	###### onsets
 
@@ -261,6 +381,86 @@ test_that("Parameters are propagated during directory analysis", {
 						
 		for(o in os) {
 			expect_equal(attr(o$onsets,"params")$read.params$channels, "right")
+		}
+		
+		
+		### Filter parameters
+		
+		### Defaults
+		
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
+		
+		### low=200
+		
+		os <- analyse.directory( testdir, filter=list(low=200, high=4000, Rp=0.001, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		200)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
+		
+		### high=5000
+		
+		os <- analyse.directory( testdir, filter=list(low=300, high=5000, Rp=0.001, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		5000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
+		
+		### Rp=1
+		
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=1, Rs=40, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			1)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
+		
+		### Rs=20
+		
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=20, steepness=1))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			20)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+		}
+		
+		### steepnes=2
+		
+		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=2))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	2)
+		}
+		
+		### All parameters
+		
+		os <- analyse.directory( testdir, filter=list(low=200, high=5000, Rp=1, Rs=20, steepness=2))
+		for(o in os) {
+			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		200)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		5000)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			1)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			20)
+			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	2)
 		}
 		
 		###### onsets
