@@ -8,8 +8,6 @@
 
 ## cleanup/refactoring
 
-* Major cleanup of object structure
-
 
 ## Documentation
 

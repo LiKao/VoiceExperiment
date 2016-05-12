@@ -91,14 +91,14 @@ onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute
 	
 	e.limit.high <- switch( limit.type,
 					   		absolute = limit.high,
-			           		relative = quantile(ts$energy,c(limit.high)))
+			           		relative = quantile(ts,c(limit.high)))
 					
 	e.limit.low <- switch( limit.type,
 					  	   absolute = limit.low,
-						   relative = quantile(ts$energy,c(limit.low)))
+						   relative = quantile(ts,c(limit.low)))
 			   
-	gated.upper <- ifelse(ts$energy > e.limit.high, 1, 0)
-	gated.lower <- ifelse(ts$energy > e.limit.low,  1, 0)
+	gated.upper <- ifelse(ts > e.limit.high, 1, 0)
+	gated.lower <- ifelse(ts > e.limit.low,  1, 0)
 	
 	
 	change.rise <- c(gated.upper,0) - c(0,gated.upper)

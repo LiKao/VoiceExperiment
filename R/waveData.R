@@ -17,61 +17,18 @@
 #
 ###############################################################################
 
-# TODO: simplify representation as a vector with additional attributes (similar to ts objects)
-
-#####
-# Generic usefull R functions
-#####
-
 #' @export
-length.WaveData <- function(x, ...) {
-	length(x$samples)
-}
-
-#####
-# Conversion to standard R objects
-#####
-
-#' @export
-as.matrix.WaveData <- function(x, ... ) {
-	as.matrix(x$samples)
-}
-
-#####
-# Usage as timeseries data
-#####
-
-#' @importFrom stats as.ts
-#' @export
-as.ts.WaveData <- function(x, ...) {
-	x$samples
-}
-
-#' @importFrom stats frequency
-#' @export
-frequency.WaveData <- function(x, ... ) {
-	frequency(as.ts(x))
-}
-
-#' @importFrom stats time
-#' @export
-time.WaveData <- function(x, ... ) {
-	time(as.ts(x))
-}
-
-#' @importFrom stats cycle
-#' @export
-cycle.WaveData <- function(x, ... ) {
-	cycle(as.ts(x))
+duration.WaveData <- function(x, ... ) {
+	attr(x,"duration")
 }
 
 #' @importFrom stats window
 #' @export
 window.WaveData <- function( x, start=NULL, end=NULL, frequency=NULL, deltat=NULL, extend=FALSE, ... ) {
-	s <- window( as.ts(x), start, end, frequency, deltat, extend, ... )
-	d <- length(s)/frequency(s)
-	r <- list( samples = s, duration = d)
-	class(r) <- append(class(r),"WaveData")
+	r <- NextMethod("window", x, start, end, frequency, deltat, extend, ... )
+	d <- length(r)/frequency(r)
+	attr(r,"duration") <- d
+	class(r) <- append("WaveData",class(r))
 	r
 }
 
@@ -85,9 +42,9 @@ print.WaveData <- function(x, ...) {
 	cat("WaveData Object:")
 	cat(paste("\n\tNumber of Samples:", length(x), sep="\t\t"))
 	cat(paste("\n\tSampling Frequency:", frequency(x),sep="\t\t"))
-	cat(paste("\n\tDuration (seconds):", x$duration, sep="\t\t"))
-	if( !is.null(x$filename) ) {
-		cat(paste("\n\tOriginal Filename:", x$filename, sep="\t\t"))	
+	cat(paste("\n\tDuration (seconds):", duration(x), sep="\t\t"))
+	if( !is.null(attr(x,"filename")) ) {
+		cat(paste("\n\tOriginal Filename:", attr(x,"filename"), sep="\t\t"))	
 	}
 }
 
@@ -104,7 +61,7 @@ plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum"
   
   if(substr(type,1,4)=="spec") {
     
-    duration.ms <- x$duration*1000
+    duration.ms <- duration(x)*1000
     f <- frequency(x)
     starts <- (seq(from=10,to=duration.ms,by=5)-10)/1000
     starts.samples <- round(starts*f)
@@ -113,7 +70,7 @@ plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum"
     w <- w / sum(w)
     
     j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
-    m <- matrix(x$samples[j],nrow=l)
+    m <- matrix(x[j],nrow=l)
     m <- m * w
     
     p <- fftw::planFFT(l)
@@ -122,12 +79,6 @@ plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum"
     image(x=starts, y=seq(from=1000/window.width,to=f/2,by=1000/window.width), z=t(log10(abs(ff[2:ceiling(l/2),]))),log="y",xlab="Time",ylab="Frequency")      
   } 
   else {
-	  plot( as.ts(x), ylab="Intensity", xlab="Time (s)", ...)
+	  NextMethod("plot", x, ylab="Intensity", xlab="Time (s)", ...)
   }
 }
-
-#' @export
-lines.WaveData <- function(x, ... ) {
-	lines( as.ts(x), ... )
-}
-	
