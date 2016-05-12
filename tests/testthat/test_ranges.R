@@ -55,36 +55,36 @@ test_that("Energy is normalized correctly", {
 	
 	### Normalize to 0.9
 	
-	expect_equal( max(energyDensity(w1, normalize=0.9)$energy), 0,9)
-	expect_equal( max(energyDensity(w2, normalize=0.9)$energy), 0,9)
-	expect_equal( max(energyDensity(w3, normalize=0.9)$energy), 0,9)
-	expect_equal( max(energyDensity(w4, normalize=0.9)$energy), 0,9)
-	expect_equal( max(energyDensity(w5, normalize=0.9)$energy), 0,9)
-	expect_equal( max(energyDensity(w6, normalize=0.9)$energy), 0,9)
-	expect_equal( max(energyDensity(w7, normalize=0.9)$energy), 0,9)
-	expect_equal( max(energyDensity(w8, normalize=0.9)$energy), 0,9)
+	expect_equal( max(energyDensity(w1, normalize=0.9)$energy), 0.9, tolerance=0.01)
+	expect_equal( max(energyDensity(w2, normalize=0.9)$energy), 0.9, tolerance=0.01)
+	expect_equal( max(energyDensity(w3, normalize=0.9)$energy), 0.9, tolerance=0.01)
+	expect_equal( max(energyDensity(w4, normalize=0.9)$energy), 0.9, tolerance=0.01)
+	expect_equal( max(energyDensity(w5, normalize=0.9)$energy), 0.9, tolerance=0.01)
+	expect_equal( max(energyDensity(w6, normalize=0.9)$energy), 0.9, tolerance=0.01)
+	expect_equal( max(energyDensity(w7, normalize=0.9)$energy), 0.9, tolerance=0.01)
+	expect_equal( max(energyDensity(w8, normalize=0.9)$energy), 0.9, tolerance=0.01)
 	
 	### Normalize to 0.6
 	
-	expect_equal( max(energyDensity(w1, normalize=0.6)$energy), 0,9)
-	expect_equal( max(energyDensity(w2, normalize=0.6)$energy), 0,9)
-	expect_equal( max(energyDensity(w3, normalize=0.6)$energy), 0,9)
-	expect_equal( max(energyDensity(w4, normalize=0.6)$energy), 0,9)
-	expect_equal( max(energyDensity(w5, normalize=0.6)$energy), 0,9)
-	expect_equal( max(energyDensity(w6, normalize=0.6)$energy), 0,9)
-	expect_equal( max(energyDensity(w7, normalize=0.6)$energy), 0,9)
-	expect_equal( max(energyDensity(w8, normalize=0.6)$energy), 0,9)
+	expect_equal( max(energyDensity(w1, normalize=0.6)$energy), 0.6, tolerance=0.01)
+	expect_equal( max(energyDensity(w2, normalize=0.6)$energy), 0.6, tolerance=0.01)
+	expect_equal( max(energyDensity(w3, normalize=0.6)$energy), 0.6, tolerance=0.01)
+	expect_equal( max(energyDensity(w4, normalize=0.6)$energy), 0.6, tolerance=0.01)
+	expect_equal( max(energyDensity(w5, normalize=0.6)$energy), 0.6, tolerance=0.01)
+	expect_equal( max(energyDensity(w6, normalize=0.6)$energy), 0.6, tolerance=0.01)
+	expect_equal( max(energyDensity(w7, normalize=0.6)$energy), 0.6, tolerance=0.01)
+	expect_equal( max(energyDensity(w8, normalize=0.6)$energy), 0.6, tolerance=0.01)
 	
 	### Normalize to 0.3
 	
-	expect_equal( max(energyDensity(w1, normalize=0.3)$energy), 0,9)
-	expect_equal( max(energyDensity(w2, normalize=0.3)$energy), 0,9)
-	expect_equal( max(energyDensity(w3, normalize=0.3)$energy), 0,9)
-	expect_equal( max(energyDensity(w4, normalize=0.3)$energy), 0,9)
-	expect_equal( max(energyDensity(w5, normalize=0.3)$energy), 0,9)
-	expect_equal( max(energyDensity(w6, normalize=0.3)$energy), 0,9)
-	expect_equal( max(energyDensity(w7, normalize=0.3)$energy), 0,9)
-	expect_equal( max(energyDensity(w8, normalize=0.3)$energy), 0,9)
+	expect_equal( max(energyDensity(w1, normalize=0.3)$energy), 0.3, tolerance=0.01)
+	expect_equal( max(energyDensity(w2, normalize=0.3)$energy), 0.3, tolerance=0.01)
+	expect_equal( max(energyDensity(w3, normalize=0.3)$energy), 0.3, tolerance=0.01)
+	expect_equal( max(energyDensity(w4, normalize=0.3)$energy), 0.3, tolerance=0.01)
+	expect_equal( max(energyDensity(w5, normalize=0.3)$energy), 0.3, tolerance=0.01)
+	expect_equal( max(energyDensity(w6, normalize=0.3)$energy), 0.3, tolerance=0.01)
+	expect_equal( max(energyDensity(w7, normalize=0.3)$energy), 0.3, tolerance=0.01)
+	expect_equal( max(energyDensity(w8, normalize=0.3)$energy), 0.3, tolerance=0.01)
 
 	
 	
