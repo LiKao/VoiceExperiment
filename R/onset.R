@@ -64,8 +64,8 @@ onsets.energyDensity <- function(ts, limit = 0.1, limit.type=c("absolute","relat
 	
 	e.limit <- switch( limit.type,
 					   absolute = limit,
-			           relative = quantile(ts$energy,c(limit)))
-	gated <- ifelse(ts$energy > e.limit, 1, 0)
+			           relative = quantile(ts,c(limit)))
+	gated <- ifelse(ts > e.limit, 1, 0)
 	changes <- c(gated,0) - c(0,gated)
 	
 	times <- time(ts)

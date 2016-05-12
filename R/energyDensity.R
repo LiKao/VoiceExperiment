@@ -100,75 +100,29 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 		energy <- energy * f
 	}
 	
-	energy <- stats::ts(energy, start=0, frequency=1000/stepsize)
-	r <- list(energy=energy,
-			  duration=(tail(starts,n=1)+window.width)/1000)
-	class(r) <- append(class(r),"energyDensity")
+	r <- stats::ts(energy, start=0, frequency=1000/stepsize)
+	attr(r,"duration") <- (tail(starts,n=1)+window.width)/1000
+	class(r) <- append("energyDensity",class(r))
 	attr(r,"params") <- list(window.width=window.width, stepsize=stepsize, normalize=normalize)
 	r
 }
-
-# TODO: Simplify representation as a vector with additional attributes (like ts objects, will simplify construction, mean and sum)
-
 
 ##### 
 # S3 generic methods
 #####
 
-#####
-# Basic methods
-#####
-
 #' @export
-length.energyDensity <- function(x, ...) {
-	length(x$energy)
-}
-
-#' @export
-sum.energyDensity <- function(x, ... ) {
-	sum(as.ts(x))
-}
-
-#' @export
-mean.energyDensity <- function(x, ... ) {
-	mean(as.ts(x))
-}
-
-#####
-# Usage as timeseries data
-#####
-
-#' @importFrom stats as.ts
-#' @export
-as.ts.energyDensity <- function(x, ...) {
-	x$energy
-}
-
-#' @importFrom stats frequency
-#' @export
-frequency.energyDensity <- function(x, ... ) {
-	frequency(as.ts(x))
-}
-
-#' @importFrom stats time
-#' @export
-time.energyDensity <- function(x, ... ) {
-	time(as.ts(x))
-}
-
-#' @importFrom stats cycle
-#' @export
-cycle.energyDensity <- function(x, ... ) {
-	cycle(as.ts(x))
+duration.energyDensity <- function(x, ... ) {
+	attr(x, "duration")
 }
 
 #' @importFrom stats window
 #' @export
 window.energyDensity <- function( x, start=NULL, end=NULL, frequency=NULL, deltat=NULL, extend=FALSE, ... ) {
-	s <- window( as.ts(x), start=start, end=end, frequency=frequency, deltat=deltat, extend=extend, ... )
-	d <- length(s)/frequency(s)
-	r <- list( energy = s, duration = d)
-	class(r) <- append(class(r),"energyDensity")
+	r <- NextMethod("window", x, start=start, end=end, frequency=frequency, deltat=deltat, extend=extend, ... )
+	d <- length(r)/frequency(r)
+	attr(r,"duration") <- d
+	class(r) <- append("energyDensity",class(r))
 	r
 }
 
@@ -181,7 +135,7 @@ print.energyDensity <- function(x, ... ) {
 	cat("EnergyDensity Object:")
 	cat(paste("\n\tNumber of Samples:", length(x), sep="\t\t"))
 	cat(paste("\n\tSampling Frequency:", frequency(x),sep="\t\t"))
-	cat(paste("\n\tDuration (seconds):", x$duration, sep="\t\t"))
+	cat(paste("\n\tDuration (seconds):", duration(x), sep="\t\t"))
 }
 
 #' Plotting of EnergyDensity Objects
@@ -198,7 +152,7 @@ plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), limit=
 		mar <- par()$mar
 		par(mar=mar+c(0,0,0,2))
 	}
-	plot(as.ts(x), ylab="Energy", xlab="Time (s)", ...)
+	NextMethod("plot",x, ylab="Energy", xlab="Time (s)", ...)
 	if(!is.null(limit)) {
 		lines(x=time(x),y=rep(limit,length(x)),type="l",lty=limit.lty)
 	}
@@ -207,9 +161,4 @@ plot.energyDensity <- function(x, db=c(0,-1,-2,-3,-4,-5,-6,-10,-15,-Inf), limit=
 		axis(4,at=pw,labels=paste(db,"dB",sep=""),las=2)
 		par(mar=mar)
 	}
-}
-
-#' @export
-lines.energyDensity <- function(x, ... ) {
-	lines(as.ts(x), ...)
 }
