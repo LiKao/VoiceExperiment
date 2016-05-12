@@ -31,10 +31,10 @@ test_that("Data has correct numerical ranges", {
 	w.stereo.left <- read.wav("../testdata/silence_50ms_stereo.wav",channels="left")
 	w.stereo.right <- read.wav("../testdata/silence_50ms_stereo.wav",channels="right")
 	
-	expect_true(all(w.mono$samples			<= 1))
-	expect_true(all(w.stereo.both$samples	<= 1))
-	expect_true(all(w.stereo.left$samples	<= 1))
-	expect_true(all(w.stereo.right$samples	<= 1))
+	expect_true(all(w.mono			<= 1))
+	expect_true(all(w.stereo.both	<= 1))
+	expect_true(all(w.stereo.left	<= 1))
+	expect_true(all(w.stereo.right	<= 1))
 	
 })
 

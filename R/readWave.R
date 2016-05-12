@@ -45,13 +45,12 @@ read.wav <- function(filename, channels=c("both","left","right")) {
 	l <- length(s)
 	d <- l/w@samp.rate
 	
-	s <- stats::ts(s, start=0, end=d, frequency=w@samp.rate)
+	r <- stats::ts(s, start=0, end=d, frequency=w@samp.rate)
 	
-	r <- list(samples=s,
-			  filename=filename,
-			  duration=d,
-			  tuneR.data = w)
-	class(r) <- append(class(r),"WaveData")
+
+	class(r) <- append("WaveData",class(r))
 	attr(r,"params") <- list(channels=channels) 
+	attr(r,"filename") <- filename
+	attr(r,"duration") <- d
 	r
 }

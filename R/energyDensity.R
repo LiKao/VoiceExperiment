@@ -74,7 +74,7 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 		stop("Illegal normalization value: ", normalize)
 	}
 
-	duration.ms <- ts$duration*1000
+	duration.ms <- duration(ts)*1000
 	f <- frequency(ts)
 	# We need to generate only up to the last full window (incomplete windows 
 	# at end are discarded)
