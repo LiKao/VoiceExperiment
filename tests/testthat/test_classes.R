@@ -35,12 +35,14 @@ test_that("Correct classes are returned", {
 	### read.wav	
 
 	expect_is(w, "WaveData")
+	expect_is(w, "ts")
 	
 	### energyDensity; energyDensity.WaveData
 	
-	expect_is(energyDensity(w), "energyDensity")
 	expect_is(energyDensity.WaveData(w), "energyDensity")
+	expect_is(energyDensity.WaveData(w), "ts")
 	expect_is(e, "energyDensity")
+	expect_is(e, "ts")
 	
 	### onsets; onsets.WaveData; onsets.energyDensity
 	
