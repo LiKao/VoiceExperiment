@@ -109,8 +109,8 @@ duration.energyDensity <- function(x, ... ) {
 
 #' @importFrom stats window
 #' @export
-window.energyDensity <- function( x, start=NULL, end=NULL, frequency=NULL, deltat=NULL, extend=FALSE, ... ) {
-	r <- NextMethod("window", x, start=start, end=end, frequency=frequency, deltat=deltat, extend=extend, ... )
+window.energyDensity <- function( x, ... ) {
+	r <- NextMethod("window", x, ... )
 	d <- length(r)/frequency(r)
 	attr(r,"duration") <- d
 	class(r) <- append("energyDensity",class(r))

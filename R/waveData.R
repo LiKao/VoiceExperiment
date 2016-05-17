@@ -24,8 +24,8 @@ duration.WaveData <- function(x, ... ) {
 
 #' @importFrom stats window
 #' @export
-window.WaveData <- function( x, start=NULL, end=NULL, frequency=NULL, deltat=NULL, extend=FALSE, ... ) {
-	r <- NextMethod("window", x, start, end, frequency, deltat, extend, ... )
+window.WaveData <- function( x, ... ) {
+	r <- NextMethod("window", x, ... )
 	d <- length(r)/frequency(r)
 	attr(r,"duration") <- d
 	class(r) <- append("WaveData",class(r))
