@@ -21,9 +21,23 @@
 #' Generic function to extract the duration of any kind of time series object
 #' 
 #' @param x 	The time series for which the duration is requested
-#' @param ... 	Extra arguments for futere methods
+#' @param ... 	Extra arguments for future methods
 #' 
 #' @export 
 duration <- function(x, ...) {
 	UseMethod("duration")
+}
+
+#' Generic function to partition a time series into windows with overlap
+#' 
+#' @param x				Time series to be sliced
+#' @param window.width 	Width of each partition window (in ms)
+#' @param stepsize		Stepsize for the windowing (in ms)
+#' @param ...			Extra arguments for future methods
+#'  
+#' @return A matrix with one window per column
+#' 
+#' @export
+slice <- function(x, window.width, stepsize, ... ) {
+	UseMethod("slice")
 }

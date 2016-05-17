@@ -9,7 +9,7 @@ duration(x, ...)
 \arguments{
 \item{x}{The time series for which the duration is requested}
 
-\item{...}{Extra arguments for futere methods}
+\item{...}{Extra arguments for future methods}
 }
 \description{
 Generic function to extract the duration of any kind of time series object

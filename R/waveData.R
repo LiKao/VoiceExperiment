@@ -54,6 +54,20 @@ summary.WaveData <- function(object, ...) {
 } 
 
 #' @export
+slice.WaveData <- function(x, window.width, stepsize, ... ) 
+{
+	duration.ms <- duration(x)*1000
+	f <- frequency(x)
+	l <- window.width/1000*f
+	starts <- (seq(from=10,to=duration.ms,by=5)-10)/1000
+	starts.samples <- round(starts*f)
+	j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
+	m <- matrix(x[j],nrow=l)
+	attr(m, "starts") <- starts
+	m
+}
+
+#' @export
 plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum","spec"), 
                           window.width=10, stepsize=5, window.function=signal::hanning, ... ) 
 {
@@ -61,22 +75,17 @@ plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum"
   
   if(substr(type,1,4)=="spec") {
     
-    duration.ms <- duration(x)*1000
     f <- frequency(x)
-    starts <- (seq(from=10,to=duration.ms,by=5)-10)/1000
-    starts.samples <- round(starts*f)
     l <- window.width/1000*f
     w <- window.function(l)
     w <- w / sum(w)
     
-    j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
-    m <- matrix(x[j],nrow=l)
-    m <- m * w
+    m <- slice(x,window.width=window.width, stepsize=stepsize) * w
     
     p <- fftw::planFFT(l)
     ff <- apply(m,2,function(v){fftw::FFT(v,plan=p)})
       
-    image(x=starts, y=seq(from=1000/window.width,to=f/2,by=1000/window.width), z=t(log10(abs(ff[2:ceiling(l/2),]))),log="y",xlab="Time",ylab="Frequency")      
+    image(x=attr(m,"starts"), y=seq(from=1000/window.width,to=f/2,by=1000/window.width), z=t(log10(abs(ff[2:ceiling(l/2),]))),log="y",xlab="Time",ylab="Frequency")      
   } 
   else {
 	  NextMethod("plot", x, ylab="Intensity", xlab="Time (s)", ...)
