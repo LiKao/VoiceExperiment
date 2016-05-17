@@ -127,6 +127,7 @@ print.energyDensity <- function(x, ... ) {
 	cat(paste("\n\tNumber of Samples:", length(x), sep="\t\t"))
 	cat(paste("\n\tSampling Frequency:", frequency(x),sep="\t\t"))
 	cat(paste("\n\tDuration (seconds):", duration(x), sep="\t\t"))
+	cat("\n")
 }
 
 #' Plotting of EnergyDensity Objects

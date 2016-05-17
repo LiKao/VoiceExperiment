@@ -171,6 +171,7 @@ print.onset <- function(x, ...) {
 	cat(paste("\n\tDuration:", 			formatC(x$end-x$start, digits=2), sep="\t\t\t"))
 	cat(paste("\n\tTotal Energy:", 		formatC(x$energy.total, digits=2), sep="\t\t"))
 	cat(paste("\n\tAverage Energy:",	formatC(x$energy.avg, digits=2), sep="\t\t"))
+	cat("\n")
 }
 
 #' @export

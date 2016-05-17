@@ -46,6 +46,7 @@ print.WaveData <- function(x, ...) {
 	if( !is.null(attr(x,"filename")) ) {
 		cat(paste("\n\tOriginal Filename:", attr(x,"filename"), sep="\t\t"))	
 	}
+	cat("\n")
 }
 
 #' @export
