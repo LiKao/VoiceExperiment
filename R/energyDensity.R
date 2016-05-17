@@ -20,8 +20,6 @@
 #
 ###############################################################################
 
-require(methods)
-
 #' Generic Method to Calculate the Energy Density of an Object
 #' 
 #' This method calculates the energy density of any kind of object, which
@@ -74,24 +72,17 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 		stop("Illegal normalization value: ", normalize)
 	}
 
-	duration.ms <- duration(ts)*1000
+	
 	f <- frequency(ts)
-	# We need to generate only up to the last full window (incomplete windows 
-	# at end are discarded)
-	starts <- (seq(from=window.width, to=duration.ms, by=stepsize)-window.width)/1000
-	starts.samples <- round(starts*f)
 	
 	l <- window.width/1000*f
 	w <- window.function(l)
 	w <- w / sum(w)
 	w <- w^2
 	
-	i <- do.call(c,lapply(1:length(starts.samples),FUN=function(v){rep(v,l)}))
-	j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
+	m <- slice(ts, window.width=window.width, stepsize=stepsize)
 	
-	m <- Matrix::sparseMatrix(i=i,j=j,x=w)
-	
-	energy <- as.vector(m %*% ((as.matrix(ts)[1:dim(m)[2]])^2))
+	energy <- colSums((m * w)^2)
 	
 	# Normalization, if activated
 	if(normalize > 0) {
@@ -101,7 +92,7 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 	}
 	
 	r <- stats::ts(energy, start=0, frequency=1000/stepsize)
-	attr(r,"duration") <- (tail(starts,n=1)+window.width)/1000
+	attr(r,"duration") <- (tail(attr(m,"starts"),n=1)+window.width)/1000
 	class(r) <- append("energyDensity",class(r))
 	attr(r,"params") <- list(window.width=window.width, stepsize=stepsize, normalize=normalize)
 	r

@@ -9,7 +9,6 @@ Imports:
 	tuneR (>= 1.2.1),
 	signal (>= 0.7-6),
 	stats,
-	Matrix,
 	fftw
 License: GPL-3
 LazyData: true
