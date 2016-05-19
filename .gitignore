@@ -11,3 +11,5 @@ version.txt
 *.Rcheck/
 VoiceExperiment_*.tar.gz
 doc/
+
+*.sublime-*
