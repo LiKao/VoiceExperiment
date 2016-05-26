@@ -59,11 +59,11 @@ slice.WaveData <- function(x, window.width, stepsize, ... )
 	duration.ms <- duration(x)*1000
 	f <- frequency(x)
 	l <- window.width/1000*f
-	starts <- (seq(from=10,to=duration.ms,by=5)-10)/1000
+	starts <- (seq(from=window.width,to=duration.ms,by=stepsize)-window.width)/1000
 	starts.samples <- round(starts*f)
 	j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
 	m <- matrix(x[j],nrow=l)
-	attr(m, "starts") <- starts
+	attr(m, "starts") <- time(x)[starts.samples+1]
 	m
 }
 
