@@ -88,3 +88,35 @@ test_that("Energy is normalized correctly", {
 	
 })
 
+test_that("Extracted slices have the correct durations", {
+	w <- read.wav("../testdata/silence_50ms_mono.wav")
+	w2 <- window(w, start=0.015, end=0.045)
+	
+	
+	# Note about end tests:
+	# The last slice may end at the last sample of the wavedata
+	# For a slice of duration d the last sample is the one just
+	# within in this duration, i.e. in the range [start,start+d)
+	# Hence the end of the slices may be at end of 
+	# file + one sample duration. Because we may also get round
+	# of error we check for two samples duration, i.e. 2/frequency.
+	
+	### Defaults
+	s <- slice(w, window.width=10, stepsize=5)
+	expect_equal( 	start(s), time(w)[1])
+	expect_true( 	end(s) - tail(time(w),n=1) < 2/frequency(w) )
+	
+	s2 <- slice(w2, window.width=10, stepsize=5)
+	expect_equal( 	start(s2), time(w2)[1])
+	expect_true( 	end(s2) - tail(time(w2),n=1) < 2/frequency(w2))
+
+	### Some more odd parameters
+	s <- slice(w, window.width=7, stepsize=3)
+	expect_equal( 	start(s), time(w)[1])
+	expect_true( 	end(s) - tail(time(w),n=1) < 2/frequency(w))
+	
+	s2 <- slice(w2, window.width=7, stepsize=3)
+	expect_equal( 	start(s2), time(w2)[1])
+	expect_true( 	end(s2) - tail(time(w2),n=1) < 2/frequency(w2))
+})
+

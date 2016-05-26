@@ -37,6 +37,11 @@ test_that("Correct classes are returned", {
 	expect_is(w, "WaveData")
 	expect_is(w, "ts")
 	
+	### slice; slice.WaveData
+	
+	expect_is(slice(w, window.width=10, stepsize=5), 			"tsSlice")
+	expect_is(slice.WaveData(w, window.width=10, stepsize=5),	"tsSlice")
+	
 	### energyDensity; energyDensity.WaveData
 	
 	expect_is(energyDensity.WaveData(w), "energyDensity")
