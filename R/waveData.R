@@ -63,7 +63,13 @@ slice.WaveData <- function(x, window.width, stepsize, ... )
 	starts.samples <- round(starts*f)
 	j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
 	m <- matrix(x[j],nrow=l)
-	attr(m, "starts") <- time(x)[starts.samples+1]
+	attr(m, "window.times") <- time(x)[starts.samples+1]
+	attr(m, "window.width") <- window.width
+	attr(m, "stepsize") <- stepsize
+	attr(m, "frequency") <- f
+	attr(m, "start") <- time(x)[starts.samples[1]+1]
+	attr(m, "end")   <- time(x)[tail(starts.samples,n=1)+1]+window.width/1000
+	class(m) <- append("tsSlice", class(m) )
 	m
 }
 

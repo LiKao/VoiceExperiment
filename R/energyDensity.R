@@ -80,9 +80,9 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 	w <- w / sum(w)
 	w <- w^2
 	
-	m <- slice(ts, window.width=window.width, stepsize=stepsize)
+	s <- slice(ts, window.width=window.width, stepsize=stepsize)
 	
-	energy <- colSums((m * w)^2)
+	energy <- colSums((s * w)^2)
 	
 	# Normalization, if activated
 	if(normalize > 0) {
@@ -91,8 +91,8 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 		energy <- energy * f
 	}
 	
-	r <- stats::ts(energy, start=0, frequency=1000/stepsize)
-	attr(r,"duration") <- (tail(attr(m,"starts"),n=1)+window.width)/1000
+	r <- stats::ts(energy, start=start(s), frequency=1000/stepsize)
+	attr(r,"duration") <- (end(s)-start(s)+window.width)/1000
 	class(r) <- append("energyDensity",class(r))
 	attr(r,"params") <- list(window.width=window.width, stepsize=stepsize, normalize=normalize)
 	r
