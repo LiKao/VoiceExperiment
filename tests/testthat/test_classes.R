@@ -78,4 +78,9 @@ test_that("Correct classes are returned", {
 	
 	expect_is( as.data.frame(d), "data.frame")
 	
+	### spectrum, spectrum.WaveData
+	
+	expect_is( spectrum(w, window.width=10, stepsize=5), "spectrum")
+	expect_is( spectrum.WaveData(w, window.width=10, stepsize=5), "spectrum")
+	
 })
