@@ -54,15 +54,20 @@ summary.WaveData <- function(object, ...) {
 } 
 
 #' @export
-slice.WaveData <- function(x, window.width, stepsize, ... ) 
+slice.WaveData <- function(x, window.width, stepsize, window.function=signal::hanning, ... ) 
 {
 	duration.ms <- duration(x)*1000
 	f <- frequency(x)
-	l <- window.width/1000*f
+	l <- ceiling(window.width/1000*f)
+	
+	w <- window.function(l)
+	w <- w/sum(w)
+		
 	starts <- (seq(from=window.width,to=duration.ms,by=stepsize)-window.width)/1000
 	starts.samples <- round(starts*f)
 	j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
-	m <- matrix(x[j],nrow=l)
+	m <- matrix(x[j],nrow=l)*w	
+	
 	attr(m, "window.times") <- time(x)[starts.samples+1]
 	attr(m, "window.width") <- window.width
 	attr(m, "stepsize") <- stepsize
@@ -83,10 +88,8 @@ plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum"
     
     f <- frequency(x)
     l <- window.width/1000*f
-    w <- window.function(l)
-    w <- w / sum(w)
     
-    m <- slice(x,window.width=window.width, stepsize=stepsize) * w
+    m <- slice(x,window.width=window.width, stepsize=stepsize, window.function=window.function)
     
     p <- fftw::planFFT(l)
     ff <- apply(m,2,function(v){fftw::FFT(v,plan=p)})
@@ -97,3 +100,4 @@ plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum"
 	  NextMethod("plot", x, ylab="Intensity", xlab="Time (s)", ...)
   }
 }
+

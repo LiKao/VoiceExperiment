@@ -75,14 +75,9 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 	
 	f <- frequency(ts)
 	
-	l <- window.width/1000*f
-	w <- window.function(l)
-	w <- w / sum(w)
-	w <- w^2
+	s <- slice(ts, window.width=window.width, stepsize=stepsize, window.function=window.function)
 	
-	s <- slice(ts, window.width=window.width, stepsize=stepsize)
-	
-	energy <- colSums((s * w)^2)
+	energy <- colSums(s^2)
 	
 	# Normalization, if activated
 	if(normalize > 0) {

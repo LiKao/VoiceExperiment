@@ -30,15 +30,16 @@ duration <- function(x, ...) {
 
 #' Generic function to partition a time series into windows with overlap
 #' 
-#' @param x				Time series to be sliced
-#' @param window.width 	Width of each partition window (in ms)
-#' @param stepsize		Stepsize for the windowing (in ms)
-#' @param ...			Extra arguments for future methods
+#' @param x					Time series to be sliced
+#' @param window.width 		Width of each partition window (in ms)
+#' @param stepsize			Stepsize for the windowing (in ms)
+#' @param window.function	Windowing function to be used during extraction (default: hanning window)
+#' @param ...				Extra arguments for future methods
 #'  
 #' @return A matrix with one window per column
 #' 
 #' @export
-slice <- function(x, window.width, stepsize, ... ) {
+slice <- function(x, window.width, stepsize, window.function=signal::hanning, ... ) {
 	UseMethod("slice")
 }
 
@@ -87,7 +88,7 @@ print.tsSlice <- function(x, ... )
 	
 	window.width 			<- attr(x, "window.width")
 	window.width.ms 		<- paste(window.width,"ms",sep="")
-	window.width.samples 	<- paste(window.width*f/1000,"samples",sep="")
+	window.width.samples 	<- paste(nrow(x),"samples",sep="")
 	cat(paste("\n\twindow.width:\t", window.width.ms, window.width.samples,  sep="\t\t"))
 	
 	stepsize 			<- attr(x,"stepsize")
