@@ -85,19 +85,44 @@ plot.WaveData <- function(x, type=c("energy","intensity","spectogram","spectrum"
   type <- match.arg(type)
   
   if(substr(type,1,4)=="spec") {
-    
-    f <- frequency(x)
-    l <- window.width/1000*f
-    
-    m <- slice(x,window.width=window.width, stepsize=stepsize, window.function=window.function)
-    
-    p <- fftw::planFFT(l)
-    ff <- apply(m,2,function(v){fftw::FFT(v,plan=p)})
-      
-    image(x=attr(m,"starts"), y=seq(from=1000/window.width,to=f/2,by=1000/window.width), z=t(log10(abs(ff[2:ceiling(l/2),]))),log="y",xlab="Time",ylab="Frequency")      
+    sp <- spectrum(x, window.width=window.width, stepsize=stepsize, window.function=window.function)
+	plot(sp,...)
   } 
   else {
 	  NextMethod("plot", x, ylab="Intensity", xlab="Time (s)", ...)
   }
+}
+
+
+#' @export
+spectrum.WaveData <- function(x, window.width, stepsize, padding=TRUE, window.function=signal::hanning, ...)
+{
+	s <- slice(x, window.width=window.width, stepsize=stepsize, window.function=window.function)
+	
+	if( padding ) {
+		# We perform a zero padding to the next power of two 
+		# to speed up FFT calculation
+		p2 <- 2^ceiling(log2(nrow(s)))
+	}
+	else {
+		p2 <- nrow(s)
+	}
+
+	m <- matrix(0,ncol=dim(s)[2],nrow=p2)
+	m[1:dim(s)[1],1:dim(s)[2]] <- s
+
+	p <- fftw::planFFT(p2)
+	ff <- apply(m,2,function(v){fftw::FFT(v,plan=p)})
+
+	r <- abs(ff[1:((p2/2+1)),])
+	class(r) <- append("spectrum", class(r) )
+	attr(r, "bins") <- p2/2+1
+	attr(r, "time") <- time(s)
+	attr(r, "window.width") <- window.width
+	attr(r, "stepsize") <- stepsize
+	attr(r, "start") <- start(s)
+	attr(r, "end") <- end(s)
+	attr(r, "frequency") <-  seq(from=0, to=frequency(x)/2,length.out=p2/2+1)
+	r
 }
 

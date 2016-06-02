@@ -43,6 +43,7 @@ slice <- function(x, window.width, stepsize, window.function=signal::hanning, ..
 	UseMethod("slice")
 }
 
+
 ###
 # S3 Generic Methods
 ###
