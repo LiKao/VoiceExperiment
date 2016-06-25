@@ -5,7 +5,7 @@
 \title{Reads Wave Date From a File}
 \usage{
 read.wav(filename, channels = c("both", "left", "right"), filter = list(low
-  = 300, high = 4000, Rp = 0.001, Rs = 40, steepness = 1))
+  = 300, high = 8000, Rp = 0.001, Rs = 40, steepness = 1))
 }
 \arguments{
 \item{filename}{The filename to be read}

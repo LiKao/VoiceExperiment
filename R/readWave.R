@@ -60,7 +60,7 @@
 #' @export 
 #' 
 read.wav <- function(filename, channels=c("both","left","right"), 
-		             filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=1)) 
+		             filter=list(low=300, high=8000, Rp=0.001, Rs=40, steepness=1)) 
 {
 	channels <- match.arg(channels)
 	
