@@ -186,3 +186,100 @@ MFCCs.WaveData <- function(ts, window.width=25, stepsize=10,  window.function=si
 	class(r) <- append("MFCCs",class(r))
 	r
 }
+
+
+#' @importFrom stats time
+#' @export
+time.MFCCs <- function(x, offset = 0, ...)
+{
+	if(offset < 0 || offset > 1) {
+		stop("Illegal offset value: ", offset)
+	}
+	
+	attr(x, "time") + attr(x, "window.width")/1000 * offset
+}
+
+#' @importFrom stats start
+#' @export
+start.MFCCs <- function(x, ...) 
+{
+	attr(x, "start")
+}
+
+#' @importFrom stats end
+#' @export
+end.MFCCs <- function(x, ...)
+{
+	attr(x, "end")
+}
+
+#' @export
+print.MFCCs <- function(x, ... ) 
+{
+	cat("MFCCs:")
+	fbs <- attr(x,"filterbanks")
+	cat(paste("\n\tNumber of Filterbanks:", fbs, sep="\t"))
+		
+	window.width 			<- attr(x, "window.width")
+	window.width.ms 		<- paste(window.width,"ms",sep="")
+	cat(paste("\n\twindow.width:\t\t", window.width.ms,  sep="\t"))
+	
+	stepsize 			<- attr(x,"stepsize")
+	stepsize.ms			<- paste(stepsize,"ms",sep="")
+	cat(paste("\n\tstepsize:\t\t", stepsize.ms, sep="\t\t"))
+	
+	cat(paste("\n\tStart time:\t\t", start(x), sep="\t\t"))
+	cat(paste("\n\tEnd time:\t\t", end(x), sep="\t\t"))
+	cat(paste("\n\tNumber of Windows:", ncol(x), sep="\t\t"))
+	cat("\n")
+}
+
+#' @export
+plot.MFCCs <- function(x, ... ){
+	fbs <- attr(x,"filterbanks")
+	pal.cold <- colorRampPalette(c("white","blue","black"), space="rgb")(100)
+	pal.hot <- colorRampPalette(c("black","red","yellow"), space="rgb")(100)
+	
+	xmin <- min(x,0)
+	xmax <- max(x,0)
+	
+	csize <- (xmax-xmin)/100
+	breaks.cold <- round(-xmin/csize)
+	breaks.cold <- round(seq(from=1,to=100,length.out=breaks.cold))
+	breaks.hot <- round(xmax/csize)
+	breaks.hot <- round(seq(from=1,to=100,length.out=breaks.hot))
+	
+	
+	pal.total <- c(pal.cold[breaks.cold],pal.hot[breaks.hot])
+	
+	mar <- par("mar")
+	
+	par(fig=c(0,0.8,0,1))
+	smar <- mar
+	smar[4] <- 0
+	par(mar=smar)
+	
+	image(x=time(x,offset=0.5), y=1:fbs,t(x), col=pal.total, 
+			xlab="Time",ylab="Coefficient #",...)
+	
+	par(fig=c(0.8,1,0,1), new=TRUE)
+	cmar <- mar
+	cmar[1] <- cmar[1] + 1
+	cmar[2] <- 1
+	cmar[3] <- cmar[3] + 1
+	cmar[4] <- cmar[4] + 2
+	par(mar=cmar)
+	
+	plot(1,1,t="n",xlim=c(0,1),ylim=c(0,length(pal.total)),xaxt="n",yaxt="n",
+			xaxs="i",yaxs="i", xlab="", ylab="",...)
+	
+	axis(4, las=2,
+		 at=round(seq(from=0,to=length(pal.total),length.out=length(pal.total)/10)), 
+		 labels=round(seq(from=min(x),to=max(x),length.out=length(pal.total)/10)))
+	
+ 	for(i in 1:length(pal.total)) {
+		polygon(c(0,0,1,1), c(i-1,i,i,i-1), col=pal.total[i], border=NA)
+ 	}
+ 
+	par(mar=mar)
+}
