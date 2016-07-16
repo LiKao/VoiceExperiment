@@ -113,17 +113,18 @@ onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute
 	
 	sidx <- 1
 	eidx <- 1
-	
+
 	while(sidx <= length(starts) ) {
 
 		start <- starts[sidx]
 		# Find first end point after the current start
-		while(ends[eidx] <= start ) {
+		while(eidx < length(ends) && ends[eidx] <= start) {
 			eidx <- eidx + 1
 		}
+		
 		end <- ends[eidx]
 		samples <- window(ts, start=start, end=end)
-		
+			
 		onset <- list(start=start,end=end, energy.total=sum(samples), energy.avg=mean(samples) )
 		class(onset) <- append(class(onset), "onset");	
 		r <- c(r,list(onset))
