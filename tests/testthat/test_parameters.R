@@ -292,6 +292,17 @@ test_that("Illegal Paramters produce errors", {
 	expect_error( MFCCs(w, filterbanks=26, retain.coeffs=-1:13), 	"Invalid coefficents to retain")
 	expect_error( MFCCs(w, filterbanks=26, retain.coeffs= 0:27), 	"Invalid coefficents to retain")
 	expect_error( MFCCs(w, delta=-1), "Invalid negative delta value")
+	
+	### Windowing
+	invalid_window1 <- function(l) {
+		rep(1,l-2)
+	}
+	expect_error( slice(w, window.width=10, stepsize=5, window.function=invalid_window1), "Invalid windowing function")
+	
+	invalid_window2 <- function(l) {
+		rep(-1,l)
+	}
+	expect_error( slice(w, window.width=10, stepsize=5, window.function=invalid_window2), "Invalid windowing function")
 })
 
 #############################################################

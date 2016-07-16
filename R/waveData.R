@@ -62,6 +62,12 @@ slice.WaveData <- function(x, window.width, stepsize, window.function=signal::ha
 	l <- ceiling(window.width/1000*f)
 	
 	w <- window.function(l)
+	if(length(w) != l) {
+		stop("Invalid windowing function (output length not correct)")
+	}
+	if( any(w<0) ) {
+		stop("Invalid windowing function (negative values)")
+	}
 	w <- w/sum(w)
 		
 	starts <- (seq(from=window.width,to=duration.ms,by=stepsize)-window.width)/1000
