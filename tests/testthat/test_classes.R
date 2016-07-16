@@ -83,4 +83,13 @@ test_that("Correct classes are returned", {
 	expect_is( spectrum(w, window.width=10, stepsize=5), "spectrum")
 	expect_is( spectrum.WaveData(w, window.width=10, stepsize=5), "spectrum")
 	
+	### MFCCs, MFCCs.WaveData
+	tryCatch(MFCCs(w), error=function(e) print(e) )
+	
+	expect_is( MFCCs(w), "MFCCs")
+	expect_is( MFCCs(w), "matrix")
+	
+	expect_is( MFCCs.WaveData(w), "MFCCs")
+	expect_is( MFCCs.WaveData(w), "matrix")
+	
 })

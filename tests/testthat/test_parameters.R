@@ -259,6 +259,39 @@ test_that("Illegal Paramters produce errors", {
 	expect_error(	analyse.directory( testdir, energy.params=list(normalize=-1.5, window.width= 10, stepsize=  5)), "Illegal normalization value: -1.5")
     expect_error(	analyse.directory( testdir, energy.params=list(normalize=-0.5, window.width= 10, stepsize=  5)), "Illegal normalization value: -0.5")
     expect_error(	analyse.directory( testdir, energy.params=list(normalize= 1.5, window.width= 10, stepsize=  5)), "Illegal normalization value: 1.5")
+	
+	#### MFCC calculation
+	
+	expect_error( freq.to.mel(-1), 		"Negative frequency in freq.to.mel conversion")
+	expect_error( mel.to.freq(-1), 		"Negative mel in mel.to.freq conversion")
+	expect_error( freq.to.mel(-2), 		"Negative frequency in freq.to.mel conversion")
+	expect_error( mel.to.freq(-2), 		"Negative mel in mel.to.freq conversion")
+	expect_error( freq.to.mel(-100), 	"Negative frequency in freq.to.mel conversion")
+	expect_error( mel.to.freq(-100), 	"Negative mel in mel.to.freq conversion")
+	
+	expect_error( preemphasis(w,  1), 	"Preemphasis too large")
+	expect_error( preemphasis(w,  2), 	"Preemphasis too large")
+	expect_error( preemphasis(w, -0.5), "Negative preemphasis value supplied to preemphasis filter")
+	expect_error( preemphasis(w, -1), 	"Negative preemphasis value supplied to preemphasis filter")
+	
+	expect_error( create.filter(  10, 20,  30,  -1), "invalid number of bins in creation of MFCC filter")
+	expect_error( create.filter(  10, 20,  30,   0), "invalid number of bins in creation of MFCC filter")
+	expect_error( create.filter( -10, 20,  30, 100), "negative lower end of MFCC filter")
+	expect_error( create.filter(  10, 20, 150, 100), "upper end of MFCC filter larger than total number of bins")
+	expect_error( create.filter(  15, 10,  30, 100), "lower end of MFCC filter is larger than top")
+	expect_error( create.filter(  10, 25,  15, 100), "top of MFCC filter is larger than upper end")
+	
+	expect_error( create.filterbank(8000, 300, 26, 44100, 1024), "Lower end of filterbank larger than upper end")
+	expect_error( create.filterbank(300, 8000, -1, 44100, 1024), "Invalid number of MFCC filterbanks")
+	expect_error( create.filterbank(300, 8000,  0, 44100, 1024), "Invalid number of MFCC filterbanks")
+	expect_error( create.filterbank(300, 8000, 26,    -1, 1024), "Invalid sampling frequency")
+	expect_error( create.filterbank(300, 8000, 26,     0, 1024), "Invalid sampling frequency")
+	expect_error( create.filterbank(300, 8000, 26, 44100,   -1), "Invalid number of FFT bins")
+	expect_error( create.filterbank(300, 8000, 26, 44100,    0), "Invalid number of FFT bins")
+	
+	expect_error( MFCCs(w, filterbanks=26, retain.coeffs=-1:13), 	"Invalid coefficents to retain")
+	expect_error( MFCCs(w, filterbanks=26, retain.coeffs= 0:27), 	"Invalid coefficents to retain")
+	expect_error( MFCCs(w, delta=-1), "Invalid negative delta value")
 })
 
 #############################################################
