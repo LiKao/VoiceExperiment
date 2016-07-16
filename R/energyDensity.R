@@ -75,14 +75,9 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 	
 	f <- frequency(ts)
 	
-	l <- window.width/1000*f
-	w <- window.function(l)
-	w <- w / sum(w)
-	w <- w^2
+	s <- slice(ts, window.width=window.width, stepsize=stepsize, window.function=window.function)
 	
-	m <- slice(ts, window.width=window.width, stepsize=stepsize)
-	
-	energy <- colSums((m * w)^2)
+	energy <- colSums(s^2)
 	
 	# Normalization, if activated
 	if(normalize > 0) {
@@ -91,8 +86,8 @@ energyDensity.WaveData <- function(ts, window.width=10, stepsize=5, normalize=1,
 		energy <- energy * f
 	}
 	
-	r <- stats::ts(energy, start=0, frequency=1000/stepsize)
-	attr(r,"duration") <- (tail(attr(m,"starts"),n=1)+window.width)/1000
+	r <- stats::ts(energy, start=start(s), frequency=1000/stepsize)
+	attr(r,"duration") <- (end(s)-start(s)+window.width)/1000
 	class(r) <- append("energyDensity",class(r))
 	attr(r,"params") <- list(window.width=window.width, stepsize=stepsize, normalize=normalize)
 	r
@@ -109,8 +104,8 @@ duration.energyDensity <- function(x, ... ) {
 
 #' @importFrom stats window
 #' @export
-window.energyDensity <- function( x, start=NULL, end=NULL, frequency=NULL, deltat=NULL, extend=FALSE, ... ) {
-	r <- NextMethod("window", x, start=start, end=end, frequency=frequency, deltat=deltat, extend=extend, ... )
+window.energyDensity <- function( x, ... ) {
+	r <- NextMethod("window", x, ... )
 	d <- length(r)/frequency(r)
 	attr(r,"duration") <- d
 	class(r) <- append("energyDensity",class(r))
