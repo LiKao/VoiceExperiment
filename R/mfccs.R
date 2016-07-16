@@ -221,13 +221,39 @@ end.MFCCs <- function(x, ...)
 	attr(x, "end")
 }
 
+#' @importFrom stats time
+#' @export
+time.MFCCs <- function(x, offset = 0, ...)
+{
+	if(offset < 0 || offset > 1) {
+		stop("Illegal offset value: ", offset)
+	}
+	
+	attr(x, "time") + attr(x, "window.width")/1000 * offset
+}
+
+#' @importFrom stats start
+#' @export
+start.MFCCs <- function(x, ...) 
+{
+	attr(x, "start")
+}
+
+#' @importFrom stats end
+#' @export
+end.MFCCs <- function(x, ...)
+{
+	attr(x, "end")
+}
+
 #' @export
 print.MFCCs <- function(x, ... ) 
 {
 	cat("MFCCs:")
 	fbs <- attr(x,"filterbanks")
 	cat(paste("\n\tNumber of Filterbanks:", fbs, sep="\t"))
-		
+	cat(paste("\n\tRetained Coefficients:", paste(attr(x,"retain.coeffs"),collapse=","), sep="\t"))
+	cat(paste("\n\tDeltas:\t\t\t\t\t", attr(x,"delta"), sep=""))
 	window.width 			<- attr(x, "window.width")
 	window.width.ms 		<- paste(window.width,"ms",sep="")
 	cat(paste("\n\twindow.width:\t\t", window.width.ms,  sep="\t"))
@@ -262,13 +288,26 @@ plot.MFCCs <- function(x, ... ){
 	
 	mar <- par("mar")
 	
-	par(fig=c(0,0.8,0,1))
-	smar <- mar
-	smar[4] <- 0
-	par(mar=smar)
+	delta <- attr(x, "delta")
 	
-	image(x=time(x,offset=0.5), y=1:fbs,t(x), col=pal.total, 
-			xlab="Time",ylab="Coefficient #",...)
+	par(fig=c(0,0.8,0,0.3)) 
+	plot(x=time(x,offset=0.5),rep(0,length(time(x))), 
+			frame.plot=FALSE,xlab="Time", ylab="",yaxt="n", type="n")
+	
+	y_max <- length(attr(x,"retain.coeffs"))
+	
+	size = (1-0.2)/(delta+1)
+	for(i in 0:delta){
+		par(fig=c(0,0.8,0.2+size*i,size*(i+1)+0.15), new=TRUE)
+		smar <- mar
+		smar[1] <- 0
+		smar[3] <- 0
+		smar[4] <- 0
+		par(mar=smar)
+		
+		image(x=time(x,offset=0.5), y=1:y_max, z=t(x[(1:y_max)+i*y_max,]), col=pal.total, 
+				xlab="",ylab="Coefficient #", xaxt="n", zlim=c(min(x),max(x)), ...)
+	}
 	
 	par(fig=c(0.8,1,0,1), new=TRUE)
 	cmar <- mar
@@ -282,12 +321,12 @@ plot.MFCCs <- function(x, ... ){
 			xaxs="i",yaxs="i", xlab="", ylab="",...)
 	
 	axis(4, las=2,
-		 at=round(seq(from=0,to=length(pal.total),length.out=length(pal.total)/10)), 
-		 labels=round(seq(from=min(x),to=max(x),length.out=length(pal.total)/10)))
+			at=round(seq(from=0,to=length(pal.total),length.out=length(pal.total)/10)), 
+			labels=round(seq(from=min(x),to=max(x),length.out=length(pal.total)/10)))
 	
- 	for(i in 1:length(pal.total)) {
+	for(i in 1:length(pal.total)) {
 		polygon(c(0,0,1,1), c(i-1,i,i,i-1), col=pal.total[i], border=NA)
- 	}
- 
+	}
+	
 	par(mar=mar)
 }
