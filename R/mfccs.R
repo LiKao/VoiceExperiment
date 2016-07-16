@@ -132,6 +132,10 @@ MFCCs.WaveData <- function(ts, window.width=25, stepsize=10,  window.function=si
 		                   lower=300, upper=8000, filterbanks=26, preemph=0.97, 
 						   retain.coeffs = 1:13, delta = 2, ... )
 {
+	if(window.width > duration(ts)*1000) {
+		stop("Duration of sequence to short")
+	}
+	
 	if( any(retain.coeffs < 0) || any(retain.coeffs>=filterbanks)) {
 		stop("Invalid coefficents to retain")
 	}
@@ -144,7 +148,7 @@ MFCCs.WaveData <- function(ts, window.width=25, stepsize=10,  window.function=si
 	
 	spec <- spectrum(ts.emph, window.width=window.width, stepsize=stepsize, 
 					 window.function=window.function)
-	
+	 
 	bins <- attr(spec,"bins")
 	f <- frequency(ts)
 	
@@ -161,20 +165,24 @@ MFCCs.WaveData <- function(ts, window.width=25, stepsize=10,  window.function=si
 	r <- apply(log.energies,2,function(v){fftw::DCT(v,plan=plan.dct,type=2)})
 
 	if(!is.null(retain.coeffs)) {
-		r <- r[retain.coeffs+1,]
+		r <- as.matrix(r[retain.coeffs+1,])
 	}
 	
-	if( delta > 0) {
-		deltas <- list(r)
-		for(i in 1:delta) {
-			d <- deltas[[i]][,1:ncol(r)] - cbind(deltas[[i]][,2:ncol(r)],rep(0,nrow(r)))
-			d[,ncol(r)-i+1] <- 0
-			deltas[[i+1]] <- d
+	if( delta > 0 ) {
+		if(delta <= ncol(r)) {
+			deltas <- list(r)
+			for(i in 1:delta) {
+				d <- deltas[[i]][,1:ncol(r)] - cbind(deltas[[i]][,2:ncol(r)],rep(0,nrow(r)))
+				d[,ncol(r)-i+1] <- 0
+				deltas[[i+1]] <- d
+			}
+			r <- as.matrix(do.call(rbind,deltas)[,1:(ncol(r)-delta)])
+		} else {
+			warning("Sequence to short to calculate deltas")
 		}
-		r <- as.matrix(do.call(rbind,deltas)[,1:(ncol(r)-delta)])
 	}
 	
-
+	
 	attr(r,"window.width") <- window.width
 	attr(r,"stepsize") <- stepsize
 	attr(r,"filterbanks") <- filterbanks
