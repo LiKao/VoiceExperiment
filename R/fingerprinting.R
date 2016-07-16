@@ -112,18 +112,56 @@ extract.fp.mean <- function(fs) {
 #' @param	ts				The time series object from which the fingerprint should
 #' 							be extracted
 #' @param	feature.type	The type of features to be used in fignerprinting
+#' @param	start			The start position at which to start extraction (see details)
+#' @param	end				The end position at which to end extraction (see details)
+#' @param	duration		The duration of the window to be extracted (see details)
 #' @param	feature.params	Additional arguments for the feature extractor
 #' @param	...				Arguments passed to fingerprinting function for the features
 #' 
+#' @details
+#' 
+#' The position of the wave file for which the fingerprint should be extracted can 
+#' be set based either on start or end values or start and a duration.
+#' 
 #' @export
-fingerprint.ts <- function(ts, feature.type=c("MFCCs", "MFCC", "spectrum"), 
+fingerprint.ts <- function(ts, feature.type=c("MFCCs", "MFCC", "spectrum"),
+						   start=NULL, end=NULL, duration=NULL,
 						   feature.params=list(), ...)
 {
 	feature.type <- match.arg(feature.type)
-	fs <- switch(feature.type,
-			MFCCs 		= do.call(MFCCs, 	c(list(ts=ts), feature.params)),
-			MFCC  		= do.call(MFCCs, 	c(list(ts=ts), feature.params)),
-			spectrum 	= do.call(spectrum, c(list(x=ts),  feature.params)))
 	
-	fingerprint.Features(fs, ...)
+	if(!is.null(start)) {
+		if( is.null(end) && is.null(duration)) {
+			stop("Start time for fingerprinting specified but no end or duration is given")
+		}
+		
+		if(!is.null(end) && !is.null(duration)) {
+			stop("Both end as well as duration supplied")
+		}
+		
+		if(!is.null(end) && end < start) {
+			stop("End before start in fingerprinting")
+		}
+		
+		if(is.null(end)) {
+			end <- start + duration
+		}
+		
+		ts.windowed <- window(ts, start=start, end=end)
+	}
+	else {
+		ts.windowed <- ts
+	}
+	
+	fs <- switch(feature.type,
+			MFCCs 		= do.call(MFCCs, 	c(list(ts=ts.windowed), feature.params)),
+			MFCC  		= do.call(MFCCs, 	c(list(ts=ts.windowed), feature.params)),
+			spectrum 	= do.call(spectrum, c(list(x=ts.windowed),  feature.params)))
+	
+	r <- fingerprint.Features(fs, ...)
+	if(!is.null(start)) {
+		attr(r, "start") 	<- start
+		attr(r, "end") 		<- end
+	}
+	r
 }

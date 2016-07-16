@@ -5,13 +5,20 @@
 \title{Extract Fingerprints for any Kind of ts Object}
 \usage{
 \method{fingerprint}{ts}(ts, feature.type = c("MFCCs", "MFCC", "spectrum"),
-  feature.params = list(), ...)
+  start = NULL, end = NULL, duration = NULL, feature.params = list(),
+  ...)
 }
 \arguments{
 \item{ts}{The time series object from which the fingerprint should
 be extracted}
 
 \item{feature.type}{The type of features to be used in fignerprinting}
+
+\item{start}{The start position at which to start extraction (see details)}
+
+\item{end}{The end position at which to end extraction (see details)}
+
+\item{duration}{The duration of the window to be extracted (see details)}
 
 \item{feature.params}{Additional arguments for the feature extractor}
 
@@ -21,5 +28,9 @@ be extracted}
 Fingerprints from ts objects are extracted by first extracting a feature
 time series from the original time series and then running the appropriate
 fingerprint extractor on this feature series.
+}
+\details{
+The position of the wave file for which the fingerprint should be extracted can 
+be set based either on start or end values or start and a duration.
 }
 
