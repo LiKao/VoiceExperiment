@@ -57,6 +57,7 @@ summary.WaveData <- function(object, ...) {
 #' @export
 slice.WaveData <- function(x, window.width, stepsize, window.function=signal::hanning, ... ) 
 {
+
 	duration.ms <- duration(x)*1000
 	f <- frequency(x)
 	l <- ceiling(window.width/1000*f)
@@ -69,7 +70,7 @@ slice.WaveData <- function(x, window.width, stepsize, window.function=signal::ha
 		stop("Invalid windowing function (negative values)")
 	}
 	w <- w/sum(w)
-		
+	
 	starts <- (seq(from=window.width,to=duration.ms,by=stepsize)-window.width)/1000
 	starts.samples <- round(starts*f)
 	j <- do.call(c,lapply(starts.samples,FUN=function(v){seq(v,v+l-1)+1}))
@@ -121,7 +122,7 @@ spectrum.WaveData <- function(x, window.width, stepsize, padding=TRUE, window.fu
 	p <- fftw::planFFT(p2)
 	ff <- apply(m,2,function(v){fftw::FFT(v,plan=p)})
 
-	r <- abs(ff[1:((p2/2+1)),])
+	r <- as.matrix(abs(ff[1:((p2/2+1)),]))
 	class(r) <- append("spectrum", class(r) )
 	attr(r, "bins") <- p2/2+1
 	attr(r, "time") <- time(s)
