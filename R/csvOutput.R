@@ -61,7 +61,8 @@ expFps.as.csv <- function( dirname, filename, read.params=list(), filter=list(),
 	
 	a <- analyse.directory( dirname=dirname, read.params=read.params, filter=filter, 
 							onset.params=onset.params, energy.params=energy.params, 
-							fp.params=list(), stoptime=NULL, duration=NULL, quiet=FALSE )
+							fp.params=list(), stoptime=stoptime, duration=duration,
+							quiet=FALSE )
 	
 	d <- as.data.frame(a, include.fp=TRUE)
 	
@@ -91,7 +92,7 @@ expResponses.as.csv <- function( dirname, filename, read.params=list(), filter=l
 	
 	a <- analyse.directory( dirname=dirname, read.params=read.params, filter=filter, 
 							onset.params=onset.params, energy.params=energy.params, 
-							fp.params=list(), stoptime=NULL, duration=NULL, 
+							fp.params=list(), stoptime=stoptime, duration=duration, 
 							nresponses=nresponses, quiet=FALSE )
 	
 	d <- as.data.frame(a, include.fp=include.fp)
@@ -144,7 +145,8 @@ expFps.as.csv2 <- function( dirname, filename, read.params=list(), filter=list()
 	
 	a <- analyse.directory( dirname=dirname, read.params=read.params, filter=filter, 
 			                onset.params=onset.params, energy.params=energy.params,
-							fp.params=list(), stoptime=NULL, duration=NULL, quiet=FALSE )
+							fp.params=list(), stoptime=stoptime, duration=duration,
+							quiet=FALSE )
 	
 	d <- as.data.frame(a, include.fp=TRUE)
 	
@@ -173,9 +175,9 @@ expResponses.as.csv2 <- function( dirname, filename, read.params=list(), filter=
 {
 	
 	a <- analyse.directory( dirname=dirname, read.params=read.params, filter=filter, 
-			onset.params=onset.params, energy.params=energy.params, 
-			fp.params=list(), stoptime=NULL, duration=NULL, 
-			nresponses=nresponses, quiet=FALSE )
+							onset.params=onset.params, energy.params=energy.params, 
+							fp.params=list(), stoptime=stoptime, duration=duration, 
+							nresponses=nresponses, quiet=FALSE )
 	
 	d <- as.data.frame(a, include.fp=include.fp)
 	
@@ -220,7 +222,8 @@ expFps.as.table <- function( dirname, filename, read.params=list(), filter=list(
 	
 	a <- analyse.directory( dirname=dirname, read.params=read.params, filter=filter, 
 			                onset.params=onset.params, energy.params=energy.params, 
-							fp.params=list(), stoptime=NULL, duration=NULL, quiet=FALSE )
+							fp.params=list(), stoptime=stoptime, duration=duration,
+							quiet=FALSE )
 	
 	d <- as.data.frame(a, include.fp=TRUE)
 	
@@ -246,9 +249,9 @@ expResponses.as.table <- function( dirname, filename, read.params=list(), filter
 {
 	
 	a <- analyse.directory( dirname=dirname, read.params=read.params, filter=filter, 
-			onset.params=onset.params, energy.params=energy.params, 
-			fp.params=list(), stoptime=NULL, duration=NULL, 
-			nresponses=nresponses, quiet=FALSE )
+							onset.params=onset.params, energy.params=energy.params, 
+							fp.params=list(), stoptime=stoptime, duration=duration, 
+							nresponses=nresponses, quiet=FALSE )
 	
 	d <- as.data.frame(a, include.fp=include.fp)
 	
