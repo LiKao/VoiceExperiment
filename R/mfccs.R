@@ -191,10 +191,16 @@ MFCCs.WaveData <- function(ts, window.width=25, stepsize=10,  window.function=si
 	attr(r,"time") <- attr(spec,"time")[1:ncol(r)]
 	attr(r,"start") <- attr(spec,"start")
 	attr(r,"end") <- attr(spec,"end")
-	class(r) <- append("MFCCs",class(r))
+	class(r) <- append(c("MFCCs", "Features"), class(r))
 	r
 }
 
+
+#' @export
+feature.type.MFCCs <- function(fs) 
+{
+	"MFCCs"
+}
 
 #' @importFrom stats time
 #' @export

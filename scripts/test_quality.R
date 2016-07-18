@@ -6,4 +6,4 @@ outfile <- args[[2]]
 
 devtools::load_all(".")
 
-expOnsets.as.csv(dirname=indir,filename=outfile)
+expFps.as.csv(dirname=indir,filename=outfile)

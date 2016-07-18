@@ -53,6 +53,11 @@ time.spectrum <- function(x, offset = 0, ...)
 	attr(x, "time") + attr(x, "window.width")/1000 * offset
 }
 
+#' @export
+feature.type.spectrum <- function(fs) {
+	"spectrum"
+}
+
 #' @importFrom stats start
 #' @export
 start.spectrum <- function(x, ...) 

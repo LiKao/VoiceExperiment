@@ -2,7 +2,6 @@
 
 ## Features
 
-* Add stop-time filter to remove beep onsets
 * Add voice recognition based on mfccs
 * Detection of onset relative to beep
 

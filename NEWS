@@ -1,3 +1,4 @@
+* added methods for fingerprinting of WaveData objects and parts of WaveData objects
 * added methods to calculate MFCCs from WaveData objects
 * slice method for wave data now returns correct timestamps for windowed waves
 

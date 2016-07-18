@@ -2,7 +2,7 @@
 % Please edit documentation in R/csvOutput.R
 \name{expOnsets.as.csv2}
 \alias{expOnsets.as.csv2}
-\title{Analyse All Files from a Given Directory and Write Results as CSV file}
+\title{Analyse All Files from a Given Directory for Onsets and Write Results as CSV file}
 \usage{
 expOnsets.as.csv2(dirname, filename, read.params = list(), filter = list(),
   onset.params = list(), energy.params = energy.params, ...)

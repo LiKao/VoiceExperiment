@@ -123,7 +123,7 @@ spectrum.WaveData <- function(x, window.width, stepsize, padding=TRUE, window.fu
 	ff <- apply(m,2,function(v){fftw::FFT(v,plan=p)})
 
 	r <- as.matrix(abs(ff[1:((p2/2+1)),]))
-	class(r) <- append("spectrum", class(r) )
+	class(r) <- append(c("spectrum","Features"), class(r) )
 	attr(r, "bins") <- p2/2+1
 	attr(r, "time") <- time(s)
 	attr(r, "window.width") <- window.width
