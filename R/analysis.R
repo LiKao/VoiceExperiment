@@ -177,13 +177,13 @@ analyse.directory.onsets <- function(dirname, read.params=list(), filter=list(),
 	r
 }
 
-analyse.clusters <- function(d, nresponses)
+analyse.clusters <- function(df, nresponses)
 {
 	
-	m <- do.call(rbind,lapply(a, function(d) as.matrix(d$fingerprint)))
+	m <- do.call(rbind,lapply(df, function(d) as.matrix(d$fingerprint)))
 	c <- kmeans(m, centers=nresponses)
 	r <- data.frame( cluster = c$cluster, 
-					 dist=matrix(rep(0,length(d)*nresponses),ncol=nresponses))
+					 dist=matrix(rep(0,length(df)*nresponses),ncol=nresponses))
 	for(i in 1:nresponses) {
 		r[,paste("dist",i,sep=".")] <- sqrt(colSums((t(m) - c$centers[i,])^2))
 	}
@@ -192,11 +192,13 @@ analyse.clusters <- function(d, nresponses)
 
 #' Analyse a Complete Directory for Onset Times, Fingerprints and clusters
 #' 
-#' @inheritParams 	read.wav
-#' @inheritParams 	onsets.WaveData
-#' @inheritParams	analyse.file
-#' @param dirname	Name of the directory from which the files should be taken 
-#' @param quiet 	If set to true, the function will output the current filename to be analysed
+#' @inheritParams 		read.wav
+#' @inheritParams 		onsets.WaveData
+#' @inheritParams		analyse.file
+#' @param dirname		Name of the directory from which the files should be taken
+#' @param nresponses	Number of response classes used in clustering. Set to \code{NULL} to 
+#' 						deactivate cluster analysis 
+#' @param quiet 		If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
 analyse.directory <- function(dirname, read.params=list(), filter=list(), onset.params=list(),
@@ -233,12 +235,12 @@ as.data.frame.voiceExperimentData <- function(x, ..., include.fp=FALSE) {
 		fps <- do.call(rbind, lapply(x, function(d){as.data.frame(d$fingerprint)}))
 		r <- cbind(r,fp=fps)
 	}
-	if( all(unlist(lapply(a,function(d) !is.null(d$response)))) ) {
+	if( all(unlist(lapply(x, function(d) !is.null(d$response)))) ) {
 		if(!include.fp) {
 			fps <- do.call(rbind, lapply(x, function(d){as.data.frame(d$fingerprint)}))
 			r <- cbind(r,fp=fps[,c("type","feature.type","start","end")])
 		}
-		cs <- do.call(rbind,lapply(a,function(d) as.data.frame(d$response)))
+		cs <- do.call(rbind,lapply(x, function(d) as.data.frame(d$response)))
 		r <- cbind(r, response=cs)
 	}
 	r
