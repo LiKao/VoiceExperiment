@@ -486,7 +486,7 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, read.params=list(channels="both"))
 						
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$channels, "both")
+			expect_equal(attr(o,"params")$read.params$channels, "both")
 		}
 		
 		
@@ -495,7 +495,7 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, read.params=list(channels="left"))
 						
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$channels, "left")
+			expect_equal(attr(o,"params")$read.params$channels, "left")
 		}
 		
 		### channels = right
@@ -503,7 +503,7 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, read.params=list(channels="right"))
 						
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$channels, "right")
+			expect_equal(attr(o,"params")$read.params$channels, "right")
 		}
 		
 		
@@ -513,77 +513,77 @@ test_that("Parameters are propagated during directory analysis", {
 		
 		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=1))
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+			expect_equal(attr(o,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o,"params")$read.params$filter$steepness,	1)
 		}
 		
 		### low=200
 		
 		os <- analyse.directory( testdir, filter=list(low=200, high=4000, Rp=0.001, Rs=40, steepness=1))
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		200)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+			expect_equal(attr(o,"params")$read.params$filter$low,		200)
+			expect_equal(attr(o,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o,"params")$read.params$filter$steepness,	1)
 		}
 		
 		### high=5000
 		
 		os <- analyse.directory( testdir, filter=list(low=300, high=5000, Rp=0.001, Rs=40, steepness=1))
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		5000)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+			expect_equal(attr(o,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o,"params")$read.params$filter$high,		5000)
+			expect_equal(attr(o,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o,"params")$read.params$filter$steepness,	1)
 		}
 		
 		### Rp=1
 		
 		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=1, Rs=40, steepness=1))
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			1)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+			expect_equal(attr(o,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o,"params")$read.params$filter$Rp,			1)
+			expect_equal(attr(o,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o,"params")$read.params$filter$steepness,	1)
 		}
 		
 		### Rs=20
 		
 		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=20, steepness=1))
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			20)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	1)
+			expect_equal(attr(o,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o,"params")$read.params$filter$Rs,			20)
+			expect_equal(attr(o,"params")$read.params$filter$steepness,	1)
 		}
 		
 		### steepnes=2
 		
 		os <- analyse.directory( testdir, filter=list(low=300, high=4000, Rp=0.001, Rs=40, steepness=2))
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		300)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		4000)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			0.001)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			40)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	2)
+			expect_equal(attr(o,"params")$read.params$filter$low,		300)
+			expect_equal(attr(o,"params")$read.params$filter$high,		4000)
+			expect_equal(attr(o,"params")$read.params$filter$Rp,			0.001)
+			expect_equal(attr(o,"params")$read.params$filter$Rs,			40)
+			expect_equal(attr(o,"params")$read.params$filter$steepness,	2)
 		}
 		
 		### All parameters
 		
 		os <- analyse.directory( testdir, filter=list(low=200, high=5000, Rp=1, Rs=20, steepness=2))
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$read.params$filter$low,		200)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$high,		5000)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rp,			1)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$Rs,			20)
-			expect_equal(attr(o$onsets,"params")$read.params$filter$steepness,	2)
+			expect_equal(attr(o,"params")$read.params$filter$low,		200)
+			expect_equal(attr(o,"params")$read.params$filter$high,		5000)
+			expect_equal(attr(o,"params")$read.params$filter$Rp,			1)
+			expect_equal(attr(o,"params")$read.params$filter$Rs,			20)
+			expect_equal(attr(o,"params")$read.params$filter$steepness,	2)
 		}
 		
 		###### onsets
@@ -593,7 +593,7 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, onset.params=list(limit.type="absolute"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"absolute")
 		}
 		
 		### limit.type = "relative"
@@ -601,7 +601,7 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, onset.params=list(limit.type="relative"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"relative")
 		}
 		
 		### lower limit parameter at 0.05
@@ -609,15 +609,15 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, onset.params=list(limit = c(0.1,0.05), limit.type="absolute"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.1,0.05))
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+			expect_equal(attr(o,"params")$onset.params$limit,		c(0.1,0.05))
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"absolute")
 		}
 		
 		os <- analyse.directory( testdir, onset.params=list(limit = c(0.1,0.05), limit.type="relative"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.1,0.05))
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+			expect_equal(attr(o,"params")$onset.params$limit,		c(0.1,0.05))
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"relative")
 		}
 		
 		### upper limit parameter at 0.5
@@ -625,15 +625,15 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, onset.params=list(limit = c(0.5,0.01), limit.type="absolute"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.5,0.01))
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+			expect_equal(attr(o,"params")$onset.params$limit,		c(0.5,0.01))
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"absolute")
 		}
 		
 		os <- analyse.directory( testdir, onset.params=list(limit = c(0.5,0.01), limit.type="relative"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		c(0.5,0.01))
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+			expect_equal(attr(o,"params")$onset.params$limit,		c(0.5,0.01))
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"relative")
 		}
 		
 		### limit = 0.5 (no hysteresis)
@@ -641,15 +641,15 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="absolute"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.5)
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"absolute")
+			expect_equal(attr(o,"params")$onset.params$limit,		0.5)
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"absolute")
 		}
 		
 		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="relative"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.5)
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+			expect_equal(attr(o,"params")$onset.params$limit,		0.5)
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"relative")
 		}
 		
 		### All parameters changed
@@ -657,8 +657,8 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, onset.params=list(limit = 0.5, limit.type="relative"))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$limit,		0.5)
-			expect_equal(attr(o$onsets,"params")$onset.params$limit.type,	"relative")
+			expect_equal(attr(o,"params")$onset.params$limit,		0.5)
+			expect_equal(attr(o,"params")$onset.params$limit.type,	"relative")
 		}
 		
 		##### energy.params
@@ -668,9 +668,9 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, energy.params=list(window.width=20, stepsize=5, normalize=0.9))
 		
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	20)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		5)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.9)
+			expect_equal(attr(o,"params")$onset.params$energy.params$window.width,	20)
+			expect_equal(attr(o,"params")$onset.params$energy.params$stepsize,		5)
+			expect_equal(attr(o,"params")$onset.params$energy.params$normalize,		0.9)
 		}
 		
 		### stepsize = 3
@@ -678,9 +678,9 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, energy.params=list(window.width=10, stepsize=3, normalize=0.9))
 						
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	10)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		3)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.9)
+			expect_equal(attr(o,"params")$onset.params$energy.params$window.width,	10)
+			expect_equal(attr(o,"params")$onset.params$energy.params$stepsize,		3)
+			expect_equal(attr(o,"params")$onset.params$energy.params$normalize,		0.9)
 		}
 		
 				
@@ -689,9 +689,9 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, energy.params=list(window.width=10, stepsize=3, normalize=0.7))
 						
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	10)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		3)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.7)
+			expect_equal(attr(o,"params")$onset.params$energy.params$window.width,	10)
+			expect_equal(attr(o,"params")$onset.params$energy.params$stepsize,		3)
+			expect_equal(attr(o,"params")$onset.params$energy.params$normalize,		0.7)
 		}
 		
 		
@@ -700,9 +700,9 @@ test_that("Parameters are propagated during directory analysis", {
 		os <- analyse.directory( testdir, energy.params=list(window.width=20, stepsize=3, normalize=0.7))
 						
 		for(o in os) {
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$window.width,	20)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$stepsize,		3)
-			expect_equal(attr(o$onsets,"params")$onset.params$energy.params$normalize,		0.7)
+			expect_equal(attr(o,"params")$onset.params$energy.params$window.width,	20)
+			expect_equal(attr(o,"params")$onset.params$energy.params$stepsize,		3)
+			expect_equal(attr(o,"params")$onset.params$energy.params$normalize,		0.7)
 		}
 })
 
