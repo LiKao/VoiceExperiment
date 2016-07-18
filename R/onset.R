@@ -199,5 +199,5 @@ as.matrix.onsetData <- function(x, padding = NULL, ...) {
 		names(p) <- n
 		r <- c(r,p)
 	}
-	r
+	t(as.matrix(r))
 }

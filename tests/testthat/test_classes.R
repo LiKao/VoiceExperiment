@@ -74,7 +74,7 @@ test_that("Correct classes are returned", {
 	
 	### conversion functions
 	
-	expect_is( as.matrix(o), "numeric")
+	expect_is( as.matrix(o), "matrix")
 	
 	expect_is( as.data.frame(d), "data.frame")
 	
