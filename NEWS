@@ -1,3 +1,6 @@
+VoiceExperiment v1.0.0 (Release date: 2016-07-18)
+==============
+
 * added clustering of responses based on fingerprints
 * added methods for fingerprinting of WaveData objects and parts of WaveData objects
 * added methods to calculate MFCCs from WaveData objects
