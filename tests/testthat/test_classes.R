@@ -30,7 +30,7 @@ test_that("Correct classes are returned", {
 	w <- read.wav("../testdata/silence_50ms_mono.wav")
 	e <- energyDensity(w)
 	o <- onsets(w)
-	d <- analyse.directory("../testdata/testsets")
+	d <- analyse.directory.onsets("../testdata/testsets")
 			
 	### read.wav	
 
@@ -66,11 +66,11 @@ test_that("Correct classes are returned", {
 	
 	### analyse.file
 	
-	expect_is(analyse.file("../testdata/silence_50ms_mono.wav")$onsets, "onsetData")
+	expect_is(analyse.file.onsets("../testdata/silence_50ms_mono.wav")$onsets, "onsetData")
 	
 	### analyse.directory
 	
-	expect_is(analyse.directory("../testdata/testsets"), "voiceExperimentData")
+	expect_is(analyse.directory.onsets("../testdata/testsets"), "voiceExperimentData")
 	
 	### conversion functions
 	
