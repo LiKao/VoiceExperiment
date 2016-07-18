@@ -165,3 +165,20 @@ fingerprint.ts <- function(ts, feature.type=c("MFCCs", "MFCC", "spectrum"),
 	}
 	r
 }
+
+#' @export
+as.matrix.fingerprint <- function(x, ... ) 
+{
+	t(NextMethod("as.matrix", x))
+}
+
+#' @export
+as.data.frame.fingerprint <- function(x, ...) {
+	m <- as.matrix(x)
+	r <- data.frame( type=attr(x,"fp.type"), feature.type=attr(x,"feature.type") )
+	if(!is.null(attr(x, "start"))) {
+		r$start <- attr(x, "start")
+		r$end   <- attr(x, "end")
+	}
+	cbind(r,value=m)
+}

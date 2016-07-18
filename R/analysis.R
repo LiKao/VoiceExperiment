@@ -205,9 +205,14 @@ analyse.directory <- function(dirname, read.params=list(), filter=list(), onset.
 }
 
 #' @export
-as.data.frame.voiceExperimentData <- function(x, ...) {
+as.data.frame.voiceExperimentData <- function(x, ..., include.fp=FALSE) {
 	max.onsets <- max(unlist(lapply(x, function(d){length(d$onsets)})))
 	onsets <- do.call(rbind,lapply(x,function(d){as.matrix(d$onsets,padding=max.onsets)}))
 	filenames <- names(x)
-	cbind(data.frame(filename=filenames,stringsAsFactors=FALSE),as.data.frame(onsets))
+	r <- cbind(data.frame(filename=filenames,stringsAsFactors=FALSE),as.data.frame(onsets))
+	if(include.fp) {
+		fps <- do.call(rbind, lapply(x, function(d){as.data.frame(d$fingerprint)}))
+		r <- cbind(r,fp=fps)
+	}
+	r
 }
