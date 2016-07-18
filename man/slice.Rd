@@ -4,7 +4,7 @@
 \alias{slice}
 \title{Generic function to partition a time series into windows with overlap}
 \usage{
-slice(x, window.width, stepsize, ...)
+slice(x, window.width, stepsize, window.function = signal::hanning, ...)
 }
 \arguments{
 \item{x}{Time series to be sliced}
@@ -12,6 +12,8 @@ slice(x, window.width, stepsize, ...)
 \item{window.width}{Width of each partition window (in ms)}
 
 \item{stepsize}{Stepsize for the windowing (in ms)}
+
+\item{window.function}{Windowing function to be used during extraction (default: hanning window)}
 
 \item{...}{Extra arguments for future methods}
 }

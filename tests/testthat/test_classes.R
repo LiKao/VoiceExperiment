@@ -30,12 +30,17 @@ test_that("Correct classes are returned", {
 	w <- read.wav("../testdata/silence_50ms_mono.wav")
 	e <- energyDensity(w)
 	o <- onsets(w)
-	d <- analyse.directory("../testdata/testsets")
+	d <- analyse.directory.onsets("../testdata/testsets")
 			
 	### read.wav	
 
 	expect_is(w, "WaveData")
 	expect_is(w, "ts")
+	
+	### slice; slice.WaveData
+	
+	expect_is(slice(w, window.width=10, stepsize=5), 			"tsSlice")
+	expect_is(slice.WaveData(w, window.width=10, stepsize=5),	"tsSlice")
 	
 	### energyDensity; energyDensity.WaveData
 	
@@ -61,16 +66,30 @@ test_that("Correct classes are returned", {
 	
 	### analyse.file
 	
-	expect_is(analyse.file("../testdata/silence_50ms_mono.wav"), "onsetData")
+	expect_is(analyse.file.onsets("../testdata/silence_50ms_mono.wav")$onsets, "onsetData")
 	
 	### analyse.directory
 	
-	expect_is(analyse.directory("../testdata/testsets"), "voiceExperimentData")
+	expect_is(analyse.directory.onsets("../testdata/testsets"), "voiceExperimentData")
 	
 	### conversion functions
 	
-	expect_is( as.matrix(o), "numeric")
+	expect_is( as.matrix(o), "matrix")
 	
 	expect_is( as.data.frame(d), "data.frame")
+	
+	### spectrum, spectrum.WaveData
+	
+	expect_is( spectrum(w, window.width=10, stepsize=5), "spectrum")
+	expect_is( spectrum.WaveData(w, window.width=10, stepsize=5), "spectrum")
+	
+	### MFCCs, MFCCs.WaveData
+	tryCatch(MFCCs(w), error=function(e) print(e) )
+	
+	expect_is( MFCCs(w), "MFCCs")
+	expect_is( MFCCs(w), "matrix")
+	
+	expect_is( MFCCs.WaveData(w), "MFCCs")
+	expect_is( MFCCs.WaveData(w), "matrix")
 	
 })

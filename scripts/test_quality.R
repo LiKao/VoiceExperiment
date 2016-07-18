@@ -6,4 +6,4 @@ outfile <- args[[2]]
 
 devtools::load_all(".")
 
-expOnsets.as.csv(dirname=indir,filename=outfile)
+expResponses.as.csv(dirname=indir,filename=outfile,stoptime=0.200, nresponses=2)
