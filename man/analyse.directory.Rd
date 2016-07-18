@@ -2,11 +2,11 @@
 % Please edit documentation in R/analysis.R
 \name{analyse.directory}
 \alias{analyse.directory}
-\title{Analyse a Complete Directory for Onset Times and Fingerprints}
+\title{Analyse a Complete Directory for Onset Times, Fingerprints and clusters}
 \usage{
 analyse.directory(dirname, read.params = list(), filter = list(),
   onset.params = list(), energy.params = list(), fp.params = list(),
-  stoptime = NULL, duration = NULL, quiet = TRUE)
+  stoptime = NULL, duration = NULL, nresponses = NULL, quiet = TRUE)
 }
 \arguments{
 \item{dirname}{Name of the directory from which the files should be taken}
@@ -26,9 +26,12 @@ See "Details"}
 
 \item{duration}{Explicit duration of the part to be fingerprinted}
 
+\item{nresponses}{Number of response classes used in clustering. Set to \code{NULL} to 
+deactivate cluster analysis}
+
 \item{quiet}{If set to true, the function will output the current filename to be analysed}
 }
 \description{
-Analyse a Complete Directory for Onset Times and Fingerprints
+Analyse a Complete Directory for Onset Times, Fingerprints and clusters
 }
 

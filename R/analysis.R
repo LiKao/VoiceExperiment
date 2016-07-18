@@ -177,7 +177,20 @@ analyse.directory.onsets <- function(dirname, read.params=list(), filter=list(),
 	r
 }
 
-#' Analyse a Complete Directory for Onset Times and Fingerprints
+analyse.clusters <- function(d, nresponses)
+{
+	
+	m <- do.call(rbind,lapply(a, function(d) as.matrix(d$fingerprint)))
+	c <- kmeans(m, centers=nresponses)
+	r <- data.frame( cluster = c$cluster, 
+					 dist=matrix(rep(0,length(d)*nresponses),ncol=nresponses))
+	for(i in 1:nresponses) {
+		r[,paste("dist",i,sep=".")] <- sqrt(colSums((t(m) - c$centers[i,])^2))
+	}
+	r
+}
+
+#' Analyse a Complete Directory for Onset Times, Fingerprints and clusters
 #' 
 #' @inheritParams 	read.wav
 #' @inheritParams 	onsets.WaveData
@@ -188,7 +201,7 @@ analyse.directory.onsets <- function(dirname, read.params=list(), filter=list(),
 #' @export
 analyse.directory <- function(dirname, read.params=list(), filter=list(), onset.params=list(),
 							  energy.params=list(), fp.params=list(), stoptime=NULL, duration=NULL,
-							  quiet=TRUE ) 
+							  nresponses=NULL, quiet=TRUE ) 
 {
 	if(!dir.exists(dirname)) {
 		stop("Directory '",dirname,"' does not exist.")
@@ -199,6 +212,12 @@ analyse.directory <- function(dirname, read.params=list(), filter=list(), onset.
 	r <- lapply(fullnames, analyse.file, read.params=read.params, filter=filter, onset.params=onset.params, 
 			    energy.params=energy.params, fp.params=fp.params, stoptime=stoptime, duration=duration,
 				quiet=quiet)
+	if(!is.null(nresponses)) {
+		c <- analyse.clusters(r, nresponses)
+		for(i in 1:nrow(c)) {
+			r[[i]]$response <- as.list(c[i,])
+		}
+	}
 	names(r) <- filenames
 	class(r) <- c("voiceExperimentData","list")
 	r
@@ -213,6 +232,14 @@ as.data.frame.voiceExperimentData <- function(x, ..., include.fp=FALSE) {
 	if(include.fp) {
 		fps <- do.call(rbind, lapply(x, function(d){as.data.frame(d$fingerprint)}))
 		r <- cbind(r,fp=fps)
+	}
+	if( all(unlist(lapply(a,function(d) !is.null(d$response)))) ) {
+		if(!include.fp) {
+			fps <- do.call(rbind, lapply(x, function(d){as.data.frame(d$fingerprint)}))
+			r <- cbind(r,fp=fps[,c("type","feature.type","start","end")])
+		}
+		cs <- do.call(rbind,lapply(a,function(d) as.data.frame(d$response)))
+		r <- cbind(r, response=cs)
 	}
 	r
 }
