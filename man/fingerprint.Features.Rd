@@ -4,7 +4,7 @@
 \alias{fingerprint.Features}
 \title{Extract Fingerprints from a time series of feature vectors (e.g. spectrum or MFCC data)}
 \usage{
-\method{fingerprint}{Features}(ts, fp.type = c("minmax", "mean"), ...)
+\method{fingerprint}{Features}(ts, fp.type = c("mean", "minmax"), ...)
 }
 \arguments{
 \item{ts}{The feature time series from which the fingerprint should be extracted}

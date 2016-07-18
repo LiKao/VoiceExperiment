@@ -177,18 +177,33 @@ analyse.directory.onsets <- function(dirname, read.params=list(), filter=list(),
 	r
 }
 
-#' Analyse a Complete Directory for Onset Times and Fingerprints
+analyse.clusters <- function(df, nresponses)
+{
+	
+	m <- do.call(rbind,lapply(df, function(d) as.matrix(d$fingerprint)))
+	c <- kmeans(m, centers=nresponses)
+	r <- data.frame( cluster = c$cluster, 
+					 dist=matrix(rep(0,length(df)*nresponses),ncol=nresponses))
+	for(i in 1:nresponses) {
+		r[,paste("dist",i,sep=".")] <- sqrt(colSums((t(m) - c$centers[i,])^2))
+	}
+	r
+}
+
+#' Analyse a Complete Directory for Onset Times, Fingerprints and clusters
 #' 
-#' @inheritParams 	read.wav
-#' @inheritParams 	onsets.WaveData
-#' @inheritParams	analyse.file
-#' @param dirname	Name of the directory from which the files should be taken 
-#' @param quiet 	If set to true, the function will output the current filename to be analysed
+#' @inheritParams 		read.wav
+#' @inheritParams 		onsets.WaveData
+#' @inheritParams		analyse.file
+#' @param dirname		Name of the directory from which the files should be taken
+#' @param nresponses	Number of response classes used in clustering. Set to \code{NULL} to 
+#' 						deactivate cluster analysis 
+#' @param quiet 		If set to true, the function will output the current filename to be analysed
 #' 
 #' @export
 analyse.directory <- function(dirname, read.params=list(), filter=list(), onset.params=list(),
 							  energy.params=list(), fp.params=list(), stoptime=NULL, duration=NULL,
-							  quiet=TRUE ) 
+							  nresponses=NULL, quiet=TRUE ) 
 {
 	if(!dir.exists(dirname)) {
 		stop("Directory '",dirname,"' does not exist.")
@@ -199,6 +214,12 @@ analyse.directory <- function(dirname, read.params=list(), filter=list(), onset.
 	r <- lapply(fullnames, analyse.file, read.params=read.params, filter=filter, onset.params=onset.params, 
 			    energy.params=energy.params, fp.params=fp.params, stoptime=stoptime, duration=duration,
 				quiet=quiet)
+	if(!is.null(nresponses)) {
+		c <- analyse.clusters(r, nresponses)
+		for(i in 1:nrow(c)) {
+			r[[i]]$response <- as.list(c[i,])
+		}
+	}
 	names(r) <- filenames
 	class(r) <- c("voiceExperimentData","list")
 	r
@@ -213,6 +234,14 @@ as.data.frame.voiceExperimentData <- function(x, ..., include.fp=FALSE) {
 	if(include.fp) {
 		fps <- do.call(rbind, lapply(x, function(d){as.data.frame(d$fingerprint)}))
 		r <- cbind(r,fp=fps)
+	}
+	if( all(unlist(lapply(x, function(d) !is.null(d$response)))) ) {
+		if(!include.fp) {
+			fps <- do.call(rbind, lapply(x, function(d){as.data.frame(d$fingerprint)}))
+			r <- cbind(r,fp=fps[,c("type","feature.type","start","end")])
+		}
+		cs <- do.call(rbind,lapply(x, function(d) as.data.frame(d$response)))
+		r <- cbind(r, response=cs)
 	}
 	r
 }

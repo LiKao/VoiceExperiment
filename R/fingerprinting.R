@@ -52,7 +52,7 @@ fingerprint <- function(ts, ... )
 #' extraction method. 
 #' 
 #' @export
-fingerprint.Features <- function(ts, fp.type = c("minmax","mean"), ...) {
+fingerprint.Features <- function(ts, fp.type = c("mean","minmax"), ...) {
 	fp.type <- match.arg(fp.type)
 	r <- switch(fp.type,
 		   			minmax 	= extract.fp.minmax(ts),

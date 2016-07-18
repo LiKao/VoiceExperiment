@@ -2,7 +2,6 @@
 
 ## Features
 
-* Add voice recognition based on mfccs
 * Detection of onset relative to beep
 
 ## cleanup/refactoring
