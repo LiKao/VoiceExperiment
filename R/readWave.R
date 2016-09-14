@@ -66,6 +66,15 @@ read.wav <- function(filename, channels=c("both","left","right"),
 	
 	w <- tuneR::readWave(filename)
 	
+	if(length(w) == 0 ){
+		warning('Error loading file "',filename,'": Empty file')
+		r <- NA
+		class(r) <- "WaveData"
+		attr(r,"Error")  <- "Empty File"
+		return(r)
+	}
+
+	
 	# Reduce stereo and Normalize to format independent of bit-depth
 	s <- (if(w@stereo){ tuneR::mono(w,which=channels)@left} else {w@left}) / (2^w@bit) 
 	f <- w@samp.rate

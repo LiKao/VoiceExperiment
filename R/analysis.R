@@ -34,7 +34,7 @@ analyse.wav.onsets <- function( wavdata, onset.params=list(), energy.params=list
 		cat("\tExtracting onsets...\n")
 	}
 	
-	do.call(onsets.WaveData, c(ts=list(wavdata), onset.params, energy.params=list(energy.params)))
+	do.call(onsets, c(ts=list(wavdata), onset.params, energy.params=list(energy.params)))
 }
 
 #' Analyse WaveData for Fingerprints
@@ -243,5 +243,6 @@ as.data.frame.voiceExperimentData <- function(x, ..., include.fp=FALSE) {
 		cs <- do.call(rbind,lapply(x, function(d) as.data.frame(d$response)))
 		r <- cbind(r, response=cs)
 	}
+	r$note <- lapply(x,function(o) ifelse(length(o$onsets) == 1 && is.na(o$onsets), attr(o$onsets,"Error"),""))
 	r
 }
