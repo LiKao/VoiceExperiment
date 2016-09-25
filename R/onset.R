@@ -199,7 +199,7 @@ fixup.names.onsetData <- function(x, i) {
 as.matrix.onsetData <- function(x, padding = NULL, ...) {
 	if(length(x) == 1 && is.na(x)) {
 		if(is.null(padding)) {
-			return(as.matrix(NA))
+			return(NA)
 		}
 		l <- 0
 		r <- NULL

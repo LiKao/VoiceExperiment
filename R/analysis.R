@@ -60,6 +60,14 @@ analyse.wav.fingerprint <- function( wavdata, onsets, fp.params=list(), stoptime
 	if(!quiet) {
 		cat("\tExtracting fingerprints...\n")
 	}
+	
+	if(length(onsets)==1 &&  is.na(onsets)) {
+		# We redirect this to fingerprint, so we are sure
+		# to always get the correct class
+		r <- do.call(fingerprint, c(ts=list(wavdata), start=0, end=0, fp.params))
+		return(r)
+	} 
+	
 	max.o = NULL
 	for(o in onsets) {
 		if(is.null(stoptime) || o$start > stoptime) {
@@ -181,12 +189,18 @@ analyse.clusters <- function(df, nresponses)
 {
 	
 	m <- do.call(rbind,lapply(df, function(d) as.matrix(d$fingerprint)))
-	c <- kmeans(m, centers=nresponses)
-	r <- data.frame( cluster = c$cluster, 
-					 dist=matrix(rep(0,length(df)*nresponses),ncol=nresponses))
+	c <- kmeans(na.omit(m), centers=nresponses)
+	r <- data.frame( dist=matrix(rep(0,length(df)*nresponses),ncol=nresponses))
+	dmin  <- rep(Inf,length(df))
+	dbest <- rep(NA,length(df))
 	for(i in 1:nresponses) {
-		r[,paste("dist",i,sep=".")] <- sqrt(colSums((t(m) - c$centers[i,])^2))
+		curr <- sqrt(colSums((t(m) - c$centers[i,])^2))
+		filter <- curr < dmin
+		dmin  <- ifelse(filter, curr, dmin)
+		dbest <- ifelse(filter, i, dbest)
+		r[,paste("dist",i,sep=".")] <- curr 
 	}
+	r$cluster <- dbest
 	r
 }
 
