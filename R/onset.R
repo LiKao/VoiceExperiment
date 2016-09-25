@@ -51,6 +51,13 @@
 #' 
 #' @export
 onsets <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"), ... ) {
+	if(length(ts)==1 && is.na(ts)) {
+		warning("onset detection called with NA")
+		r <- NA
+		class(r) <- "onsetData"
+		attr(r,"Error") <- attr(ts,"Error")
+		return(r)
+	}
 	UseMethod("onsets")
 }
 
@@ -190,8 +197,16 @@ fixup.names.onsetData <- function(x, i) {
 
 #' @export
 as.matrix.onsetData <- function(x, padding = NULL, ...) {
-	l <- length(x)
-	r <- do.call(c,lapply( X=1:l, FUN=function(i){fixup.names.onsetData(x, i)}))
+	if(length(x) == 1 && is.na(x)) {
+		if(is.null(padding)) {
+			return(NA)
+		}
+		l <- 0
+		r <- NULL
+	} else {
+		l <- length(x)
+		r <- do.call(c,lapply( X=1:l, FUN=function(i){fixup.names.onsetData(x, i)}))
+	}
 	if(!is.null(padding) && l < padding) {
 		o <- paste("Onset",(l+1):padding,sep="")
 		n <- do.call(c,lapply(o,FUN=function(s){paste(s,c("Start", "End", "Duration", "TotalEnergy", "AverageEnergy"),sep=".")}))
