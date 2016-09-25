@@ -64,9 +64,14 @@ analyse.wav.fingerprint <- function( wavdata, onsets, fp.params=list(), stoptime
 	if(length(onsets)==1 &&  is.na(onsets)) {
 		# We redirect this to fingerprint, so we are sure
 		# to always get the correct class
-		r <- do.call(fingerprint, c(ts=list(wavdata), start=0, end=0, fp.params))
+		r <- do.call(fingerprint, c(ts=list(NA), start=0, end=0, fp.params))
 		return(r)
-	} 
+	}
+	
+	if(!is.null(stoptime) && duration(wavdata) <= stoptime) {
+		r <- do.call(fingerprint, c(ts=list(NA), start=0, end=0, fp.params))
+		return(r)
+	}
 	
 	max.o = NULL
 	for(o in onsets) {
@@ -78,7 +83,9 @@ analyse.wav.fingerprint <- function( wavdata, onsets, fp.params=list(), stoptime
 	}
 	
 	if(is.null(max.o)) {
-		stop("No suitable onset found for fingerprinting")
+		warning("No suitable onset found for fingerprinting")
+		r <- do.call(fingerprint, c(ts=list(NA), start=0, end=0, fp.params))
+		return(r)
 	} 
 	
 	start <- max.o$start
