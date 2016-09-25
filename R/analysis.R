@@ -264,6 +264,6 @@ as.data.frame.voiceExperimentData <- function(x, ..., include.fp=FALSE) {
 		cs <- do.call(rbind,lapply(x, function(d) as.data.frame(d$response)))
 		r <- cbind(r, response=cs)
 	}
-	r$note <- lapply(x,function(o) ifelse(length(o$onsets) == 1 && is.na(o$onsets), attr(o$onsets,"Error"),""))
+	r$note <- unlist(lapply(x,function(o) ifelse(length(o$onsets) == 1 && is.na(o$onsets), attr(o$onsets,"Error"),"")))
 	r
 }
