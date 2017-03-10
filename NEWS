@@ -1,3 +1,5 @@
+* Added filtering of very short onset blocks (possible false positives)
+
 VoiceExperiment v1.0.1 (Release date: 2016-09-25)
 ==============
 

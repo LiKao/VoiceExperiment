@@ -27,7 +27,7 @@ test_that("Correct classes are returned", {
 	
 	### Prepare Data
 	
-	w <- read.wav("../testdata/silence_50ms_mono.wav")
+	w <- read.wav("../testdata/silence_noise_silence_500ms.wav")
 	e <- energyDensity(w)
 	o <- onsets(w)
 	d <- analyse.directory.onsets("../testdata/testsets")
