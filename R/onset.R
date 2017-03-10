@@ -172,11 +172,16 @@ onsets.WaveData <- function( ts, limit = c(0.1,0.01), limit.type=c("absolute","r
 }
 
 #' @export
+duration.onset <- function(x, ...) {
+	x$end-x$start
+}
+
+#' @export
 print.onset <- function(x, ...) {
 	cat("Onset Block:")
 	cat(paste("\n\tStart:", 			x$start,sep="\t\t\t\t"))
 	cat(paste("\n\tEnd:", 				x$end, sep="\t\t\t\t"))
-	cat(paste("\n\tDuration:", 			formatC(x$end-x$start, digits=2), sep="\t\t\t"))
+	cat(paste("\n\tDuration:", 			formatC(duration(x), digits=2), sep="\t\t\t"))
 	cat(paste("\n\tTotal Energy:", 		formatC(x$energy.total, digits=2), sep="\t\t"))
 	cat(paste("\n\tAverage Energy:",	formatC(x$energy.avg, digits=2), sep="\t\t"))
 	cat("\n")
