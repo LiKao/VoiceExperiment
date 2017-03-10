@@ -152,6 +152,12 @@ onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute
 			sidx <- sidx + 1
 		}
 	}
+	
+	if(length(r) == 0) {
+		warning("No suitable onset found in data... NA returned")
+		r <- NA
+		attr(r,"Error") <- "No suitable onset found in data"
+	}
 		
 	class(r) <- append(class(r), "onsetData")
 	attr(r,"params") <- list(limit=limit, limit.type=limit.type, min.duration=min.duration) 
