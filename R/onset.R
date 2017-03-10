@@ -154,7 +154,7 @@ onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute
 	}
 		
 	class(r) <- append(class(r), "onsetData")
-	attr(r,"params") <- list(limit=limit, limit.type=limit.type) 
+	attr(r,"params") <- list(limit=limit, limit.type=limit.type, min.duration=min.duration) 
 	attr(r,"dataType") <- "energyDensity"
 	r
 }
@@ -174,7 +174,7 @@ onsets.WaveData <- function( ts, limit = c(0.1,0.01), limit.type=c("absolute","r
 	# Parameter testing done in called functions
 	
 	e <- do.call(energyDensity.WaveData, c(list(ts=ts), energy.params) )
-	r <- onsets.energyDensity(e, limit = limit, limit.type=limit.type)
+	r <- onsets.energyDensity(e, limit = limit, limit.type=limit.type, min.duration=min.duration)
 	p1 <- attr(r,"params")
 	p2 <- attr(e,"params")
 	p1$dataType = "WaveData"	
