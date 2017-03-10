@@ -34,7 +34,7 @@ analyse.wav.onsets <- function( wavdata, onset.params=list(), energy.params=list
 		cat("\tExtracting onsets...\n")
 	}
 	
-	do.call(onsets.WaveData, c(ts=list(wavdata), onset.params, energy.params=list(energy.params)))
+	do.call(onsets, c(ts=list(wavdata), onset.params, energy.params=list(energy.params)))
 }
 
 #' Analyse WaveData for Fingerprints
@@ -60,6 +60,19 @@ analyse.wav.fingerprint <- function( wavdata, onsets, fp.params=list(), stoptime
 	if(!quiet) {
 		cat("\tExtracting fingerprints...\n")
 	}
+	
+	if(length(onsets)==1 &&  is.na(onsets)) {
+		# We redirect this to fingerprint, so we are sure
+		# to always get the correct class
+		r <- do.call(fingerprint, c(ts=list(NA), start=0, end=0, fp.params))
+		return(r)
+	}
+	
+	if(!is.null(stoptime) && duration(wavdata) <= stoptime) {
+		r <- do.call(fingerprint, c(ts=list(NA), start=0, end=0, fp.params))
+		return(r)
+	}
+	
 	max.o = NULL
 	for(o in onsets) {
 		if(is.null(stoptime) || o$start > stoptime) {
@@ -70,7 +83,9 @@ analyse.wav.fingerprint <- function( wavdata, onsets, fp.params=list(), stoptime
 	}
 	
 	if(is.null(max.o)) {
-		stop("No suitable onset found for fingerprinting")
+		warning("No suitable onset found for fingerprinting")
+		r <- do.call(fingerprint, c(ts=list(NA), start=0, end=0, fp.params))
+		return(r)
 	} 
 	
 	start <- max.o$start
@@ -181,12 +196,18 @@ analyse.clusters <- function(df, nresponses)
 {
 	
 	m <- do.call(rbind,lapply(df, function(d) as.matrix(d$fingerprint)))
-	c <- kmeans(m, centers=nresponses)
-	r <- data.frame( cluster = c$cluster, 
-					 dist=matrix(rep(0,length(df)*nresponses),ncol=nresponses))
+	c <- kmeans(na.omit(m), centers=nresponses)
+	r <- data.frame( dist=matrix(rep(0,length(df)*nresponses),ncol=nresponses))
+	dmin  <- rep(Inf,length(df))
+	dbest <- rep(NA,length(df))
 	for(i in 1:nresponses) {
-		r[,paste("dist",i,sep=".")] <- sqrt(colSums((t(m) - c$centers[i,])^2))
+		curr <- sqrt(colSums((t(m) - c$centers[i,])^2))
+		filter <- curr < dmin
+		dmin  <- ifelse(filter, curr, dmin)
+		dbest <- ifelse(filter, i, dbest)
+		r[,paste("dist",i,sep=".")] <- curr 
 	}
+	r$cluster <- dbest
 	r
 }
 
@@ -243,5 +264,6 @@ as.data.frame.voiceExperimentData <- function(x, ..., include.fp=FALSE) {
 		cs <- do.call(rbind,lapply(x, function(d) as.data.frame(d$response)))
 		r <- cbind(r, response=cs)
 	}
+	r$note <- unlist(lapply(x,function(o) ifelse(length(o$onsets) == 1 && is.na(o$onsets), attr(o$onsets,"Error"),"")))
 	r
 }

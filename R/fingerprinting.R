@@ -30,6 +30,12 @@
 #' @export
 fingerprint <- function(ts, ... ) 
 {
+	if(length(ts) == 1 && is.na(ts)) {
+		warning("Fingerprint called with NA")
+		r <- NA
+		class(r) <- "fingerprint"
+		return(r)
+	}
 	UseMethod("fingerprint")
 }
 
@@ -169,11 +175,17 @@ fingerprint.ts <- function(ts, feature.type=c("MFCCs", "MFCC", "spectrum"),
 #' @export
 as.matrix.fingerprint <- function(x, ... ) 
 {
+	if(length(x) == 1 && is.na(x)){
+		return(NA)
+	}
 	t(NextMethod("as.matrix", x))
 }
 
 #' @export
 as.data.frame.fingerprint <- function(x, ...) {
+	if(length(x) == 1 && is.na(x)) {
+		return(NA)
+	}
 	m <- as.matrix(x)
 	r <- data.frame( type=attr(x,"fp.type"), feature.type=attr(x,"feature.type") )
 	if(!is.null(attr(x, "start"))) {
