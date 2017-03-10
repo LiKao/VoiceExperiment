@@ -25,15 +25,22 @@
 #' where the energy is above a portion of \code{limit}, compared to the overal
 #' energy, are assumed to contain actual data.
 #' 
-#' @param ts The object containing the time series data.
+#' @param ts 				The object containing the time series data.
 #' 
-#' @param limit Parameters used for detecting onsets. See 'Details'
+#' @param limit 			Parameters used for detecting onsets. See 'Details'
 #' 
-#' @param limit.type Type of limit, which is used to detect on- and offsets.
-#' 		  If set to \code{absolute} (default) then the limit value is used
-#' 		  directly. If set to \code{relative} then the limit is determined
-#' 		  as the energy in the i-th percentile, where i is given by the
-#' 		  limit parameter.
+#' @param limit.type 		Type of limit, which is used to detect on- and 
+#' 							offsets. If set to \code{absolute} (default) then
+#' 							the limit value is used directly. If set to
+#' 							\code{relative} then the limit is determined
+#' 		  					as the energy in the i-th percentile, where i is
+#' 							given by the limit parameter.
+#' 
+#' @param min.duration		Minimum duration of onsets to be detected. Onsets
+#' 							that have less duration than this value (in seconds)
+#' 							will be assumed to be false positives and be discarded.
+#' 							Set to \code{NULL} or \code{0} to disable filtering of 
+#' 							short onsets.
 #' 
 #' @param ... Object specific parameters  
 #' 
@@ -50,7 +57,8 @@
 #' value twice). 
 #' 
 #' @export
-onsets <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"), ... ) {
+onsets <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"), 
+				   min.duration=0.1, ... ) {
 	if(length(ts)==1 && is.na(ts)) {
 		warning("onset detection called with NA")
 		r <- NA
@@ -67,7 +75,8 @@ onsets <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"),
 #' @param ... ignored
 #'  
 #' @export
-onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"), ... ) {
+onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"), 
+								 min.duration=0.1, ... ) {
 	limit.type = match.arg(limit.type)
 	
 	if(length(limit)>1) {
@@ -134,7 +143,9 @@ onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute
 			
 		onset <- list(start=start,end=end, energy.total=sum(samples), energy.avg=mean(samples) )
 		class(onset) <- append(class(onset), "onset");	
-		r <- c(r,list(onset))
+		if(is.null(min.duration) || min.duration < 0 || duration(onset) >= min.duration ) {
+			r <- c(r,list(onset))
+		}
 		
 		# Skip all starts, which are before the current end
 		while(sidx <= length(starts) && starts[sidx] <= end) {
@@ -159,7 +170,7 @@ onsets.energyDensity <- function(ts, limit = c(0.1,0.01), limit.type=c("absolute
 #' 
 #' @export
 onsets.WaveData <- function( ts, limit = c(0.1,0.01), limit.type=c("absolute","relative"),
-							 energy.params = list(), ... ) {
+							 min.duration=0.1, energy.params = list(), ... ) {
 	# Parameter testing done in called functions
 	
 	e <- do.call(energyDensity.WaveData, c(list(ts=ts), energy.params) )

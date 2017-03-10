@@ -5,18 +5,25 @@
 \title{Calculate (Physical) Onset Times from an Object containing Time Series Data}
 \usage{
 onsets(ts, limit = c(0.1, 0.01), limit.type = c("absolute", "relative"),
-  ...)
+  min.duration = 0.1, ...)
 }
 \arguments{
 \item{ts}{The object containing the time series data.}
 
 \item{limit}{Parameters used for detecting onsets. See 'Details'}
 
-\item{limit.type}{Type of limit, which is used to detect on- and offsets.
-If set to \code{absolute} (default) then the limit value is used
-directly. If set to \code{relative} then the limit is determined
-as the energy in the i-th percentile, where i is given by the
-limit parameter.}
+\item{limit.type}{Type of limit, which is used to detect on- and 
+offsets. If set to \code{absolute} (default) then
+the limit value is used directly. If set to
+\code{relative} then the limit is determined
+  as the energy in the i-th percentile, where i is
+given by the limit parameter.}
+
+\item{min.duration}{Minimum duration of onsets to be detected. Onsets
+that have less duration than this value (in seconds)
+will be assumed to be false positives and be discarded.
+Set to \code{NULL} or \code{0} to disable filtering of 
+short onsets.}
 
 \item{...}{Object specific parameters}
 }
