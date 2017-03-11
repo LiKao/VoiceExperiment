@@ -309,7 +309,7 @@ test_that("Illegal Paramters produce errors", {
 
 test_that("Parameters are propagated during file analysis", {
 			
-	testfile	<- "../testdata/silence_50ms_mono.wav"
+	testfile	<- "../testdata/silence_noise_silence_500ms.wav"
 	
 	###### read.wav
 	

@@ -1,4 +1,18 @@
+VoiceExperiment v1.0.2
+==============
+
 * Added filtering of very short onset blocks (possible false positives)
+
+Notes:
+* All detected blocks (between onset and offset) of less than 100ms
+are now considered false positives and discarded during onset detection.
+The actual duration to be used for detecting false positives can
+be changed as a parameter (e.g. if very short responses are to be 
+detected).
+
+* Files which have no onsets (e.g. after filtering due to the time
+limit), are now reported as "No suitable onset found in data" in
+the results set.
 
 VoiceExperiment v1.0.1 (Release date: 2016-09-25)
 ==============
