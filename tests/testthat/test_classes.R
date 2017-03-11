@@ -66,7 +66,7 @@ test_that("Correct classes are returned", {
 	
 	### analyse.file
 	
-	expect_is(analyse.file.onsets("../testdata/silence_50ms_mono.wav")$onsets, "onsetData")
+	expect_is(analyse.file.onsets("../testdata/silence_noise_silence_500ms.wav")$onsets, "onsetData")
 	
 	### analyse.directory
 	

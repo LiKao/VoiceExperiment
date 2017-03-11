@@ -35,10 +35,11 @@ test_that("False Positives are discarded based on duration", {
 
 	# Testcase: 1 block of noise 50ms (below min.duration)
 	#
-	# Should detect no block
+	# Should detect no block (i.e. NA returned)
 	w2 <- read.wav("../testdata/silence_noise_silence_50ms.wav")
-	o2 <- onsets(w2)
-	expect_equal(length(o2), 0)
+	expect_warning(o2 <- onsets(w2))
+	expect_equal(length(o2), 1) # NA has length=1
+	expect_true(is.na(o2))
 	
 	# Testcase: 2 blocks of noise 500ms (both above min.duration)
 	#
@@ -49,10 +50,11 @@ test_that("False Positives are discarded based on duration", {
 	
 	# Testcase: 2 blocks of noise 50ms (both below min.duration)
 	#
-	# Should detect 0 blocks
+	# Should detect 0 blocks (i.e. NA returned)
 	w4 <- read.wav("../testdata/silence_noise_noise_50ms.wav")
-	o4 <- onsets(w4)
-	expect_equal(length(o4), 0)
+	expect_warning(o4 <- onsets(w4))
+	expect_equal(length(o4), 1) # NA has length=1
+	expect_true(is.na(o4))
 	
 	# Testcase: 1 block of noise 50ms  (below min.duration)
 	#           1 block of noise 500ms (above min.duration)
@@ -66,8 +68,8 @@ test_that("False Positives are discarded based on duration", {
 	#           1 block of noise 500ms (above min.duration)
 	#
 	# Should detect 1 blocks
-	w5 <- read.wav("../testdata/silence_noise_noise_500ms_50ms.wav")
-	o5 <- onsets(w5)
-	expect_equal(length(o5), 1)
+	w6 <- read.wav("../testdata/silence_noise_noise_500ms_50ms.wav")
+	o6 <- onsets(w6)
+	expect_equal(length(o6), 1)
 	
 })
